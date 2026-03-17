@@ -99,8 +99,8 @@ def generate_report(ticker, name):
 ## 業務簡介
 **板塊:** {sector}
 **產業:** {industry}
-**市值:** {market_cap:,.0f} 百萬台幣
-**企業價值:** {enterprise_value:,.0f} 百萬台幣
+**市值:** {f'{market_cap:,.0f}' if isinstance(market_cap, (int, float)) else market_cap} 百萬台幣
+**企業價值:** {f'{enterprise_value:,.0f}' if isinstance(enterprise_value, (int, float)) else enterprise_value} 百萬台幣
 
 {business_summary}
 
