@@ -20,7 +20,7 @@ from collections import defaultdict
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import (
     REPORTS_DIR, setup_stdout,
-    classify_wikilink, CATEGORY_COLORS, CATEGORY_LABELS,
+    classify_wikilink, CATEGORY_COLORS, CATEGORY_LABELS, TICKER_PATTERN,
 )
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -37,7 +37,7 @@ def scan_graph(min_weight=5, top_n=None):
         for f in files:
             if not f.endswith(".md"):
                 continue
-            m = re.match(r"^(\d{4})", f)
+            m = re.match(rf"^({TICKER_PATTERN})", f, re.IGNORECASE)
             if not m:
                 continue
             with open(os.path.join(root, f), "r", encoding="utf-8") as fh:
@@ -108,10 +108,10 @@ def build_html(nodes, edges):
     )
 
     return f"""<!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="ru">
 <head>
 <meta charset="utf-8">
-<title>Taiwan Stock Wikilink Network</title>
+<title>Граф викалинков покрытия</title>
 <style>
   * {{ margin: 0; padding: 0; box-sizing: border-box; }}
   body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #1a1a2e; color: #eee; overflow: hidden; }}
@@ -128,11 +128,11 @@ def build_html(nodes, edges):
 </head>
 <body>
 <div id="controls">
-  <h2>Wikilink Network</h2>
-  <label>Min Edge Weight: <span id="weightVal">5</span></label>
+  <h2>Граф викалинков</h2>
+  <label>Мин. вес связи: <span id="weightVal">5</span></label>
   <input type="range" id="weightSlider" min="1" max="50" value="5">
-  <label>Search:</label>
-  <input type="text" id="search" placeholder="e.g. 台積電, NVIDIA, CoWoS">
+  <label>Поиск:</label>
+  <input type="text" id="search" placeholder="например, Газпром, NVIDIA, CPO">
 </div>
 <div id="legend">{legend_items}</div>
 <div id="tooltip"></div>
@@ -159,7 +159,7 @@ function render(minWeight) {{
   links.forEach(l => {{ activeIds.add(l.source.id || l.source); activeIds.add(l.target.id || l.target); }});
   const nodes = fullData.nodes.filter(n => activeIds.has(n.id));
 
-  d3.select("#stats").html(`Nodes: ${{nodes.length}} | Edges: ${{links.length}}`);
+  d3.select("#stats").html(`Узлы: ${{nodes.length}} | Связи: ${{links.length}}`);
 
   g.selectAll("*").remove();
 
@@ -186,7 +186,7 @@ function render(minWeight) {{
     .call(d3.drag().on("start", dragStart).on("drag", dragging).on("end", dragEnd))
     .on("mouseover", (e, d) => {{
       tooltip.style("display", "block").html(
-        `<b>${{d.id}}</b><br>提及次數: ${{d.count}}<br>類別: ${{d.category}}`
+        `<b>${{d.id}}</b><br>Упоминаний: ${{d.count}}<br>Категория: ${{d.category}}`
       );
       highlightNeighbors(d);
     }})

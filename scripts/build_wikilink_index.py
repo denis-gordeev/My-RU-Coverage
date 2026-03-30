@@ -49,9 +49,11 @@ APP_TERMS = {
 }
 
 
-def is_cjk(s):
-    """Check if string is predominantly CJK characters."""
-    return sum(1 for c in s if "\u4e00" <= c <= "\u9fff") > len(s) * 0.3
+def is_local_script(s):
+    """Check if string is predominantly CJK or Cyrillic."""
+    cjk = sum(1 for c in s if "\u4e00" <= c <= "\u9fff")
+    cyrillic = sum(1 for c in s if "\u0400" <= c <= "\u04FF")
+    return (cjk + cyrillic) > len(s) * 0.3
 
 
 def collect_wikilinks():
@@ -83,9 +85,9 @@ def categorize(wikilinks):
             materials[name] = count
         elif name in APP_TERMS:
             applications[name] = count
-        elif is_cjk(name) and count >= 2:
+        elif is_local_script(name) and count >= 2:
             companies_tw[name] = count
-        elif not is_cjk(name) and count >= 2:
+        elif not is_local_script(name) and count >= 2:
             companies_intl[name] = count
         # Single-mention entries are omitted from the index
 
@@ -98,7 +100,7 @@ def build_section(title, items, limit=None):
     sorted_items = sorted(items.items(), key=lambda x: -x[1])
     if limit:
         shown = sorted_items[:limit]
-        total_label = f" ({len(items)} total, showing top {limit})"
+        total_label = f" ({len(items)} всего, показаны первые {limit})"
     else:
         shown = sorted_items
         total_label = f" ({len(items)})"
@@ -119,30 +121,30 @@ def main():
     tech, mat, app, intl, tw = categorize(wikilinks)
 
     lines = [
-        "# Wikilink Index",
+        "# Индекс викалинков",
         "",
-        f"> **{len(wikilinks)} unique wikilinks** across 1,733 ticker reports. Auto-generated — do not edit manually.",
-        f"> Regenerate: `python scripts/build_wikilink_index.py`",
+        f"> **{len(wikilinks)} уникальных викалинков** по всем отчётам. Файл генерируется автоматически.",
+        f"> Пересобрать: `python scripts/build_wikilink_index.py`",
         "",
         "---",
         "",
     ]
 
-    lines.extend(build_section("Technologies & Standards", tech))
-    lines.extend(build_section("Materials & Substrates", mat))
-    lines.extend(build_section("Applications & End Markets", app))
-    lines.extend(build_section("International Companies", intl, limit=200))
-    lines.extend(build_section("Taiwan Companies", tw, limit=300))
+    lines.extend(build_section("Технологии и стандарты", tech))
+    lines.extend(build_section("Материалы и подложки", mat))
+    lines.extend(build_section("Конечные рынки и применения", app))
+    lines.extend(build_section("Иностранные компании", intl, limit=200))
+    lines.extend(build_section("Локальные компании", tw, limit=300))
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
 
-    print(f"Generated WIKILINKS.md: {len(wikilinks)} unique wikilinks")
-    print(f"  Technologies: {len(tech)}")
-    print(f"  Materials: {len(mat)}")
-    print(f"  Applications: {len(app)}")
-    print(f"  International companies: {len(intl)}")
-    print(f"  Taiwan companies: {len(tw)}")
+    print(f"Сгенерирован WIKILINKS.md: {len(wikilinks)} уникальных викалинков")
+    print(f"  Технологии: {len(tech)}")
+    print(f"  Материалы: {len(mat)}")
+    print(f"  Применения: {len(app)}")
+    print(f"  Иностранные компании: {len(intl)}")
+    print(f"  Локальные компании: {len(tw)}")
 
 
 if __name__ == "__main__":

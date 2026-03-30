@@ -7,11 +7,11 @@ Preserves all other content including financial tables.
 
 Usage:
   python scripts/update_valuation.py                     # ALL tickers
-  python scripts/update_valuation.py 2330                # Single ticker
-  python scripts/update_valuation.py 2330 2317 3034      # Multiple tickers
+  python scripts/update_valuation.py SBER                # Single ticker
+  python scripts/update_valuation.py SBER GAZP LKOH      # Multiple tickers
   python scripts/update_valuation.py --batch 101         # By batch
-  python scripts/update_valuation.py --sector Semiconductors  # By sector
-  python scripts/update_valuation.py --dry-run 2330      # Preview without writing
+  python scripts/update_valuation.py --sector Energy     # By sector
+  python scripts/update_valuation.py --dry-run SBER      # Preview without writing
 """
 
 import os
@@ -25,12 +25,13 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import (
     find_ticker_files, parse_scope_args, setup_stdout,
     fetch_valuation_data, build_valuation_table, update_metadata,
+    DEFAULT_MARKET_SUFFIXES, get_market_profile,
 )
 
 
 def fetch_valuation(ticker):
-    """Fetch valuation multiples only. Tries .TW then .TWO."""
-    for suffix in [".TW", ".TWO"]:
+    """Fetch valuation multiples only. Tries local suffixes in priority order."""
+    for suffix in DEFAULT_MARKET_SUFFIXES:
         try:
             stock = yf.Ticker(f"{ticker}{suffix}")
             info = stock.info
@@ -49,12 +50,13 @@ def fetch_valuation(ticker):
                 if info.get("enterpriseValue")
                 else None
             )
-
+            market_profile = get_market_profile(suffix)
             return {
                 "valuation": valuation,
                 "market_cap": market_cap,
                 "enterprise_value": enterprise_value,
                 "suffix": suffix,
+                "unit_label": market_profile["unit_label"],
             }
         except Exception:
             continue
@@ -88,7 +90,12 @@ def update_file(filepath, ticker, dry_run=False):
             new_table + "\n\n### 年度關鍵財務數據",
         )
 
-    content = update_metadata(content, data.get("market_cap"), data.get("enterprise_value"))
+    content = update_metadata(
+        content,
+        data.get("market_cap"),
+        data.get("enterprise_value"),
+        data.get("unit_label", "млн руб."),
+    )
 
     if dry_run:
         print(f"  {ticker}: WOULD UPDATE ({data['suffix']})")

@@ -1,8 +1,8 @@
 """
 discover.py — Reverse discovery: find companies related to a buzzword.
 
-User hears a buzzword (e.g., 液冷散熱, 核融合, CPO) and wants to know which
-Taiwan-listed companies are connected. The script:
+User hears a buzzword (e.g., редкоземы, импортозамещение, CPO) and wants to know
+which covered companies are connected. The script:
 
 1. Searches all relevant ticker reports for mentions of the buzzword
 2. Wikilinks the buzzword where it appears but isn't yet tagged

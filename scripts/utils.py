@@ -14,6 +14,28 @@ from datetime import date, datetime
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPORTS_DIR = os.path.join(PROJECT_ROOT, "Pilot_Reports")
 TASK_FILE = os.path.join(PROJECT_ROOT, "task.md")
+TICKER_PATTERN = r"[A-Z0-9][A-Z0-9._-]{0,11}"
+
+MARKET_PROFILES = {
+    ".ME": {
+        "unit_label": "млн руб.",
+        "price_symbol": "₽",
+        "scope_label": "российский рынок",
+    },
+    ".TW": {
+        "unit_label": "百萬台幣",
+        "price_symbol": "NT$",
+        "scope_label": "тайваньский рынок",
+    },
+    ".TWO": {
+        "unit_label": "百萬台幣",
+        "price_symbol": "NT$",
+        "scope_label": "тайваньский OTC-рынок",
+    },
+}
+
+DEFAULT_MARKET_SUFFIXES = [".ME", ".TW", ".TWO"]
+DEFAULT_UNIT_LABEL = MARKET_PROFILES[".ME"]["unit_label"]
 
 
 # =============================================================================
@@ -27,7 +49,7 @@ def find_ticker_files(tickers=None, sector=None):
     files = {}
     for fp in glob.glob(os.path.join(REPORTS_DIR, "**", "*.md"), recursive=True):
         fn = os.path.basename(fp)
-        m = re.match(r"^(\d{4})_", fn)
+        m = re.match(rf"^({TICKER_PATTERN})_", fn, re.IGNORECASE)
         if not m:
             continue
         t = m.group(1)
@@ -46,7 +68,7 @@ def find_ticker_files(tickers=None, sector=None):
 def get_ticker_from_filename(filepath):
     """Extract ticker number and company name from a report filename."""
     fn = os.path.basename(filepath)
-    m = re.match(r"^(\d{4})_(.+)\.md$", fn)
+    m = re.match(rf"^({TICKER_PATTERN})_(.+)\.md$", fn, re.IGNORECASE)
     if m:
         return m.group(1), m.group(2)
     return None, None
@@ -101,7 +123,9 @@ def parse_scope_args(args):
         sector = " ".join(args[1:])
         return None, sector, f"all tickers in sector: {sector}"
     else:
-        tickers = [t.strip() for t in args if re.match(r"^\d{4}$", t.strip())]
+        tickers = [
+            t.strip() for t in args if re.match(rf"^{TICKER_PATTERN}$", t.strip(), re.IGNORECASE)
+        ]
         return tickers, None, f"{len(tickers)} tickers: {', '.join(tickers)}"
 
 
@@ -116,9 +140,9 @@ def setup_stdout():
 # =============================================================================
 
 # Canonical name mapping: alias -> canonical
-# Taiwan companies use Chinese, foreign companies use English
+# Local companies use local naming, foreign companies use global naming.
 WIKILINK_ALIASES = {
-    # Taiwan companies: English -> Chinese
+    # Local market companies: English -> Chinese aliases kept for legacy corpus
     "TSMC": "台積電", "MediaTek": "聯發科", "Foxconn": "鴻海",
     "UMC": "聯電", "ASE": "日月光投控", "SPIL": "矽品",
     "Pegatron": "和碩", "Compal": "仁寶", "Quanta": "廣達",
@@ -132,7 +156,7 @@ WIKILINK_ALIASES = {
     "Largan": "大立光", "CTCI": "中鼎", "PTI": "力成",
     "WIN Semi": "穩懋", "Walsin": "華新科",
     "日月光": "日月光投控",
-    # Foreign companies: Chinese -> English
+    # Foreign companies: local-language aliases -> English canonical
     "艾司摩爾": "ASML", "應用材料": "Applied Materials", "AMAT": "Applied Materials",
     "東京威力": "Tokyo Electron", "TEL": "Tokyo Electron",
     "科林研發": "Lam Research", "科磊": "KLA", "愛德萬": "Advantest",
@@ -219,17 +243,22 @@ CATEGORY_COLORS = {
 }
 
 CATEGORY_LABELS = {
-    "taiwan_company": "台灣公司",
-    "international_company": "國際公司",
-    "technology": "技術/標準",
-    "material": "材料/基板",
-    "application": "終端應用",
+    "taiwan_company": "Локальная компания",
+    "international_company": "Иностранная компания",
+    "technology": "Технология / стандарт",
+    "material": "Материал / подложка",
+    "application": "Конечный рынок",
 }
 
 
-def is_cjk(s):
-    """Check if a string is primarily CJK characters."""
-    return sum(1 for c in s if "\u4e00" <= c <= "\u9fff") > len(s) * 0.3
+def is_local_language_name(s):
+    """Check if a string is primarily written in a local non-Latin script."""
+    if not s:
+        return False
+
+    cjk = sum(1 for c in s if "\u4e00" <= c <= "\u9fff")
+    cyrillic = sum(1 for c in s if "\u0400" <= c <= "\u04FF")
+    return (cjk + cyrillic) > len(s) * 0.3
 
 
 def classify_wikilink(name):
@@ -240,9 +269,14 @@ def classify_wikilink(name):
         return "material"
     if name in APPLICATION_TERMS:
         return "application"
-    if is_cjk(name):
+    if is_local_language_name(name):
         return "taiwan_company"
     return "international_company"
+
+
+def get_market_profile(suffix=None):
+    """Return unit/price settings for a ticker suffix."""
+    return MARKET_PROFILES.get(suffix, MARKET_PROFILES[".ME"])
 
 
 # =============================================================================
@@ -267,6 +301,16 @@ def fetch_valuation_data(info):
     # Price
     cur_price = info.get("currentPrice")
     valuation["_price"] = f"{cur_price:,.2f}" if cur_price else None
+    currency = (info.get("currency") or "").upper()
+    valuation["_currency_symbol"] = {
+        "RUB": "₽",
+        "TWD": "NT$",
+        "USD": "$",
+        "EUR": "€",
+        "CNY": "¥",
+        "JPY": "¥",
+        "HKD": "HK$",
+    }.get(currency, "$")
 
     # Period info
     mrq = info.get("mostRecentQuarter")
@@ -293,7 +337,7 @@ def build_valuation_table(v):
     today = date.today().strftime("%Y-%m-%d")
     period_parts = []
     if v.get("_price"):
-        period_parts.append(f"股價 ${v['_price']} as of {today}")
+        period_parts.append(f"Цена {v.get('_currency_symbol', '$')}{v['_price']} на {today}")
     if v.get("_ttm_end"):
         period_parts.append(f"TTM 截至 {v['_ttm_end']}")
     if v.get("_fwd_end"):
@@ -304,18 +348,18 @@ def build_valuation_table(v):
     return title + header_row + "\n" + sep_row + "\n" + val_row
 
 
-def update_metadata(content, market_cap, enterprise_value):
+def update_metadata(content, market_cap, enterprise_value, unit_label=DEFAULT_UNIT_LABEL):
     """Update 市值 and 企業價值 metadata in file content."""
     if market_cap:
         content = re.sub(
-            r"(\*\*市值:\*\*) .+?百萬台幣",
-            rf"\1 {market_cap} 百萬台幣",
+            r"(\*\*市值:\*\*) .+",
+            rf"\1 {market_cap} {unit_label}",
             content,
         )
     if enterprise_value:
         content = re.sub(
-            r"(\*\*企業價值:\*\*) .+?百萬台幣",
-            rf"\1 {enterprise_value} 百萬台幣",
+            r"(\*\*企業價值:\*\*) .+",
+            rf"\1 {enterprise_value} {unit_label}",
             content,
         )
     return content

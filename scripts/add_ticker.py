@@ -8,8 +8,8 @@ Creates a new .md file under Pilot_Reports/{sector}/ with:
 - Financial tables from yfinance (annual 3yr + quarterly 4Q)
 
 Usage:
-  python scripts/add_ticker.py 2330 台積電                    # Auto-detect sector
-  python scripts/add_ticker.py 2330 台積電 --sector Semiconductors  # Specify sector
+  python scripts/add_ticker.py GAZP Газпром                    # Auto-detect sector
+  python scripts/add_ticker.py GAZP Газпром --sector Energy    # Specify sector
 
 After generating, use /update-enrichment to add business descriptions.
 """
@@ -37,6 +37,7 @@ def generate_report(ticker, name, sector=None, industry=None):
             industry = fin_data.get("industry", "Unknown")
         market_cap = fin_data.get("market_cap", "N/A")
         enterprise_value = fin_data.get("enterprise_value", "N/A")
+        unit_label = fin_data.get("unit_label", "млн руб.")
         fin_section = build_financial_section(fin_data)
     else:
         if not sector:
@@ -45,8 +46,9 @@ def generate_report(ticker, name, sector=None, industry=None):
             industry = "Unknown"
         market_cap = "N/A"
         enterprise_value = "N/A"
+        unit_label = "млн руб."
         fin_section = (
-            "## 財務概況 (單位: 百萬台幣, 只有 Margin 為 %)\n"
+            f"## 財務概況 (單位: {unit_label}, 只有 Margin 為 %)\n"
             "### 年度關鍵財務數據 (近 3 年)\n無可用數據。\n\n"
             "### 季度關鍵財務數據 (近 4 季)\n無可用數據。\n"
         )
@@ -56,8 +58,8 @@ def generate_report(ticker, name, sector=None, industry=None):
 ## 業務簡介
 **板塊:** {sector}
 **產業:** {industry}
-**市值:** {market_cap} 百萬台幣
-**企業價值:** {enterprise_value} 百萬台幣
+**市值:** {market_cap} {unit_label}
+**企業價值:** {enterprise_value} {unit_label}
 
 *(待enrichment — 請使用 /update-enrichment 補充業務描述)*
 

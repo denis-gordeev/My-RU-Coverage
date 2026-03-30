@@ -8,14 +8,14 @@ sections while preserving metadata and 財務概況.
 
 Usage:
   python scripts/update_enrichment.py --data enrichment.json          # From JSON file
-  python scripts/update_enrichment.py --data enrichment.json 2330     # Single ticker from JSON
+  python scripts/update_enrichment.py --data enrichment.json SBER     # Single ticker from JSON
   python scripts/update_enrichment.py --data enrichment.json --batch 101
-  python scripts/update_enrichment.py --data enrichment.json --sector Semiconductors
+  python scripts/update_enrichment.py --data enrichment.json --sector Energy
 
 JSON format:
 {
-  "2330": {
-    "desc": "Traditional Chinese description with [[wikilinks]]...",
+  "SBER": {
+    "desc": "Русскоязычное описание с [[wikilinks]]...",
     "supply_chain": "**上游:**\\n- ...\\n**中游:**\\n- ...\\n**下游:**\\n- ...",
     "cust": "### 主要客戶\\n- ...\\n\\n### 主要供應商\\n- ..."
   }
@@ -45,7 +45,7 @@ def apply_enrichment(filepath, ticker, data):
     if "**板塊:**" not in content and "**市值:**" not in content:
         sector = data.get("sector", "N/A")
         industry = data.get("industry", "N/A")
-        meta = f"**板塊:** {sector}\n**產業:** {industry}\n**市值:** N/A 百萬台幣\n**企業價值:** N/A 百萬台幣\n\n"
+        meta = f"**板塊:** {sector}\n**產業:** {industry}\n**市值:** N/A млн руб.\n**企業價值:** N/A млн руб.\n\n"
         content = content.replace("## 業務簡介\n", "## 業務簡介\n" + meta, 1)
 
     # Replace business description (preserve metadata block above it)
@@ -113,7 +113,7 @@ def main():
 
     if not json_path:
         print("Usage: python scripts/update_enrichment.py --data <json_file> [scope]")
-        print("  Scope: 2330 | 2330 2317 | --batch 101 | --sector Semiconductors | (none=all)")
+        print("  Scope: SBER | SBER GAZP | --batch 101 | --sector Energy | (none=all)")
         return
 
     # Load enrichment data

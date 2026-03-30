@@ -14,7 +14,7 @@ import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from utils import REPORTS_DIR, TASK_FILE, get_batch_tickers, setup_stdout
+from utils import REPORTS_DIR, TASK_FILE, TICKER_PATTERN, get_batch_tickers, setup_stdout
 
 # --- Quality Rules (aligned with CLAUDE.md Golden Rules) ---
 
@@ -149,7 +149,7 @@ def find_batch_files(tickers):
     for root, dirs, files in os.walk(REPORTS_DIR):
         for file in files:
             if file.endswith(".md"):
-                match = re.match(r"^(\d{4})", file)
+                match = re.match(rf"^({TICKER_PATTERN})", file, re.IGNORECASE)
                 if match and match.group(1) in tickers:
                     found[match.group(1)] = os.path.join(root, file)
     return found

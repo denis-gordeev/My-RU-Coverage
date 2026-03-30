@@ -7,13 +7,13 @@ All enrichment content (業務簡介, 供應鏈, 客戶供應商) is preserved.
 
 Usage:
   python scripts/update_financials.py                  # Update ALL tickers
-  python scripts/update_financials.py 2330             # Single ticker
-  python scripts/update_financials.py 2330 2317 3034   # Multiple tickers
+  python scripts/update_financials.py SBER             # Single ticker
+  python scripts/update_financials.py SBER GAZP LKOH   # Multiple tickers
   python scripts/update_financials.py --batch 101      # All tickers in a batch
-  python scripts/update_financials.py --sector Semiconductors  # Entire sector
-  python scripts/update_financials.py --dry-run 2330   # Preview without writing
+  python scripts/update_financials.py --sector Energy  # Entire sector
+  python scripts/update_financials.py --dry-run SBER   # Preview without writing
 
-Units: 百萬台幣 (Million NTD). Margins in %.
+Units depend on the exchange suffix: `.ME` -> млн руб., `.TW/.TWO` -> 百萬台幣.
 """
 
 import os
@@ -28,6 +28,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import (
     find_ticker_files, parse_scope_args, setup_stdout,
     fetch_valuation_data, build_valuation_table, update_metadata,
+    DEFAULT_MARKET_SUFFIXES, get_market_profile,
 )
 
 # Financial metrics to extract
@@ -127,8 +128,8 @@ def extract_metrics(income_stmt, cashflow):
 
 
 def fetch_financials(ticker):
-    """Fetch financial data. Tries .TW then .TWO suffix."""
-    for suffix in [".TW", ".TWO"]:
+    """Fetch financial data. Tries local suffixes in configured priority order."""
+    for suffix in DEFAULT_MARKET_SUFFIXES:
         try:
             stock = yf.Ticker(f"{ticker}{suffix}")
             income = stock.income_stmt
@@ -177,7 +178,7 @@ def fetch_financials(ticker):
             )
 
             valuation = fetch_valuation_data(info)
-
+            market_profile = get_market_profile(suffix)
             return {
                 "annual": df_annual,
                 "quarterly": df_quarterly,
@@ -187,6 +188,7 @@ def fetch_financials(ticker):
                 "sector": info.get("sector", "N/A"),
                 "industry": info.get("industry", "N/A"),
                 "suffix": suffix,
+                "unit_label": market_profile["unit_label"],
             }
         except Exception:
             continue
@@ -207,7 +209,8 @@ def df_to_clean_markdown(df):
 
 
 def build_financial_section(data):
-    section = "## 財務概況 (單位: 百萬台幣, 只有 Margin 為 %)\n"
+    unit_label = data.get("unit_label", "млн руб.")
+    section = f"## 財務概況 (單位: {unit_label}, 只有 Margin 為 %)\n"
 
     # Valuation snapshot
     v = data.get("valuation", {})
@@ -244,7 +247,12 @@ def update_file(filepath, ticker, dry_run=False):
         new_content = content.rstrip() + "\n\n" + new_fin
 
     # Update metadata
-    new_content = update_metadata(new_content, data.get("market_cap"), data.get("enterprise_value"))
+    new_content = update_metadata(
+        new_content,
+        data.get("market_cap"),
+        data.get("enterprise_value"),
+        data.get("unit_label", "млн руб."),
+    )
 
     if dry_run:
         print(f"  {ticker}: WOULD UPDATE ({data['suffix']})")
