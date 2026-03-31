@@ -26,6 +26,7 @@ from utils import (
     find_ticker_files, parse_scope_args, setup_stdout,
     fetch_valuation_data, build_valuation_table, update_metadata,
     DEFAULT_MARKET_SUFFIXES, get_market_profile,
+    SECTION_HEADER_REGEX,
 )
 
 
@@ -75,20 +76,17 @@ def update_file(filepath, ticker, dry_run=False):
 
     new_table = build_valuation_table(data["valuation"])
 
-    # Replace existing 估值指標 section (between ### 估值指標 and ### 年度)
-    if "### 估值指標" in content:
+    if re.search(SECTION_HEADER_REGEX["valuation"], content):
         content = re.sub(
-            r"### 估值指標.*?(?=\n### 年度)",
+            rf"{SECTION_HEADER_REGEX['valuation']}.*?(?=\n{SECTION_HEADER_REGEX['annual']})",
             new_table + "\n",
             content,
             flags=re.DOTALL,
         )
-    elif "## 財務概況" in content:
-        # No valuation section yet — insert before 年度
-        content = content.replace(
-            "### 年度關鍵財務數據",
-            new_table + "\n\n### 年度關鍵財務數據",
-        )
+    elif re.search(SECTION_HEADER_REGEX["financial"], content):
+        annual_match = re.search(SECTION_HEADER_REGEX["annual"], content)
+        if annual_match:
+            content = content[: annual_match.start()] + new_table + "\n\n" + content[annual_match.start() :]
 
     content = update_metadata(
         content,

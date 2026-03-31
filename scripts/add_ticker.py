@@ -4,14 +4,14 @@ add_ticker.py — Generate a new ticker report with financials and base structur
 Creates a new .md file under Pilot_Reports/{sector}/ with:
 - Title with wikilinked company name
 - Metadata (sector, industry, market cap, enterprise value)
-- Placeholder sections for enrichment (業務簡介, 供應鏈, 客戶供應商)
+- Placeholder sections for enrichment
 - Financial tables from yfinance (annual 3yr + quarterly 4Q)
 
 Usage:
   python scripts/add_ticker.py GAZP Газпром                    # Auto-detect sector
   python scripts/add_ticker.py GAZP Газпром --sector Energy    # Specify sector
 
-After generating, use /update-enrichment to add business descriptions.
+After generating, use update_enrichment.py to add business descriptions.
 """
 
 import os
@@ -19,7 +19,11 @@ import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from utils import find_ticker_files, REPORTS_DIR, PROJECT_ROOT
+from utils import (
+    find_ticker_files, REPORTS_DIR, PROJECT_ROOT,
+    BUSINESS_SECTION_TITLE, SUPPLY_CHAIN_SECTION_TITLE, CUSTOMERS_SECTION_TITLE,
+    FINANCIAL_SECTION_TITLE, ANNUAL_SECTION_TITLE, QUARTERLY_SECTION_TITLE,
+)
 
 # Import financials fetcher
 from update_financials import fetch_financials, build_financial_section
@@ -48,26 +52,26 @@ def generate_report(ticker, name, sector=None, industry=None):
         enterprise_value = "N/A"
         unit_label = "млн руб."
         fin_section = (
-            f"## 財務概況 (單位: {unit_label}, 只有 Margin 為 %)\n"
-            "### 年度關鍵財務數據 (近 3 年)\n無可用數據。\n\n"
-            "### 季度關鍵財務數據 (近 4 季)\n無可用數據。\n"
+            f"{FINANCIAL_SECTION_TITLE} (единицы: {unit_label}, маржа указана в %)\n"
+            f"{ANNUAL_SECTION_TITLE}\nНет доступных данных.\n\n"
+            f"{QUARTERLY_SECTION_TITLE}\nНет доступных данных.\n"
         )
 
     content = f"""# {ticker} - [[{name}]]
 
-## 業務簡介
-**板塊:** {sector}
-**產業:** {industry}
-**市值:** {market_cap} {unit_label}
-**企業價值:** {enterprise_value} {unit_label}
+{BUSINESS_SECTION_TITLE}
+**Сектор:** {sector}
+**Отрасль:** {industry}
+**Рыночная капитализация:** {market_cap} {unit_label}
+**Стоимость предприятия (EV):** {enterprise_value} {unit_label}
 
-*(待enrichment — 請使用 /update-enrichment 補充業務描述)*
+*(Нужно обогащение: заполните описание через `update_enrichment.py`.)*
 
-## 供應鏈位置
-*(待enrichment)*
+{SUPPLY_CHAIN_SECTION_TITLE}
+*(Нужно обогащение.)*
 
-## 主要客戶及供應商
-*(待enrichment)*
+{CUSTOMERS_SECTION_TITLE}
+*(Нужно обогащение.)*
 
 {fin_section}"""
 
@@ -86,7 +90,7 @@ def main():
 
     args = sys.argv[1:]
 
-    if not args:
+    if not args or args[0] in {"-h", "--help"}:
         print("Usage:")
         print("  python scripts/add_ticker.py <ticker> <name>")
         print("  python scripts/add_ticker.py <ticker> <name> --sector <sector>")
@@ -105,7 +109,7 @@ def main():
     existing = find_ticker_files([ticker])
     if existing:
         print(f"Ticker {ticker} already exists at: {existing[ticker]}")
-        print("Use /update-financials or /update-enrichment to update it.")
+        print("Use update_financials.py or update_enrichment.py to update it.")
         return
 
     print(f"Generating report for {ticker} ({name})...")
@@ -124,7 +128,7 @@ def main():
 
     print(f"Created: {filepath}")
     print(f"Sector: {folder_name}")
-    print(f"\nNext: use /update-enrichment to add business description, supply chain, and customers.")
+    print("\nNext: use update_enrichment.py to add business description, supply chain, and counterparties.")
 
 
 if __name__ == "__main__":

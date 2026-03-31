@@ -33,10 +33,21 @@ PLACEHOLDER_STRINGS = [
     "(待更新)",
     "基於嚴格實名制",
     "待enrichment",
+    "Нужно обогащение",
 ]
 
-REQUIRED_METADATA = ["板塊:", "產業:", "市值:", "企業價值:"]
-REQUIRED_SECTIONS = ["## 業務簡介", "## 供應鏈位置", "## 主要客戶及供應商", "## 財務概況"]
+REQUIRED_METADATA = [
+    [r"板塊:", r"Сектор:"],
+    [r"產業:", r"Отрасль:"],
+    [r"市值:", r"Рыночная капитализация:"],
+    [r"企業價值:", r"Стоимость предприятия \(EV\):"],
+]
+REQUIRED_SECTIONS = [
+    r"## (?:Описание бизнеса|業務簡介)",
+    r"## (?:Положение в цепочке поставок|供應鏈位置)",
+    r"## (?:Ключевые клиенты и поставщики|主要客戶及供應商)",
+    r"## (?:Финансовый обзор|財務概況)",
+]
 
 ENGLISH_INDICATORS = [
     "Business Description", "Inc.", "Ltd.", "manufactures",
@@ -61,27 +72,30 @@ def find_generic_wikilinks(wikilinks):
 
 def check_metadata(content):
     issues = []
-    for field in REQUIRED_METADATA:
-        if field not in content:
-            issues.append(f"Missing metadata: {field}")
+    for variants in REQUIRED_METADATA:
+        if not any(re.search(field, content) for field in variants):
+            issues.append(f"Missing metadata: {variants[-1]}")
         else:
             for line in content.split("\n"):
-                if field in line:
-                    after_field = line.split(field, 1)[1].strip()
+                matched = next((field for field in variants if re.search(field, line)), None)
+                if matched:
+                    after_field = re.split(matched, line, maxsplit=1)[1].strip()
                     if not after_field or "(待更新)" in line:
-                        issues.append(f"Empty metadata: {field}")
+                        issues.append(f"Empty metadata: {variants[-1]}")
                     break
     return issues
 
 
 def check_sections(content):
-    return [s for s in REQUIRED_SECTIONS if s not in content]
+    return [s for s in REQUIRED_SECTIONS if not re.search(s, content)]
 
 
 def check_section_depth(content):
     issues = []
     sc_match = re.search(
-        r"## 供應鏈位置\n(.*?)(?=\n## 主要客戶及供應商|\Z)", content, re.DOTALL
+        r"## (?:Положение в цепочке поставок|供應鏈位置)\n(.*?)(?=\n## (?:Ключевые клиенты и поставщики|主要客戶及供應商)|\Z)",
+        content,
+        re.DOTALL,
     )
     if sc_match:
         sc_lines = [l for l in sc_match.group(1).strip().split("\n") if l.strip()]
@@ -89,7 +103,9 @@ def check_section_depth(content):
             issues.append(f"Supply chain too thin ({len(sc_lines)} lines)")
 
     cs_match = re.search(
-        r"## 主要客戶及供應商\n(.*?)(?=\n## 財務概況|\Z)", content, re.DOTALL
+        r"## (?:Ключевые клиенты и поставщики|主要客戶及供應商)\n(.*?)(?=\n## (?:Финансовый обзор|財務概況)|\Z)",
+        content,
+        re.DOTALL,
     )
     if cs_match:
         cs_lines = [l for l in cs_match.group(1).strip().split("\n") if l.strip()]

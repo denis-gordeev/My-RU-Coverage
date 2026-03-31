@@ -18,6 +18,9 @@ import re
 import sys
 from collections import defaultdict
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from utils import TICKER_PATTERN
+
 REPORTS_DIR = os.path.join(os.path.dirname(__file__), "..", "Pilot_Reports")
 THEMES_DIR = os.path.join(os.path.dirname(__file__), "..", "themes")
 
@@ -147,7 +150,7 @@ def scan_wikilinks():
         for f in os.listdir(sector_path):
             if not f.endswith(".md"):
                 continue
-            m = re.match(r"^(\d{4})_(.+)\.md$", f)
+            m = re.match(rf"^({TICKER_PATTERN})_(.+)\.md$", f, re.IGNORECASE)
             if not m:
                 continue
             ticker, company = m.group(1), m.group(2)
@@ -163,11 +166,11 @@ def scan_wikilinks():
             }
             parts = re.split(r"## ", content)
             for part in parts:
-                if part.startswith("業務簡介"):
+                if re.match(r"^(?:Описание бизнеса|業務簡介)", part):
                     sections["desc"] = part
-                elif part.startswith("供應鏈位置"):
+                elif re.match(r"^(?:Положение в цепочке поставок|供應鏈位置)", part):
                     sections["supply_chain"] = part
-                elif part.startswith("主要客戶及供應商"):
+                elif re.match(r"^(?:Ключевые клиенты и поставщики|主要客戶及供應商)", part):
                     sections["customers"] = part
 
             # Find all wikilinks in non-financial sections
@@ -176,11 +179,12 @@ def scan_wikilinks():
                 # Determine role from context
                 role = "related"
                 if wl in sections["supply_chain"]:
-                    if "上游" in sections["supply_chain"].split(wl)[0][-100:]:
+                    context = sections["supply_chain"].split(wl)[0][-100:].lower()
+                    if "上游" in context or "верх" in context:
                         role = "upstream"
-                    elif "下游" in sections["supply_chain"].split(wl)[0][-100:]:
+                    elif "下游" in context or "ниж" in context:
                         role = "downstream"
-                    elif "中游" in sections["supply_chain"].split(wl)[0][-100:]:
+                    elif "中游" in context or "средн" in context:
                         role = "midstream"
 
                 wl_map[wl].append(

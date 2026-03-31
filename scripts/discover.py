@@ -29,7 +29,7 @@ import subprocess
 from collections import defaultdict
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from utils import REPORTS_DIR, PROJECT_ROOT, setup_stdout
+from utils import REPORTS_DIR, PROJECT_ROOT, setup_stdout, TICKER_PATTERN, SECTION_HEADER_REGEX
 
 # Sector groups for smart filtering
 TECH_SECTORS = {
@@ -127,7 +127,7 @@ def search_reports(buzzword, sectors_filter=None):
         for f in sorted(os.listdir(sector_path)):
             if not f.endswith(".md"):
                 continue
-            m = re.match(r"^(\d{4})_(.+)\.md$", f)
+            m = re.match(rf"^({TICKER_PATTERN})_(.+)\.md$", f, re.IGNORECASE)
             if not m:
                 continue
 
@@ -137,8 +137,8 @@ def search_reports(buzzword, sectors_filter=None):
             with open(filepath, "r", encoding="utf-8") as fh:
                 content = fh.read()
 
-            # Only search before 財務概況
-            text = content.split("## 財務概況")[0] if "## 財務概況" in content else content
+            financial_split = re.split(SECTION_HEADER_REGEX["financial"], content, maxsplit=1)
+            text = financial_split[0]
 
             # Check for linked mentions [[buzzword]]
             linked_count = len(re.findall(r"\[\[" + re.escape(buzzword) + r"\]\]", text))
@@ -160,9 +160,9 @@ def search_reports(buzzword, sectors_filter=None):
                 # Determine relationship from section
                 role = "mentioned"
                 for section_name, role_name in [
-                    ("## 業務簡介", "core_business"),
-                    ("## 供應鏈位置", "supply_chain"),
-                    ("## 主要客戶及供應商", "customer_supplier"),
+                    (SECTION_HEADER_REGEX["business"], "core_business"),
+                    (SECTION_HEADER_REGEX["supply_chain"], "supply_chain"),
+                    (SECTION_HEADER_REGEX["customers"], "customer_supplier"),
                 ]:
                     section_match = re.search(
                         rf"{section_name}\n(.*?)(?=\n## |\Z)", text, re.DOTALL
@@ -196,18 +196,19 @@ def apply_wikilinks(results, buzzword):
             content = f.read()
 
         # Split to protect financial tables
-        parts = content.split("## 財務概況")
-        if len(parts) < 2:
+        financial_match = re.search(SECTION_HEADER_REGEX["financial"], content)
+        if not financial_match:
             continue
 
-        text = parts[0]
+        text = content[: financial_match.start()]
+        financial_part = content[financial_match.start() :]
         # Replace bare mentions with wikilinked version
         # Be careful not to double-link
         pattern = r"(?<!\[\[)" + re.escape(buzzword) + r"(?!\]\])(?![A-Za-z\u4e00-\u9fff])"
         new_text, count = re.subn(pattern, f"[[{buzzword}]]", text)
 
         if count > 0:
-            content = new_text + "## 財務概況" + parts[1]
+            content = new_text + financial_part
             with open(r["filepath"], "w", encoding="utf-8") as f:
                 f.write(content)
             applied += count

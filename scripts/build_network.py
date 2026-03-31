@@ -21,6 +21,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import (
     REPORTS_DIR, setup_stdout,
     classify_wikilink, CATEGORY_COLORS, CATEGORY_LABELS, TICKER_PATTERN,
+    split_before_financial_section,
 )
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -41,7 +42,10 @@ def scan_graph(min_weight=5, top_n=None):
             if not m:
                 continue
             with open(os.path.join(root, f), "r", encoding="utf-8") as fh:
-                content = fh.read().split("## 財務概況")[0]
+                content = fh.read()
+            split_parts = split_before_financial_section(content)
+            if split_parts:
+                content = split_parts[0]
             wls = set(re.findall(r"\[\[([^\]]+)\]\]", content))
             wl_per_file[m.group(1)] = wls
             for wl in wls:

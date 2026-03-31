@@ -33,7 +33,11 @@ import sys
 import json
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from utils import find_ticker_files, parse_scope_args, PROJECT_ROOT, normalize_wikilinks
+from utils import (
+    find_ticker_files, parse_scope_args, PROJECT_ROOT, normalize_wikilinks,
+    BUSINESS_SECTION_TITLE, SUPPLY_CHAIN_SECTION_TITLE, CUSTOMERS_SECTION_TITLE,
+    SECTION_HEADER_REGEX,
+)
 
 
 def apply_enrichment(filepath, ticker, data):
@@ -42,18 +46,23 @@ def apply_enrichment(filepath, ticker, data):
         content = f.read()
 
     # Add metadata block if missing
-    if "**板塊:**" not in content and "**市值:**" not in content:
+    if not re.search(r"\*\*(?:Сектор|板塊):\*\*", content) and not re.search(r"\*\*(?:Рыночная капитализация|市值):\*\*", content):
         sector = data.get("sector", "N/A")
         industry = data.get("industry", "N/A")
-        meta = f"**板塊:** {sector}\n**產業:** {industry}\n**市值:** N/A млн руб.\n**企業價值:** N/A млн руб.\n\n"
-        content = content.replace("## 業務簡介\n", "## 業務簡介\n" + meta, 1)
+        meta = (
+            f"**Сектор:** {sector}\n"
+            f"**Отрасль:** {industry}\n"
+            f"**Рыночная капитализация:** N/A млн руб.\n"
+            f"**Стоимость предприятия (EV):** N/A млн руб.\n\n"
+        )
+        content = re.sub(SECTION_HEADER_REGEX["business"] + r"\n", BUSINESS_SECTION_TITLE + "\n" + meta, content, count=1)
 
     # Replace business description (preserve metadata block above it)
     if "desc" in data:
         def repl_desc(m):
             return f"{m.group(1)}{data['desc']}\n"
         content = re.sub(
-            r"(## 業務簡介\n(?:.*?企業價值:.*?\n\n|))(.*?)(?=\n## 供應鏈位置)",
+            r"((?:## (?:Описание бизнеса|業務簡介))\n(?:.*?(?:Стоимость предприятия \(EV\)|企業價值):.*?\n\n|))(.*?)(?=\n(?:## (?:Положение в цепочке поставок|供應鏈位置)))",
             repl_desc,
             content,
             flags=re.DOTALL,
@@ -63,7 +72,7 @@ def apply_enrichment(filepath, ticker, data):
     if "supply_chain" in data:
         sc = data["supply_chain"] + "\n"
         content = re.sub(
-            r"(## 供應鏈位置\n)(.*?)(?=\n## 主要客戶及供應商)",
+            r"((?:## (?:Положение в цепочке поставок|供應鏈位置))\n)(.*?)(?=\n(?:## (?:Ключевые клиенты и поставщики|主要客戶及供應商)))",
             rf"\g<1>{sc}",
             content,
             flags=re.DOTALL,
@@ -73,11 +82,15 @@ def apply_enrichment(filepath, ticker, data):
     if "cust" in data:
         ct = data["cust"] + "\n"
         content = re.sub(
-            r"(## 主要客戶及供應商\n)(.*?)(?=\n## 財務概況)",
+            r"((?:## (?:Ключевые клиенты и поставщики|主要客戶及供應商))\n)(.*?)(?=\n(?:## (?:Финансовый обзор|財務概況)))",
             rf"\g<1>{ct}",
             content,
             flags=re.DOTALL,
         )
+
+    content = re.sub(SECTION_HEADER_REGEX["business"], BUSINESS_SECTION_TITLE, content)
+    content = re.sub(SECTION_HEADER_REGEX["supply_chain"], SUPPLY_CHAIN_SECTION_TITLE, content)
+    content = re.sub(SECTION_HEADER_REGEX["customers"], CUSTOMERS_SECTION_TITLE, content)
 
     # Normalize wikilinks: standardize aliases, collapse duplicates
     content = normalize_wikilinks(content)

@@ -37,6 +37,31 @@ MARKET_PROFILES = {
 DEFAULT_MARKET_SUFFIXES = [".ME", ".TW", ".TWO"]
 DEFAULT_UNIT_LABEL = MARKET_PROFILES[".ME"]["unit_label"]
 
+BUSINESS_SECTION_TITLE = "## Описание бизнеса"
+SUPPLY_CHAIN_SECTION_TITLE = "## Положение в цепочке поставок"
+CUSTOMERS_SECTION_TITLE = "## Ключевые клиенты и поставщики"
+FINANCIAL_SECTION_TITLE = "## Финансовый обзор"
+VALUATION_SECTION_TITLE = "### Оценочные мультипликаторы"
+ANNUAL_SECTION_TITLE = "### Ключевые финансовые показатели по годам (3 года)"
+QUARTERLY_SECTION_TITLE = "### Ключевые финансовые показатели по кварталам (4 квартала)"
+
+SECTION_HEADER_REGEX = {
+    "business": r"## (?:Описание бизнеса|業務簡介)",
+    "supply_chain": r"## (?:Положение в цепочке поставок|供應鏈位置)",
+    "customers": r"## (?:Ключевые клиенты и поставщики|主要客戶及供應商)",
+    "financial": r"## (?:Финансовый обзор|財務概況)",
+    "valuation": r"### (?:Оценочные мультипликаторы|估值指標)",
+    "annual": r"### (?:Ключевые финансовые показатели по годам \(3 года\)|年度關鍵財務數據 \(近 3 年\))",
+    "quarterly": r"### (?:Ключевые финансовые показатели по кварталам \(4 квартала\)|季度關鍵財務數據 \(近 4 季\))",
+}
+
+METADATA_LABEL_PATTERNS = {
+    "sector": [r"\*\*Сектор:\*\*", r"\*\*板塊:\*\*"],
+    "industry": [r"\*\*Отрасль:\*\*", r"\*\*產業:\*\*"],
+    "market_cap": [r"\*\*Рыночная капитализация:\*\*", r"\*\*市值:\*\*"],
+    "enterprise_value": [r"\*\*Стоимость предприятия \(EV\):\*\*", r"\*\*企業價值:\*\*"],
+}
+
 
 # =============================================================================
 # File Discovery
@@ -186,13 +211,13 @@ WIKILINK_ALIASES = {
 def normalize_wikilinks(content):
     """Normalize all wikilinks in content to canonical names.
     Also collapses duplicate parentheticals like [[X]] ([[X]]).
-    Only operates on text before 財務概況 to protect financial tables.
+    Only operates on text before the financial section to protect tables.
     """
-    parts = content.split("## 財務概況")
-    if len(parts) < 2:
+    split_parts = split_before_financial_section(content)
+    if split_parts is None:
         return content
 
-    text = parts[0]
+    text, financial_part = split_parts
 
     # Step 1: Replace alias wikilinks with canonical names
     for alias, canonical in WIKILINK_ALIASES.items():
@@ -205,7 +230,7 @@ def normalize_wikilinks(content):
         text,
     )
 
-    return text + "## 財務概況" + parts[1]
+    return text + financial_part
 
 
 # =============================================================================
@@ -279,6 +304,14 @@ def get_market_profile(suffix=None):
     return MARKET_PROFILES.get(suffix, MARKET_PROFILES[".ME"])
 
 
+def split_before_financial_section(content):
+    """Split content into pre-financial text and the financial section."""
+    match = re.search(SECTION_HEADER_REGEX["financial"], content)
+    if not match:
+        return None
+    return content[: match.start()], content[match.start() :]
+
+
 # =============================================================================
 # Valuation Table Rendering (shared by update_financials and update_valuation)
 # =============================================================================
@@ -326,7 +359,7 @@ def fetch_valuation_data(info):
 
 
 def build_valuation_table(v):
-    """Build the 估值指標 markdown section from valuation dict."""
+    """Build the valuation markdown section from valuation dict."""
     headers = ["P/E (TTM)", "Forward P/E", "P/S (TTM)", "P/B", "EV/EBITDA"]
     values = [v.get(h, "N/A") for h in headers]
     widths = [max(len(h), len(val)) for h, val in zip(headers, values)]
@@ -339,29 +372,27 @@ def build_valuation_table(v):
     if v.get("_price"):
         period_parts.append(f"Цена {v.get('_currency_symbol', '$')}{v['_price']} на {today}")
     if v.get("_ttm_end"):
-        period_parts.append(f"TTM 截至 {v['_ttm_end']}")
+        period_parts.append(f"TTM на {v['_ttm_end']}")
     if v.get("_fwd_end"):
-        period_parts.append(f"Forward 預估至 {v['_fwd_end']}")
+        period_parts.append(f"Forward до {v['_fwd_end']}")
     period_note = " | ".join(period_parts) if period_parts else ""
 
-    title = f"### 估值指標 ({period_note})\n" if period_note else "### 估值指標\n"
+    title = (
+        f"{VALUATION_SECTION_TITLE} ({period_note})\n"
+        if period_note
+        else f"{VALUATION_SECTION_TITLE}\n"
+    )
     return title + header_row + "\n" + sep_row + "\n" + val_row
 
 
 def update_metadata(content, market_cap, enterprise_value, unit_label=DEFAULT_UNIT_LABEL):
-    """Update 市值 and 企業價值 metadata in file content."""
+    """Update market cap and EV metadata in file content."""
     if market_cap:
-        content = re.sub(
-            r"(\*\*市值:\*\*) .+",
-            rf"\1 {market_cap} {unit_label}",
-            content,
-        )
+        for pattern in METADATA_LABEL_PATTERNS["market_cap"]:
+            content = re.sub(rf"({pattern}) .+", rf"\1 {market_cap} {unit_label}", content)
     if enterprise_value:
-        content = re.sub(
-            r"(\*\*企業價值:\*\*) .+",
-            rf"\1 {enterprise_value} {unit_label}",
-            content,
-        )
+        for pattern in METADATA_LABEL_PATTERNS["enterprise_value"]:
+            content = re.sub(rf"({pattern}) .+", rf"\1 {enterprise_value} {unit_label}", content)
     return content
 
 

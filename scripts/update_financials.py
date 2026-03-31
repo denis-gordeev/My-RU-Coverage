@@ -29,6 +29,8 @@ from utils import (
     find_ticker_files, parse_scope_args, setup_stdout,
     fetch_valuation_data, build_valuation_table, update_metadata,
     DEFAULT_MARKET_SUFFIXES, get_market_profile,
+    FINANCIAL_SECTION_TITLE, ANNUAL_SECTION_TITLE, QUARTERLY_SECTION_TITLE,
+    SECTION_HEADER_REGEX,
 )
 
 # Financial metrics to extract
@@ -210,23 +212,23 @@ def df_to_clean_markdown(df):
 
 def build_financial_section(data):
     unit_label = data.get("unit_label", "млн руб.")
-    section = f"## 財務概況 (單位: {unit_label}, 只有 Margin 為 %)\n"
+    section = f"{FINANCIAL_SECTION_TITLE} (единицы: {unit_label}, маржа указана в %)\n"
 
     # Valuation snapshot
     v = data.get("valuation", {})
     if v:
         section += build_valuation_table(v) + "\n\n"
 
-    section += "### 年度關鍵財務數據 (近 3 年)\n"
+    section += f"{ANNUAL_SECTION_TITLE}\n"
     if data["annual"] is not None and not data["annual"].empty:
         section += df_to_clean_markdown(data["annual"]) + "\n\n"
     else:
-        section += "無可用數據。\n\n"
-    section += "### 季度關鍵財務數據 (近 4 季)\n"
+        section += "Нет доступных данных.\n\n"
+    section += f"{QUARTERLY_SECTION_TITLE}\n"
     if data["quarterly"] is not None and not data["quarterly"].empty:
         section += df_to_clean_markdown(data["quarterly"]) + "\n"
     else:
-        section += "無可用數據。\n"
+        section += "Нет доступных данных.\n"
     return section
 
 
@@ -241,8 +243,8 @@ def update_file(filepath, ticker, dry_run=False):
 
     new_fin = build_financial_section(data)
 
-    if re.search(r"## 財務概況", content):
-        new_content = re.sub(r"## 財務概況.*", new_fin, content, flags=re.DOTALL)
+    if re.search(SECTION_HEADER_REGEX["financial"], content):
+        new_content = re.sub(rf"{SECTION_HEADER_REGEX['financial']}.*", new_fin, content, flags=re.DOTALL)
     else:
         new_content = content.rstrip() + "\n\n" + new_fin
 
