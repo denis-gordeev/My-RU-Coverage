@@ -96,33 +96,33 @@ def generate_report(ticker, name):
         # Markdown Content
         md_content = f"""# {ticker} - {name}
 
-## 業務簡介
-**板塊:** {sector}
-**產業:** {industry}
-**市值:** {f'{market_cap:,.0f}' if isinstance(market_cap, (int, float)) else market_cap} 百萬台幣
-**企業價值:** {f'{enterprise_value:,.0f}' if isinstance(enterprise_value, (int, float)) else enterprise_value} 百萬台幣
+## Описание бизнеса
+**Сектор:** {sector}
+**Отрасль:** {industry}
+**Рыночная капитализация:** {f'{market_cap:,.0f}' if isinstance(market_cap, (int, float)) else market_cap} млн тайв. долл.
+**Стоимость предприятия (EV):** {f'{enterprise_value:,.0f}' if isinstance(enterprise_value, (int, float)) else enterprise_value} млн тайв. долл.
 
 {business_summary}
 
-## 供應鏈位置
-*(待 AI 補充)*
+## Положение в цепочке поставок
+*(Нужно дополнение от исследователя или ИИ)*
 
-## 主要客戶及供應商
-*(待 AI 補充)*
+## Ключевые клиенты и поставщики
+*(Нужно дополнение от исследователя или ИИ)*
 
-## 財務概況 (單位: 百萬台幣, 只有 Margin 為 %)
-### 年度關鍵財務數據 (近 3 年)
+## Финансовый обзор (единица: млн тайв. долл., Margin указан в %)
+### Ключевые финансовые показатели по годам (3 года)
 """
         if not df_annual.empty:
             md_content += df_annual.to_markdown(floatfmt=".2f") + "\n\n"
         else:
-            md_content += "無可用數據。\n\n"
+            md_content += "Нет доступных данных.\n\n"
 
-        md_content += "### 季度關鍵財務數據 (近 4 季)\n"
+        md_content += "### Ключевые финансовые показатели по кварталам (4 квартала)\n"
         if not df_quarterly.empty:
              md_content += df_quarterly.to_markdown(floatfmt=".2f") + "\n\n"
         else:
-            md_content += "無可用數據。\n\n"
+            md_content += "Нет доступных данных.\n\n"
             
         return md_content
 

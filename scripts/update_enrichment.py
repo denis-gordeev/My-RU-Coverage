@@ -3,8 +3,8 @@ update_enrichment.py — Update enrichment content (desc, supply chain, customer
 in ticker reports. Preserves financial tables.
 
 This script applies enrichment data from a JSON file or inline DATA dict
-to ticker report files. It replaces 業務簡介, 供應鏈位置, and 主要客戶及供應商
-sections while preserving metadata and 財務概況.
+to ticker report files. It replaces the business, supply-chain, and
+counterparty sections while preserving metadata and the financial block.
 
 Usage:
   python scripts/update_enrichment.py --data enrichment.json          # From JSON file
@@ -16,8 +16,8 @@ JSON format:
 {
   "SBER": {
     "desc": "Русскоязычное описание с [[wikilinks]]...",
-    "supply_chain": "**上游:**\\n- ...\\n**中游:**\\n- ...\\n**下游:**\\n- ...",
-    "cust": "### 主要客戶\\n- ...\\n\\n### 主要供應商\\n- ..."
+    "supply_chain": "**Верхний контур:**\\n- ...\\n**Ключевое звено:**\\n- ...\\n**Конечный спрос:**\\n- ...",
+    "cust": "### Ключевые клиенты\\n- ...\\n\\n### Ключевые поставщики\\n- ..."
   }
 }
 

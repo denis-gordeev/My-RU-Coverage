@@ -2,8 +2,8 @@
 update_financials.py — Refresh financial tables in ticker reports.
 
 Fetches latest annual (3yr) and quarterly (4Q) data from yfinance,
-then replaces ONLY the ## 財務概況 section in each report file.
-All enrichment content (業務簡介, 供應鏈, 客戶供應商) is preserved.
+then replaces ONLY the `## Финансовый обзор` section in each report file.
+All enrichment content (business description, supply chain, counterparties) is preserved.
 
 Usage:
   python scripts/update_financials.py                  # Update ALL tickers
@@ -13,7 +13,7 @@ Usage:
   python scripts/update_financials.py --sector Energy  # Entire sector
   python scripts/update_financials.py --dry-run SBER   # Preview without writing
 
-Units depend on the exchange suffix: `.ME` -> млн руб., `.TW/.TWO` -> 百萬台幣.
+Units depend on the exchange suffix: `.ME` -> млн руб., `.TW/.TWO` -> млн тайв. долл.
 """
 
 import os

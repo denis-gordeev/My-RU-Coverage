@@ -210,7 +210,7 @@ def build_theme_page(theme_tag, theme_def, wl_map):
     lines.append("")
     lines.append(f"> {theme_def['desc']}")
     lines.append("")
-    lines.append(f"**涵蓋公司數:** {len(entries)}")
+    lines.append(f"**Количество компаний:** {len(entries)}")
     lines.append("")
 
     # Related themes
@@ -221,7 +221,7 @@ def build_theme_page(theme_tag, theme_def, wl_map):
         if count > 0:
             related_with_counts.append(f"[[{r}]] ({count})")
     if related_with_counts:
-        lines.append(f"**相關主題:** {' | '.join(related_with_counts)}")
+        lines.append(f"**Связанные темы:** {' | '.join(related_with_counts)}")
         lines.append("")
 
     lines.append("---")
@@ -248,25 +248,25 @@ def build_theme_page(theme_tag, theme_def, wl_map):
         return result
 
     if upstream:
-        lines.append(f"## 上游 ({len(upstream)})")
+        lines.append(f"## Верхний контур ({len(upstream)})")
         lines.append("")
         lines.extend(format_entries(upstream))
         lines.append("")
 
     if midstream:
-        lines.append(f"## 中游 ({len(midstream)})")
+        lines.append(f"## Ключевое звено ({len(midstream)})")
         lines.append("")
         lines.extend(format_entries(midstream))
         lines.append("")
 
     if downstream:
-        lines.append(f"## 下游 ({len(downstream)})")
+        lines.append(f"## Конечный спрос ({len(downstream)})")
         lines.append("")
         lines.extend(format_entries(downstream))
         lines.append("")
 
     if other:
-        lines.append(f"## 相關公司 ({len(other)})")
+        lines.append(f"## Связанные компании ({len(other)})")
         lines.append("")
         lines.extend(format_entries(other))
         lines.append("")
@@ -277,24 +277,24 @@ def build_theme_page(theme_tag, theme_def, wl_map):
 def build_index(themes_built):
     """Build themes/README.md index."""
     lines = []
-    lines.append("# Thematic Investment Screens")
+    lines.append("# Тематические подборки")
     lines.append("")
-    lines.append("> Auto-generated supply chain maps for thematic investing.")
-    lines.append("> Regenerate: `python scripts/build_themes.py`")
+    lines.append("> Автогенерируемые карты цепочек стоимости и смежных компаний.")
+    lines.append("> Пересборка: `python scripts/build_themes.py`")
     lines.append("")
     lines.append("---")
     lines.append("")
 
     # Group by category
     categories = {
-        "先進封裝": ["CoWoS", "HBM", "CPO"],
-        "光電與化合物半導體": ["矽光子", "VCSEL", "碳化矽", "氮化鎵", "磷化銦"],
-        "AI / 資料中心": ["AI 伺服器", "資料中心", "NVIDIA"],
-        "電動車 / 車用": ["電動車", "Tesla"],
-        "通訊": ["5G", "低軌衛星"],
-        "製程與設備": ["EUV"],
-        "材料": ["光阻液", "ABF 載板", "矽晶圓"],
-        "品牌供應鏈": ["Apple", "NVIDIA", "Tesla"],
+        "Передовая упаковка": ["CoWoS", "HBM", "CPO"],
+        "Фотоника и compound semis": ["矽光子", "VCSEL", "碳化矽", "氮化鎵", "磷化銦"],
+        "AI / дата-центры": ["AI 伺服器", "資料中心", "NVIDIA"],
+        "Электромобили / авто": ["電動車", "Tesla"],
+        "Связь": ["5G", "低軌衛星"],
+        "Процесс и оборудование": ["EUV"],
+        "Материалы": ["光阻液", "ABF 載板", "矽晶圓"],
+        "Брендовые цепочки": ["Apple", "NVIDIA", "Tesla"],
     }
 
     for cat_name, tags in categories.items():
@@ -304,7 +304,7 @@ def build_index(themes_built):
             if tag in themes_built:
                 count = themes_built[tag]
                 safe_name = tag.replace(" ", "_").replace("/", "_")
-                lines.append(f"- [{tag}]({safe_name}.md) — {count} 家公司")
+                lines.append(f"- [{tag}]({safe_name}.md) — {count} компаний")
         lines.append("")
 
     return "\n".join(lines)

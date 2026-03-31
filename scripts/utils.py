@@ -23,12 +23,12 @@ MARKET_PROFILES = {
         "scope_label": "российский рынок",
     },
     ".TW": {
-        "unit_label": "百萬台幣",
+        "unit_label": "млн тайв. долл.",
         "price_symbol": "NT$",
         "scope_label": "тайваньский рынок",
     },
     ".TWO": {
-        "unit_label": "百萬台幣",
+        "unit_label": "млн тайв. долл.",
         "price_symbol": "NT$",
         "scope_label": "тайваньский OTC-рынок",
     },
