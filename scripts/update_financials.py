@@ -48,6 +48,41 @@ METRICS_KEYS = {
     "capex": ["Capital Expenditure", "Capital Expenditures"],
 }
 
+METRIC_ROW_LABELS = {
+    "default": {
+        "Revenue": "Revenue",
+        "Gross Profit": "Gross Profit",
+        "Gross Margin (%)": "Gross Margin (%)",
+        "Selling & Marketing Exp": "Selling & Marketing Exp",
+        "R&D Exp": "R&D Exp",
+        "General & Admin Exp": "General & Admin Exp",
+        "Operating Income": "Operating Income",
+        "Operating Margin (%)": "Operating Margin (%)",
+        "Net Income": "Net Income",
+        "Net Margin (%)": "Net Margin (%)",
+        "Op Cash Flow": "Op Cash Flow",
+        "Investing Cash Flow": "Investing Cash Flow",
+        "Financing Cash Flow": "Financing Cash Flow",
+        "CAPEX": "CAPEX",
+    },
+    ".ME": {
+        "Revenue": "Выручка",
+        "Gross Profit": "Валовая прибыль",
+        "Gross Margin (%)": "Валовая маржа (%)",
+        "Selling & Marketing Exp": "Коммерческие расходы",
+        "R&D Exp": "Расходы на R&D",
+        "General & Admin Exp": "Общехозяйственные расходы",
+        "Operating Income": "Операционная прибыль",
+        "Operating Margin (%)": "Операционная маржа (%)",
+        "Net Income": "Чистая прибыль",
+        "Net Margin (%)": "Чистая маржа (%)",
+        "Op Cash Flow": "Операционный денежный поток",
+        "Investing Cash Flow": "Инвестиционный денежный поток",
+        "Financing Cash Flow": "Финансовый денежный поток",
+        "CAPEX": "Капитальные затраты",
+    },
+}
+
 
 def get_series(df, keys):
     for key in keys:
@@ -129,6 +164,12 @@ def extract_metrics(income_stmt, cashflow):
     return df
 
 
+def localize_metric_labels(df, suffix):
+    """Rename financial metric rows for market-specific report language."""
+    labels = METRIC_ROW_LABELS.get(suffix, METRIC_ROW_LABELS["default"])
+    return df.rename(index=labels)
+
+
 def fetch_financials(ticker):
     """Fetch financial data. Tries local suffixes in configured priority order."""
     for suffix in DEFAULT_MARKET_SUFFIXES:
@@ -150,6 +191,7 @@ def fetch_financials(ticker):
                 non_pct = [r for r in df_annual.index if "%" not in r]
                 df_annual.loc[non_pct] = df_annual.loc[non_pct] / 1_000_000
                 df_annual = df_annual.iloc[:, :3]
+                df_annual = localize_metric_labels(df_annual, suffix)
 
             df_quarterly = extract_metrics(
                 stock.quarterly_income_stmt, stock.quarterly_cashflow
@@ -166,6 +208,7 @@ def fetch_financials(ticker):
                 non_pct = [r for r in df_quarterly.index if "%" not in r]
                 df_quarterly.loc[non_pct] = df_quarterly.loc[non_pct] / 1_000_000
                 df_quarterly = df_quarterly.iloc[:, :4]
+                df_quarterly = localize_metric_labels(df_quarterly, suffix)
 
             info = stock.info
             market_cap = (
