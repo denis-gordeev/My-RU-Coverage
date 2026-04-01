@@ -2,13 +2,13 @@
 
 > 蘋果公司台灣供應鏈成員
 
-**涵蓋公司數:** 80
+**Количество компаний:** 80
 
-**相關主題:** [[台積電]] (182) | [[鴻海]] (63)
+**Связанные темы:** [[台積電]] (182) | [[鴻海]] (63)
 
 ---
 
-## 上游 (14)
+## Верхний контур (14)
 
 - **2414 精技** (Computer Hardware)
 - **3406 玉晶光** (Computer Hardware)
@@ -25,12 +25,12 @@
 - **3518 柏騰** (Specialty Industrial Machinery)
 - **2430 燦坤** (Specialty Retail)
 
-## 中游 (2)
+## Ключевое звено (2)
 
 - **2367 燿華** (Electronic Components)
 - **6821 聯寶** (Electronic Components)
 
-## 下游 (39)
+## Конечный спрос (39)
 
 - **2382 廣達** (Computer Hardware)
 - **2385 群光** (Computer Hardware)
@@ -72,7 +72,7 @@
 - **6706 惠特** (Specialty Industrial Machinery)
 - **1444 力麗** (Textile Manufacturing)
 
-## 相關公司 (25)
+## Связанные компании (25)
 
 - **8438 昶昕** (Chemicals)
 - **3419 譁裕** (Communication Equipment)

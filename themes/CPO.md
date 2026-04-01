@@ -2,17 +2,17 @@
 
 > Co-Packaged Optics，將光學元件整合於晶片封裝中以突破頻寬瓶頸
 
-**涵蓋公司數:** 13
+**Количество компаний:** 13
 
-**相關主題:** [[矽光子]] (15) | [[光收發模組]] (7) | [[AI 伺服器]] (148) | [[資料中心]] (77)
+**Связанные темы:** [[矽光子]] (15) | [[光收發模組]] (7) | [[AI 伺服器]] (148) | [[資料中心]] (77)
 
 ---
 
-## 上游 (1)
+## Верхний контур (1)
 
 - **6706 惠特** (Specialty Industrial Machinery)
 
-## 中游 (6)
+## Ключевое звено (6)
 
 - **3163 波若威** (Communication Equipment)
 - **3363 上詮** (Communication Equipment)
@@ -21,7 +21,7 @@
 - **6205 詮欣** (Electronic Components)
 - **3450 聯鈞** (Semiconductor Equipment & Materials)
 
-## 相關公司 (6)
+## Связанные компании (6)
 
 - **4908 前鼎** (Communication Equipment)
 - **6530 創威** (Communication Equipment)
