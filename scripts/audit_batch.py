@@ -14,7 +14,10 @@ import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from utils import REPORTS_DIR, TASK_FILE, TICKER_PATTERN, get_batch_tickers, setup_stdout
+from utils import (
+    REPORTS_DIR, TASK_FILE, TICKER_PATTERN,
+    get_batch_tickers, setup_stdout, extract_wikilinks,
+)
 
 # --- Quality Rules (aligned with CLAUDE.md Golden Rules) ---
 
@@ -54,12 +57,6 @@ ENGLISH_INDICATORS = [
     "provides", "is a company", "headquartered", "was founded",
     "specializes in", "engages in", "operates through",
 ]
-
-
-def extract_wikilinks(content):
-    return re.findall(r"\[\[([^\]]+)\]\]", content)
-
-
 def find_generic_wikilinks(wikilinks):
     generic = []
     for wl in wikilinks:

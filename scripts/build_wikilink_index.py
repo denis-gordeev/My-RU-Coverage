@@ -13,6 +13,9 @@ import os
 import re
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from utils import extract_wikilinks
+
 REPORTS_DIR = os.path.join(os.path.dirname(__file__), "..", "Pilot_Reports")
 OUTPUT_FILE = os.path.join(os.path.dirname(__file__), "..", "WIKILINKS.md")
 
@@ -39,6 +42,7 @@ MATERIAL_TERMS = {
     "銅箔", "玻纖布", "光阻液", "研磨液", "超純水",
     "氦氣", "氖氣", "鈦酸鋇", "聚醯亞胺",
     "導線架", "探針卡", "BT 樹脂", "銀漿", "銅漿", "氧化鋁",
+    "золото", "алмазы", "железная руда", "коксующийся уголь", "сталь",
 }
 
 APP_TERMS = {
@@ -46,6 +50,8 @@ APP_TERMS = {
     "智慧家庭", "車用電子", "消費電子", "綠能", "太陽能",
     "風電", "儲能系統", "離岸風電", "自動駕駛", "智慧城市",
     "行車記錄器", "無人機",
+    "электроэнергетика", "строительство", "машиностроение", "автопром",
+    "трубная промышленность", "ювелирный рынок", "драгоценные металлы",
 }
 
 
@@ -65,7 +71,7 @@ def collect_wikilinks():
                 continue
             with open(os.path.join(root, f), "r", encoding="utf-8") as fh:
                 content = fh.read()
-            for wl in re.findall(r"\[\[([^\]]+)\]\]", content):
+            for wl in extract_wikilinks(content):
                 wikilinks[wl] = wikilinks.get(wl, 0) + 1
     return wikilinks
 

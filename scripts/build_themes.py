@@ -19,7 +19,7 @@ import sys
 from collections import defaultdict
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from utils import TICKER_PATTERN
+from utils import TICKER_PATTERN, extract_wikilinks
 
 REPORTS_DIR = os.path.join(os.path.dirname(__file__), "..", "Pilot_Reports")
 THEMES_DIR = os.path.join(os.path.dirname(__file__), "..", "themes")
@@ -87,6 +87,26 @@ THEME_DEFINITIONS = {
         "name": "Агрохимия",
         "desc": "Химические продукты для сельского хозяйства: удобрения, сырьё, компоненты и связанная логистика",
         "related": ["удобрения", "природный газ"],
+    },
+    "золото": {
+        "name": "Золото и золотодобыча",
+        "desc": "Добыча золота, разработка месторождений, аффинаж и каналы реализации металла в российском контуре",
+        "related": ["драгоценные металлы", "цветные металлы"],
+    },
+    "сталь": {
+        "name": "Сталь и чёрная металлургия",
+        "desc": "Производство стали, проката и металлопродукции с привязкой к внутреннему промышленному и строительному спросу",
+        "related": ["строительство", "машиностроение", "трубная промышленность"],
+    },
+    "алмазы": {
+        "name": "Алмазы и алмазодобыча",
+        "desc": "Добыча алмазного сырья, сортировка, экспорт и связь с ювелирным рынком",
+        "related": ["ювелирный рынок", "драгоценные металлы"],
+    },
+    "электроэнергетика": {
+        "name": "Электроэнергетика России",
+        "desc": "Генерация, сбыт, энерготрейдинг и инфраструктура оптового рынка электроэнергии в российском контуре",
+        "related": ["природный газ", "финансовый рынок"],
     },
     # === Advanced Packaging ===
     "CoWoS": {
@@ -236,7 +256,7 @@ def scan_wikilinks():
 
             # Find all wikilinks in non-financial sections
             text = sections["desc"] + sections["supply_chain"] + sections["customers"]
-            for wl in set(re.findall(r"\[\[([^\]]+)\]\]", text)):
+            for wl in set(extract_wikilinks(text)):
                 # Determine role from context
                 role = "related"
                 if wl in sections["supply_chain"]:
@@ -353,8 +373,12 @@ def build_index(themes_built):
             "финтех",
             "нефтегаз",
             "природный газ",
+            "электроэнергетика",
             "телеком",
             "продуктовый ритейл",
+            "золото",
+            "сталь",
+            "алмазы",
             "цветные металлы",
             "экосистемы",
             "биржевая инфраструктура",

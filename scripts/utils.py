@@ -233,6 +233,14 @@ def normalize_wikilinks(content):
     return text + financial_part
 
 
+def extract_wikilinks(content):
+    """Extract canonical wikilink targets, ignoring optional display aliases."""
+    wikilinks = []
+    for raw in re.findall(r"\[\[([^\]]+)\]\]", content):
+        wikilinks.append(raw.split("|", 1)[0].strip())
+    return wikilinks
+
+
 # =============================================================================
 # Category Classification (shared by build_wikilink_index, build_themes, build_network)
 # =============================================================================
@@ -251,12 +259,15 @@ MATERIAL_TERMS = {
     "碳化矽", "氮化鎵", "磷化銦", "砷化鎵", "矽晶圓", "銅箔", "玻纖布",
     "光阻液", "研磨液", "超純水", "氦氣", "氖氣", "鈦酸鋇", "聚醯亞胺",
     "導線架", "探針卡", "BT 樹脂", "銀漿", "銅漿", "氧化鋁",
+    "золото", "алмазы", "железная руда", "коксующийся уголь", "сталь",
 }
 
 APPLICATION_TERMS = {
     "AI 伺服器", "電動車", "物聯網", "資料中心", "低軌衛星", "5G",
     "智慧家庭", "車用電子", "消費電子", "綠能", "太陽能", "風電",
     "儲能系統", "離岸風電", "自動駕駛", "智慧城市", "行車記錄器", "無人機",
+    "электроэнергетика", "строительство", "машиностроение", "автопром",
+    "трубная промышленность", "ювелирный рынок", "драгоценные металлы",
 }
 
 CATEGORY_COLORS = {
