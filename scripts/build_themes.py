@@ -358,42 +358,71 @@ def build_theme_page(theme_tag, theme_def, wl_map):
 def build_index(themes_built):
     """Build themes/README.md index."""
     lines = []
+    ru_theme_tags = [
+        "банки",
+        "финтех",
+        "нефтегаз",
+        "природный газ",
+        "электроэнергетика",
+        "телеком",
+        "продуктовый ритейл",
+        "золото",
+        "сталь",
+        "алмазы",
+        "цветные металлы",
+        "экосистемы",
+        "биржевая инфраструктура",
+        "финансовый рынок",
+        "удобрения",
+        "агрохимия",
+    ]
+    legacy_theme_tags = [
+        "CoWoS",
+        "HBM",
+        "CPO",
+        "矽光子",
+        "VCSEL",
+        "碳化矽",
+        "氮化鎵",
+        "磷化銦",
+        "AI 伺服器",
+        "資料中心",
+        "電動車",
+        "5G",
+        "低軌衛星",
+        "EUV",
+        "光阻液",
+        "ABF 載板",
+        "矽晶圓",
+        "Apple",
+        "NVIDIA",
+        "Tesla",
+    ]
+    ru_built = sum(1 for tag in ru_theme_tags if tag in themes_built)
+    legacy_built = sum(1 for tag in legacy_theme_tags if tag in themes_built)
+
     lines.append("# Тематические подборки")
     lines.append("")
     lines.append("> Автогенерируемые карты цепочек стоимости и смежных компаний.")
+    lines.append("> Навигация собрана в mixed-режиме: российские темы идут первыми, legacy-тайваньский корпус сохранён ниже для обратной совместимости.")
     lines.append("> Пересборка: `python scripts/build_themes.py`")
+    lines.append("")
+    lines.append(f"> Российских тем в индексе: {ru_built}. Legacy/global тем: {legacy_built}.")
     lines.append("")
     lines.append("---")
     lines.append("")
 
     # Group by category
     categories = {
-        "Российский рынок": [
-            "банки",
-            "финтех",
-            "нефтегаз",
-            "природный газ",
-            "электроэнергетика",
-            "телеком",
-            "продуктовый ритейл",
-            "золото",
-            "сталь",
-            "алмазы",
-            "цветные металлы",
-            "экосистемы",
-            "биржевая инфраструктура",
-            "финансовый рынок",
-            "удобрения",
-            "агрохимия",
-        ],
-        "Передовая упаковка": ["CoWoS", "HBM", "CPO"],
-        "Фотоника и compound semis": ["矽光子", "VCSEL", "碳化矽", "氮化鎵", "磷化銦"],
-        "AI / дата-центры": ["AI 伺服器", "資料中心", "NVIDIA"],
-        "Электромобили / авто": ["電動車", "Tesla"],
-        "Связь": ["5G", "低軌衛星"],
-        "Процесс и оборудование": ["EUV"],
-        "Материалы": ["光阻液", "ABF 載板", "矽晶圓"],
-        "Брендовые цепочки": ["Apple", "NVIDIA", "Tesla"],
+        "Российский рынок": ru_theme_tags,
+        "Legacy / Тайвань: передовая упаковка": ["CoWoS", "HBM", "CPO"],
+        "Legacy / Тайвань: фотоника и compound semis": ["矽光子", "VCSEL", "碳化矽", "氮化鎵", "磷化銦"],
+        "Legacy / Тайвань: AI и дата-центры": ["AI 伺服器", "資料中心", "NVIDIA"],
+        "Legacy / Тайвань: электромобили и авто": ["電動車", "Tesla"],
+        "Legacy / Тайвань: связь": ["5G", "低軌衛星"],
+        "Legacy / Тайвань: процесс и оборудование": ["EUV"],
+        "Legacy / Тайвань: материалы": ["光阻液", "ABF 載板", "矽晶圓"],
+        "Legacy / Тайвань: брендовые цепочки": ["Apple", "NVIDIA", "Tesla"],
     }
 
     for cat_name, tags in categories.items():
