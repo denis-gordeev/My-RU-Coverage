@@ -99,9 +99,9 @@ def apply_enrichment(filepath, ticker, data):
         f.write(content)
 
     try:
-        print(f"  {ticker}: ENRICHED ({os.path.basename(filepath)})")
+        print(f"  {ticker}: обогащено ({os.path.basename(filepath)})")
     except UnicodeEncodeError:
-        print(f"  {ticker}: ENRICHED")
+        print(f"  {ticker}: обогащено")
     return True
 
 
@@ -125,19 +125,19 @@ def main():
         args = args[:idx] + args[idx + 2:]
 
     if not json_path:
-        print("Usage: python scripts/update_enrichment.py --data <json_file> [scope]")
-        print("  Scope: SBER | SBER GAZP | --batch 101 | --sector Energy | (none=all)")
+        print("Использование: python scripts/update_enrichment.py --data <json_file> [scope]")
+        print("  Область: SBER | SBER GAZP | --batch 101 | --sector Energy | без аргументов = все")
         return
 
     # Load enrichment data
     if not os.path.isabs(json_path):
         json_path = os.path.join(PROJECT_ROOT, json_path)
     enrichment_data = load_enrichment_data(json_path)
-    print(f"Loaded {len(enrichment_data)} ticker entries from {os.path.basename(json_path)}")
+    print(f"Загружено записей по тикерам: {len(enrichment_data)} из {os.path.basename(json_path)}")
 
     # Parse scope
     tickers, sector, desc = parse_scope_args(args)
-    print(f"Scope: {desc}\n")
+    print(f"Область применения: {desc}\n")
 
     # Find matching files
     # If specific tickers given, intersect with enrichment data
@@ -150,7 +150,7 @@ def main():
     files = find_ticker_files(target_tickers, sector)
 
     if not files:
-        print("No matching files found.")
+        print("Подходящие файлы не найдены.")
         return
 
     enriched = skipped = 0
@@ -161,7 +161,7 @@ def main():
         else:
             skipped += 1
 
-    print(f"\nDone. Enriched: {enriched} | Skipped: {skipped}")
+    print(f"\nГотово. Обогащено: {enriched} | Пропущено: {skipped}")
 
 
 if __name__ == "__main__":

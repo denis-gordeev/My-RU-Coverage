@@ -1,10 +1,15 @@
+"""Legacy-скрипт для исторического тайваньского прототипа.
+
+Не использовать для текущего российского workflow без отдельной адаптации под MOEX.
+"""
+
 import pandas as pd
 import yfinance as yf
 import os
 import time
 
 def generate_report(ticker, name):
-    print(f"Processing {ticker} ({name})...")
+    print(f"[LEGACY] Обрабатываю {ticker} ({name})...")
     try:
         stock = yf.Ticker(f"{ticker}.TW")
         info = stock.info
@@ -117,7 +122,7 @@ def generate_report(ticker, name):
         return md_content
 
     except Exception as e:
-        print(f"Error fetching data for {ticker}: {e}")
+        print(f"[LEGACY] Ошибка при загрузке данных для {ticker}: {e}")
         return None
 
 def main():
@@ -190,7 +195,7 @@ def main():
             time.sleep(1)
             
     except Exception as e:
-        print(f"Critical Error: {e}")
+        print(f"[LEGACY] Критическая ошибка: {e}")
 
 if __name__ == "__main__":
     main()

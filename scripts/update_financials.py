@@ -281,7 +281,7 @@ def update_file(filepath, ticker, dry_run=False):
 
     data = fetch_financials(ticker)
     if data is None:
-        print(f"  {ticker}: SKIP (no data from yfinance)")
+        print(f"  {ticker}: пропуск (yfinance не вернул данные)")
         return False
 
     new_fin = build_financial_section(data)
@@ -300,12 +300,12 @@ def update_file(filepath, ticker, dry_run=False):
     )
 
     if dry_run:
-        print(f"  {ticker}: WOULD UPDATE ({data['suffix']})")
+        print(f"  {ticker}: черновое обновление ({data['suffix']})")
         return True
 
     with open(filepath, "w", encoding="utf-8") as f:
         f.write(new_content)
-    print(f"  {ticker}: UPDATED ({data['suffix']})")
+    print(f"  {ticker}: обновлено ({data['suffix']})")
     return True
 
 
@@ -318,14 +318,14 @@ def main():
         args.remove("--dry-run")
 
     tickers, sector, desc = parse_scope_args(args)
-    print(f"Updating financials for {desc}...")
+    print(f"Обновляю финансовый блок для области: {desc}...")
     files = find_ticker_files(tickers, sector)
 
     if not files:
-        print("No matching files found.")
+        print("Подходящие файлы не найдены.")
         return
 
-    print(f"Found {len(files)} files.\n")
+    print(f"Найдено файлов: {len(files)}.\n")
     updated = failed = skipped = 0
 
     for ticker in sorted(files.keys()):
@@ -335,11 +335,11 @@ def main():
             else:
                 skipped += 1
         except Exception as e:
-            print(f"  {ticker}: ERROR ({e})")
+            print(f"  {ticker}: ошибка ({e})")
             failed += 1
         time.sleep(0.5)
 
-    print(f"\nDone. Updated: {updated} | Skipped: {skipped} | Failed: {failed}")
+    print(f"\nГотово. Обновлено: {updated} | Пропущено: {skipped} | Ошибок: {failed}")
 
 
 if __name__ == "__main__":

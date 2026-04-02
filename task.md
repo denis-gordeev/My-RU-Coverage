@@ -1,5 +1,17 @@
-# Task: Establish Company Coverage Prototype
-**SINGLE SOURCE OF TRUTH**: This document is the definitive reference for batch definitions and task progress. Do not rely on external Excel files for batch tracking.
+# Task: Russian Coverage Workflow
+
+## Текущий рабочий контур
+
+Этот файл больше не является источником правды для текущего российского покрытия. Актуальный живой список задач и статусов ведётся в `TODO.md`.
+
+- Для новых задач приоритет: российские эмитенты, MOEX-тикеры и русскоязычные материалы.
+- Исторические тайваньские batch-задачи ниже сохранены как архив для обратной совместимости со старыми скриптами (`--batch`, аудит legacy-корпуса и т.д.).
+- Новые российские automation round не должны добавлять сюда новые batch-списки; их нужно фиксировать в `TODO.md`.
+- Если требуется адаптация legacy-скриптов, это должно быть явно помечено как отдельная задача миграции.
+
+## Legacy Taiwan Archive
+
+**SINGLE SOURCE OF TRUTH**: This legacy section remains the reference for historical Taiwan batch definitions and progress. Do not rely on external Excel files for batch tracking.
 **MINIMUM REQUIREMENT POLICY**: The tickers listed in this document are the *minimum* required set. You are authorized to discover and add missing tickers if they are not in the Exception List.
 **SINGLE BATCH PROCESSING**: Process entire batches as single units (e.g., Batch 21: 4908-4967) to minimize authorization interruptions. Do not subdivide.
 **UPDATE AFTER EACH BATCH**: Mark tasks as completed in this document immediately after finishing each batch.

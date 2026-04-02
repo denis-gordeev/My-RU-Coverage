@@ -109,7 +109,7 @@ def get_batch_tickers(batch_num):
         with open(TASK_FILE, "r", encoding="utf-8") as f:
             content = f.read()
     except Exception as e:
-        print(f"Error reading task.md: {e}")
+        print(f"Не удалось прочитать task.md: {e}")
         return []
 
     pattern = re.compile(
@@ -124,7 +124,7 @@ def get_batch_tickers(batch_num):
             for t in raw.split(",")
             if re.search(r"\d{4}", t)
         ]
-    print(f"Error: Batch {batch_num} not found in task.md")
+    print(f"Пакет {batch_num} не найден в task.md")
     return []
 
 
@@ -133,25 +133,25 @@ def parse_scope_args(args):
     Returns (tickers_list_or_None, sector_or_None, description_string)
     """
     if not args:
-        return None, None, "ALL tickers"
+        return None, None, "все тикеры"
     elif args[0] == "--batch":
         if len(args) < 2:
-            print("Error: --batch requires a batch number")
+            print("Параметр --batch требует номер пакета")
             sys.exit(1)
         batch_num = args[1]
         tickers = get_batch_tickers(batch_num)
-        return tickers, None, f"{len(tickers)} tickers in Batch {batch_num}"
+        return tickers, None, f"{len(tickers)} тикеров из пакета {batch_num}"
     elif args[0] == "--sector":
         if len(args) < 2:
-            print("Error: --sector requires a sector name")
+            print("Параметр --sector требует название сектора")
             sys.exit(1)
         sector = " ".join(args[1:])
-        return None, sector, f"all tickers in sector: {sector}"
+        return None, sector, f"все тикеры из сектора: {sector}"
     else:
         tickers = [
             t.strip() for t in args if re.match(rf"^{TICKER_PATTERN}$", t.strip(), re.IGNORECASE)
         ]
-        return tickers, None, f"{len(tickers)} tickers: {', '.join(tickers)}"
+        return tickers, None, f"{len(tickers)} тикеров: {', '.join(tickers)}"
 
 
 def setup_stdout():

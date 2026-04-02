@@ -91,7 +91,7 @@ def main():
     args = sys.argv[1:]
 
     if not args or args[0] in {"-h", "--help"}:
-        print("Usage:")
+        print("Использование:")
         print("  python scripts/add_ticker.py <ticker> <name>")
         print("  python scripts/add_ticker.py <ticker> <name> --sector <sector>")
         return
@@ -108,11 +108,11 @@ def main():
     # Check if ticker already exists
     existing = find_ticker_files([ticker])
     if existing:
-        print(f"Ticker {ticker} already exists at: {existing[ticker]}")
-        print("Use update_financials.py or update_enrichment.py to update it.")
+        print(f"Тикер {ticker} уже существует: {existing[ticker]}")
+        print("Для обновления используйте update_financials.py или update_enrichment.py.")
         return
 
-    print(f"Generating report for {ticker} ({name})...")
+    print(f"Создаю карточку для {ticker} ({name})...")
     content, detected_sector = generate_report(ticker, name, sector)
 
     # Determine output folder
@@ -126,9 +126,9 @@ def main():
     with open(filepath, "w", encoding="utf-8") as f:
         f.write(content)
 
-    print(f"Created: {filepath}")
-    print(f"Sector: {folder_name}")
-    print("\nNext: use update_enrichment.py to add business description, supply chain, and counterparties.")
+    print(f"Создан файл: {filepath}")
+    print(f"Сектор: {folder_name}")
+    print("\nДальше: используйте update_enrichment.py, чтобы добавить описание бизнеса, цепочку поставок и контрагентов.")
 
 
 if __name__ == "__main__":

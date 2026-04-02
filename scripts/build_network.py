@@ -267,26 +267,26 @@ def main():
 
     os.makedirs(NETWORK_DIR, exist_ok=True)
 
-    print(f"Scanning wikilink co-occurrences (min weight: {min_weight})...")
+    print(f"Сканирую совместную встречаемость викалинков (мин. вес: {min_weight})...")
     nodes, edges = scan_graph(min_weight=min_weight, top_n=top_n)
-    print(f"Graph: {len(nodes)} nodes, {len(edges)} edges")
+    print(f"Граф: узлов {len(nodes)}, связей {len(edges)}")
 
     # Save JSON data
     graph_data = {"nodes": nodes, "links": edges}
     json_path = os.path.join(NETWORK_DIR, "graph_data.json")
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(graph_data, f, ensure_ascii=False, indent=2)
-    print(f"Saved: {json_path}")
+    print(f"Сохранён файл: {json_path}")
 
     # Generate HTML
     html = build_html(nodes, edges)
     html_path = os.path.join(NETWORK_DIR, "index.html")
     with open(html_path, "w", encoding="utf-8") as f:
         f.write(html)
-    print(f"Saved: {html_path}")
+    print(f"Сохранён файл: {html_path}")
 
-    print(f"\nOpen in browser: {html_path}")
-    print("Or serve locally: python -m http.server 8000 --directory network/")
+    print(f"\nОткройте в браузере: {html_path}")
+    print("Или поднимите локальный сервер: python -m http.server 8000 --directory network/")
 
 
 if __name__ == "__main__":

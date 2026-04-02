@@ -1,22 +1,27 @@
+"""Legacy-скрипт пакетной генерации тайваньского корпуса.
+
+Сохраняется для исторической совместимости. Для российского workflow нужен отдельный MOEX-конвейер.
+"""
+
 import pandas as pd
 import yfinance as yf
 import os
 import time
 
 def generate_report(ticker, name):
-    print(f"Processing {ticker} ({name})...")
+    print(f"[LEGACY] Обрабатываю {ticker} ({name})...")
     try:
         stock = yf.Ticker(f"{ticker}.TW")
         info = stock.info
         
         # Retry with .TWO if .TW fails (common for OTC stocks)
         if not info or 'longName' not in info:
-            print(f"Retrying {ticker} with .TWO suffix...")
+            print(f"[LEGACY] Повторяю запрос для {ticker} с суффиксом .TWO...")
             stock = yf.Ticker(f"{ticker}.TWO")
             info = stock.info
 
         if not info or 'longName' not in info:
-             print(f"Failed to fetch data for {ticker} (tried .TW and .TWO)")
+             print(f"[LEGACY] Не удалось получить данные для {ticker} (проверены .TW и .TWO)")
              return None
         
         # Basic Info
@@ -127,15 +132,17 @@ def generate_report(ticker, name):
         return md_content
 
     except Exception as e:
-        print(f"Error fetching data for {ticker}: {e}")
+        print(f"[LEGACY] Ошибка при загрузке данных для {ticker}: {e}")
         return None
 
 import argparse
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--ticker", type=str, help="Generate report for a specific ticker only")
-    parser.add_argument("--name", type=str, help="Specify company name for the report (optional)")
+    parser = argparse.ArgumentParser(
+        description="Legacy-генератор отчётов для тайваньского корпуса. Не относится к текущему MOEX-workflow."
+    )
+    parser.add_argument("--ticker", type=str, help="Сгенерировать отчёт только для указанного тикера")
+    parser.add_argument("--name", type=str, help="Явно задать название компании (необязательно)")
     args = parser.parse_args()
 
     excel_path = 'f:/My TW Coverage/Taiwan Stock Coverage.xlsx'
@@ -154,9 +161,9 @@ def main():
                 # Assuming ticker is in the first column (index 0)
                 ex_df = pd.read_excel(exception_path, header=None)
                 excluded_tickers = ex_df[0].astype(str).str.strip().tolist()
-                print(f"Loaded {len(excluded_tickers)} excluded tickers.")
+                print(f"[LEGACY] Загружено исключённых тикеров: {len(excluded_tickers)}.")
             except Exception as e:
-                print(f"Warning: Failed to read exception list: {e}")
+                print(f"[LEGACY] Предупреждение: не удалось прочитать список исключений: {e}")
         
         df = pd.read_excel(excel_path, header=None)
         
@@ -168,14 +175,14 @@ def main():
             
             # Check Exception List
             if target_ticker in excluded_tickers:
-                print(f"Skipping {target_ticker} (In Exception List)")
+                print(f"[LEGACY] Пропускаю {target_ticker} (в списке исключений)")
                 return
 
             # Filter for specific ticker (ensure string comparison)
             batch_df = df[df[0].astype(str).str.strip() == target_ticker]
             if batch_df.empty:
                 name_to_use = args.name if args.name else "Unknown"
-                print(f"Warning: Ticker {args.ticker} not found in Excel. Processing with name '{name_to_use}'.")
+                print(f"[LEGACY] Предупреждение: тикер {args.ticker} не найден в Excel. Обрабатываю с именем '{name_to_use}'.")
                 # Create a 1-row DataFrame manually if not found in Excel
                 batch_df = pd.DataFrame([[args.ticker, name_to_use]], columns=[0, 1])
             elif args.name:
@@ -194,7 +201,7 @@ def main():
             filepath = os.path.join(output_dir, filename)
 
             if os.path.exists(filepath):
-                 print(f"Skipping {filename} (Already exists)")
+                 print(f"[LEGACY] Пропускаю {filename} (файл уже существует)")
                  # If user specifically asked for this ticker, maybe they want to overwrite? 
                  # For now, stick to safe "Skip". User can delete file if they want regeneration.
                  continue
@@ -204,12 +211,12 @@ def main():
             if report:
                 with open(filepath, "w", encoding="utf-8") as f:
                     f.write(report)
-                print(f"Report generated: {filename}")
+                print(f"[LEGACY] Сгенерирован отчёт: {filename}")
             
             time.sleep(1)
             
     except Exception as e:
-        print(f"Critical Error: {e}")
+        print(f"[LEGACY] Критическая ошибка: {e}")
 
 if __name__ == "__main__":
     main()

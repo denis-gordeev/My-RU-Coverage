@@ -1,3 +1,8 @@
+"""Legacy-утилита организации тайваньских отчётов по папкам.
+
+Сохраняется как исторический скрипт и не является частью текущего российского workflow.
+"""
+
 import os
 import shutil
 
@@ -5,11 +10,11 @@ def organize_reports():
     base_dir = 'f:/My TW Coverage/Pilot_Reports'
     
     if not os.path.exists(base_dir):
-        print(f"Directory not found: {base_dir}")
+        print(f"[LEGACY] Каталог не найден: {base_dir}")
         return
 
     files = [f for f in os.listdir(base_dir) if f.endswith('.md')]
-    print(f"Found {len(files)} reports to organize.")
+    print(f"[LEGACY] Найдено отчётов для раскладки: {len(files)}.")
     
     count = 0
     errors = 0
@@ -46,17 +51,17 @@ def organize_reports():
                  shutil.move(filepath, os.path.join(industry_dir, filename))
                  count += 1
                  if count % 100 == 0:
-                     print(f"Organized {count} files...")
+                     print(f"[LEGACY] Разложено файлов: {count}...")
             else:
-                print(f"Skipping {filename}: Already exists in {safe_industry}")
+                print(f"[LEGACY] Пропускаю {filename}: уже существует в {safe_industry}")
 
         except Exception as e:
-            print(f"Error processing {filename}: {e}")
+            print(f"[LEGACY] Ошибка обработки {filename}: {e}")
             errors += 1
 
-    print(f"Organization Complete.")
-    print(f"Moved: {count}")
-    print(f"Errors: {errors}")
+    print("[LEGACY] Раскладка завершена.")
+    print(f"[LEGACY] Перемещено: {count}")
+    print(f"[LEGACY] Ошибок: {errors}")
 
 if __name__ == "__main__":
     organize_reports()

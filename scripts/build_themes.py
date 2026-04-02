@@ -374,15 +374,15 @@ def main():
             print(f"  {tag}: {defn['name']}")
         return
 
-    print("Scanning wikilinks across all reports...")
+    print("Сканирую викалинки по всем отчётам...")
     wl_map = scan_wikilinks()
-    print(f"Found {len(wl_map)} unique wikilinks.\n")
+    print(f"Найдено уникальных викалинков: {len(wl_map)}.\n")
 
     # Filter to requested theme or build all
     if args and args[0] != "--list":
         themes_to_build = {args[0]: THEME_DEFINITIONS.get(args[0])}
         if not themes_to_build[args[0]]:
-            print(f"Theme '{args[0]}' not in THEME_DEFINITIONS. Use --list to see available themes.")
+            print(f"Тема '{args[0]}' отсутствует в THEME_DEFINITIONS. Используйте --list для списка доступных тем.")
             return
     else:
         themes_to_build = THEME_DEFINITIONS
@@ -397,14 +397,14 @@ def main():
                 f.write(page)
             count = len(wl_map.get(tag, []))
             themes_built[tag] = count
-            print(f"  {tag}: {count} companies -> {safe_name}.md")
+            print(f"  {tag}: {count} компаний -> {safe_name}.md")
 
     # Build index
     index = build_index(themes_built)
     with open(os.path.join(THEMES_DIR, "README.md"), "w", encoding="utf-8") as f:
         f.write(index)
 
-    print(f"\nDone. Generated {len(themes_built)} theme pages in themes/")
+    print(f"\nГотово. Сгенерировано тематических страниц: {len(themes_built)} в каталоге themes/")
 
 
 if __name__ == "__main__":
