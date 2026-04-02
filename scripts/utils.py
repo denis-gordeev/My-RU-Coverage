@@ -398,12 +398,13 @@ def build_valuation_table(v):
 
 def update_metadata(content, market_cap, enterprise_value, unit_label=DEFAULT_UNIT_LABEL):
     """Update market cap and EV metadata in file content."""
-    if market_cap:
-        for pattern in METADATA_LABEL_PATTERNS["market_cap"]:
-            content = re.sub(rf"({pattern}) .+", rf"\1 {market_cap} {unit_label}", content)
-    if enterprise_value:
-        for pattern in METADATA_LABEL_PATTERNS["enterprise_value"]:
-            content = re.sub(rf"({pattern}) .+", rf"\1 {enterprise_value} {unit_label}", content)
+    market_cap_value = market_cap if market_cap not in (None, "", "None") else "N/A"
+    enterprise_value_value = enterprise_value if enterprise_value not in (None, "", "None") else "N/A"
+
+    for pattern in METADATA_LABEL_PATTERNS["market_cap"]:
+        content = re.sub(rf"({pattern}) .+", rf"\1 {market_cap_value} {unit_label}", content)
+    for pattern in METADATA_LABEL_PATTERNS["enterprise_value"]:
+        content = re.sub(rf"({pattern}) .+", rf"\1 {enterprise_value_value} {unit_label}", content)
     return content
 
 
