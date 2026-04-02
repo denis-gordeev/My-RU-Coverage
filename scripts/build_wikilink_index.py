@@ -1,12 +1,12 @@
 """
-build_wikilink_index.py — Regenerate WIKILINKS.md from all ticker reports.
+build_wikilink_index.py — Пересобирает WIKILINKS.md по всем карточкам эмитентов.
 
-Usage:
+Использование:
     python scripts/build_wikilink_index.py
 
-This scans every .md file under Pilot_Reports/ and builds a categorized
-index of all [[wikilinks]] with occurrence counts. Run after any enrichment
-update to keep the index current.
+Сканирует все `.md` в `Pilot_Reports/` и собирает категоризированный индекс
+всех `[[wikilinks]]` с числом упоминаний. Запускается после обновления
+карточек, тем или связей.
 """
 
 import os
@@ -50,14 +50,14 @@ APP_TERMS = {
 
 
 def is_local_script(s):
-    """Check if string is predominantly CJK or Cyrillic."""
+    """Проверяет, написано ли имя преимущественно на кириллице или CJK."""
     cjk = sum(1 for c in s if "\u4e00" <= c <= "\u9fff")
     cyrillic = sum(1 for c in s if "\u0400" <= c <= "\u04FF")
     return (cjk + cyrillic) > len(s) * 0.3
 
 
 def collect_wikilinks():
-    """Scan all reports and return {name: count} dict."""
+    """Возвращает словарь `{wikilink: число_упоминаний}` по всем отчётам."""
     wikilinks = {}
     for root, dirs, files in os.walk(REPORTS_DIR):
         for f in files:
@@ -71,11 +71,11 @@ def collect_wikilinks():
 
 
 def categorize(wikilinks):
-    """Split wikilinks into categories."""
+    """Разбивает викалинки по смысловым категориям."""
     technologies = {}
     materials = {}
     applications = {}
-    companies_tw = {}
+    companies_local = {}
     companies_intl = {}
 
     for name, count in wikilinks.items():
@@ -86,16 +86,16 @@ def categorize(wikilinks):
         elif name in APP_TERMS:
             applications[name] = count
         elif is_local_script(name) and count >= 2:
-            companies_tw[name] = count
+            companies_local[name] = count
         elif not is_local_script(name) and count >= 2:
             companies_intl[name] = count
-        # Single-mention entries are omitted from the index
+        # Единичные упоминания в индекс не включаем
 
-    return technologies, materials, applications, companies_intl, companies_tw
+    return technologies, materials, applications, companies_intl, companies_local
 
 
 def build_section(title, items, limit=None):
-    """Build a markdown section from a dict."""
+    """Строит markdown-раздел из словаря `{имя: счётчик}`."""
     lines = []
     sorted_items = sorted(items.items(), key=lambda x: -x[1])
     if limit:
@@ -118,7 +118,7 @@ def main():
         sys.stdout.reconfigure(encoding="utf-8")
 
     wikilinks = collect_wikilinks()
-    tech, mat, app, intl, tw = categorize(wikilinks)
+    tech, mat, app, intl, local = categorize(wikilinks)
 
     lines = [
         "# Индекс викалинков",
@@ -134,7 +134,7 @@ def main():
     lines.extend(build_section("Материалы и подложки", mat))
     lines.extend(build_section("Конечные рынки и применения", app))
     lines.extend(build_section("Иностранные компании", intl, limit=200))
-    lines.extend(build_section("Локальные компании", tw, limit=300))
+    lines.extend(build_section("Локальные компании", local, limit=300))
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
@@ -144,7 +144,7 @@ def main():
     print(f"  Материалы: {len(mat)}")
     print(f"  Применения: {len(app)}")
     print(f"  Иностранные компании: {len(intl)}")
-    print(f"  Локальные компании: {len(tw)}")
+    print(f"  Локальные компании: {len(local)}")
 
 
 if __name__ == "__main__":

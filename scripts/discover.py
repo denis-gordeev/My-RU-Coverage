@@ -1,25 +1,26 @@
 """
-discover.py — Reverse discovery: find companies related to a buzzword.
+discover.py — Обратный поиск компаний по ключевому слову или теме.
 
-User hears a buzzword (e.g., редкоземы, импортозамещение, CPO) and wants to know
-which covered companies are connected. The script:
+Если нужно понять, какие эмитенты связаны с темой вроде "импортозамещение",
+"редкоземы", "СПГ" или "CPO", скрипт:
 
-1. Searches all relevant ticker reports for mentions of the buzzword
-2. Wikilinks the buzzword where it appears but isn't yet tagged
-3. Reports which companies are related and how
-4. Optionally updates themes and network
+1. Ищет упоминания по всем релевантным карточкам эмитентов
+2. При необходимости добавляет [[wikilinks]] для найденного термина
+3. Показывает, какие компании и в каком контексте связаны с темой
+4. По запросу пересобирает темы, граф и индекс викалинков
 
-Usage:
-  python scripts/discover.py "液冷散熱"                    # Search ALL sectors (recommended)
-  python scripts/discover.py "液冷散熱" --apply            # Apply wikilinks to files
-  python scripts/discover.py "液冷散熱" --apply --rebuild  # Also rebuild themes + network
-  python scripts/discover.py "液冷散熱" --smart            # Auto-filter sectors (faster but may miss)
-  python scripts/discover.py "液冷散熱" --sector Semiconductors  # Limit to one sector
-  python scripts/discover.py "液冷散熱" --sectors "Semiconductors,Electronic Components"
+Примеры:
+  python scripts/discover.py "импортозамещение"                            # искать по всем секторам
+  python scripts/discover.py "СПГ" --apply                                 # проставить [[wikilinks]]
+  python scripts/discover.py "CPO" --apply --rebuild                       # + пересобрать темы/граф/индекс
+  python scripts/discover.py "редкоземы" --smart                           # автофильтр секторов
+  python scripts/discover.py "CPO" --sector Semiconductors                 # ограничить одним сектором
+  python scripts/discover.py "CPO" --sectors "Semiconductors,Electronic Components"
 
-Sector filtering:
-  Tech buzzwords skip: Banks, Insurance, Real Estate, Food, Textile, etc.
-  Use --smart to auto-filter, or --sector/--sectors to specify manually.
+Фильтрация секторов:
+  Технологические ключевые слова обычно пропускают банки, страхование,
+  недвижимость, продукты питания, текстиль и прочие нерелевантные сектора.
+  Используйте --smart для автофильтрации или --sector/--sectors вручную.
 """
 
 import os
@@ -31,7 +32,7 @@ from collections import defaultdict
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import REPORTS_DIR, PROJECT_ROOT, setup_stdout, TICKER_PATTERN, SECTION_HEADER_REGEX
 
-# Sector groups for smart filtering
+# Группы секторов для умной фильтрации
 TECH_SECTORS = {
     "Semiconductors", "Semiconductor Equipment & Materials",
     "Electronic Components", "Computer Hardware", "Communication Equipment",
@@ -76,7 +77,7 @@ REAL_ESTATE_SECTORS = {
     "REIT - Diversified",
 }
 
-# Smart sector mapping: buzzword category -> which sector groups to search
+# Карта профилей: тип темы -> какие группы секторов искать
 SMART_PROFILES = {
     "tech": TECH_SECTORS | INDUSTRIAL_SECTORS | MATERIALS_SECTORS,
     "energy": TECH_SECTORS | INDUSTRIAL_SECTORS | ENERGY_SECTORS | MATERIALS_SECTORS,
@@ -84,22 +85,27 @@ SMART_PROFILES = {
     "all": None,  # None = search everything
 }
 
-# Buzzword hints for smart detection
+# Подсказки для автоопределения профиля
 TECH_KEYWORDS = [
     "半導體", "晶片", "IC", "AI", "伺服器", "封裝", "製程", "光電",
     "通訊", "5G", "衛星", "記憶體", "電池", "充電", "散熱", "矽",
     "雷射", "光纖", "感測", "量子", "ASIC", "GPU", "HBM", "PCB",
     "LED", "OLED", "EUV", "SiC", "GaN", "MEMS", "RF", "CPO",
+    "полупровод", "чип", "микросхем", "сервер", "дата-центр", "ЦОД",
+    "связь", "телеком", "спутник", "батаре", "заряд", "охлажден",
+    "квант", "фотон", "оптик", "GPU", "ASIC", "CPO",
 ]
 
 ENERGY_KEYWORDS = [
     "能源", "電力", "風電", "太陽能", "儲能", "氫能", "核", "碳",
     "綠電", "充電", "電網",
+    "энерг", "электро", "ветер", "солнеч", "накопител",
+    "водород", "атом", "углерод", "сеть", "нефт", "газ", "СПГ", "LNG",
 ]
 
 
 def detect_profile(buzzword):
-    """Auto-detect which sector profile to use based on buzzword content."""
+    """Автоопределение профиля секторов по содержанию запроса."""
     for kw in TECH_KEYWORDS:
         if kw in buzzword:
             return "tech"
@@ -110,9 +116,7 @@ def detect_profile(buzzword):
 
 
 def search_reports(buzzword, sectors_filter=None):
-    """Search all reports for mentions of the buzzword.
-    Returns list of {ticker, company, sector, filepath, linked, context}.
-    """
+    """Ищет упоминания темы по карточкам эмитентов."""
     results = []
 
     for sector_dir in sorted(os.listdir(REPORTS_DIR)):
@@ -120,7 +124,7 @@ def search_reports(buzzword, sectors_filter=None):
         if not os.path.isdir(sector_path):
             continue
 
-        # Apply sector filter
+        # Ограничение по списку секторов
         if sectors_filter and sector_dir not in sectors_filter:
             continue
 
@@ -140,24 +144,24 @@ def search_reports(buzzword, sectors_filter=None):
             financial_split = re.split(SECTION_HEADER_REGEX["financial"], content, maxsplit=1)
             text = financial_split[0]
 
-            # Check for linked mentions [[buzzword]]
+            # Уже проставленные [[wikilinks]]
             linked_count = len(re.findall(r"\[\[" + re.escape(buzzword) + r"\]\]", text))
 
-            # Check for bare mentions (not inside [[ ]])
+            # Обычные упоминания вне [[ ]]
             bare_pattern = r"(?<!\[\[)" + re.escape(buzzword) + r"(?!\]\])"
             bare_matches = list(re.finditer(bare_pattern, text))
             bare_count = len(bare_matches)
 
             if linked_count > 0 or bare_count > 0:
-                # Extract context snippets for bare mentions
+                # Короткие контекстные сниппеты
                 contexts = []
-                for match in bare_matches[:3]:  # Max 3 snippets
+                for match in bare_matches[:3]:
                     start = max(0, match.start() - 30)
                     end = min(len(text), match.end() + 30)
                     snippet = text[start:end].replace("\n", " ").strip()
                     contexts.append(f"...{snippet}...")
 
-                # Determine relationship from section
+                # Примерно определяем роль по разделу
                 role = "mentioned"
                 for section_name, role_name in [
                     (SECTION_HEADER_REGEX["business"], "core_business"),
@@ -186,7 +190,7 @@ def search_reports(buzzword, sectors_filter=None):
 
 
 def apply_wikilinks(results, buzzword):
-    """Add [[buzzword]] wikilinks to files where it's mentioned but not linked."""
+    """Добавляет [[wikilinks]] там, где термин найден без разметки."""
     applied = 0
     for r in results:
         if r["bare"] == 0:
@@ -195,16 +199,19 @@ def apply_wikilinks(results, buzzword):
         with open(r["filepath"], "r", encoding="utf-8") as f:
             content = f.read()
 
-        # Split to protect financial tables
+        # Финансовый раздел не трогаем
         financial_match = re.search(SECTION_HEADER_REGEX["financial"], content)
         if not financial_match:
             continue
 
         text = content[: financial_match.start()]
         financial_part = content[financial_match.start() :]
-        # Replace bare mentions with wikilinked version
-        # Be careful not to double-link
-        pattern = r"(?<!\[\[)" + re.escape(buzzword) + r"(?!\]\])(?![A-Za-z\u4e00-\u9fff])"
+        # Не даём задвоить существующие [[wikilinks]]
+        pattern = (
+            r"(?<!\[\[)"
+            + re.escape(buzzword)
+            + r"(?!\]\])(?![A-Za-z\u0400-\u04FF\u4e00-\u9fff])"
+        )
         new_text, count = re.subn(pattern, f"[[{buzzword}]]", text)
 
         if count > 0:
@@ -217,25 +224,25 @@ def apply_wikilinks(results, buzzword):
 
 
 def print_report(results, buzzword):
-    """Print discovery results in a readable format."""
+    """Печатает сводку по найденным совпадениям."""
     if not results:
-        print(f"\n找不到任何提及「{buzzword}」的公司。")
+        print(f"\nНе найдено компаний, где упоминается «{buzzword}».")
         return
 
-    # Group by role
+    # Группировка по типу связи
     by_role = defaultdict(list)
     for r in results:
         by_role[r["role"]].append(r)
 
     print(f"\n{'=' * 60}")
-    print(f"「{buzzword}」關聯公司：共 {len(results)} 家")
+    print(f"Компании, связанные с темой «{buzzword}»: {len(results)}")
     print(f"{'=' * 60}")
 
     role_labels = {
-        "core_business": "核心業務相關",
-        "supply_chain": "供應鏈相關",
-        "customer_supplier": "客戶/供應商相關",
-        "mentioned": "其他提及",
+        "core_business": "Связь через основной бизнес",
+        "supply_chain": "Связь через цепочку поставок",
+        "customer_supplier": "Связь через клиентов/поставщиков",
+        "mentioned": "Прочие упоминания",
     }
 
     for role, label in role_labels.items():
@@ -245,33 +252,33 @@ def print_report(results, buzzword):
         print(f"\n### {label} ({len(entries)})")
         for r in sorted(entries, key=lambda x: x["ticker"]):
             link_status = "✓" if r["linked"] > 0 else "○"
-            bare_note = f" (+{r['bare']} 未標記)" if r["bare"] > 0 else ""
+            bare_note = f" (+{r['bare']} без [[wikilink]])" if r["bare"] > 0 else ""
             print(f"  {link_status} {r['ticker']} {r['company']} ({r['sector']}){bare_note}")
-            for ctx in r["contexts"][:1]:  # Show 1 context snippet
-                print(f"    → {ctx}")
+            for ctx in r["contexts"][:1]:
+                print(f"    -> {ctx}")
 
 
 def main():
     setup_stdout()
 
     if len(sys.argv) < 2:
-        print("Usage:")
-        print('  python scripts/discover.py "液冷散熱"                  # Search all')
-        print('  python scripts/discover.py "液冷散熱" --smart          # Auto-filter sectors')
-        print('  python scripts/discover.py "液冷散熱" --sector Semiconductors')
-        print('  python scripts/discover.py "液冷散熱" --apply          # Apply wikilinks')
-        print('  python scripts/discover.py "液冷散熱" --apply --rebuild # + rebuild themes/network')
+        print("Использование:")
+        print('  python scripts/discover.py "импортозамещение"        # искать по всем секторам')
+        print('  python scripts/discover.py "СПГ" --smart              # автофильтр секторов')
+        print('  python scripts/discover.py "CPO" --sector Semiconductors')
+        print('  python scripts/discover.py "редкоземы" --apply        # проставить [[wikilinks]]')
+        print('  python scripts/discover.py "СПГ" --apply --rebuild    # + пересобрать темы/граф')
         sys.exit(1)
 
     buzzword = sys.argv[1]
     args = sys.argv[2:]
 
-    # Parse flags
+    # Разбор флагов
     do_apply = "--apply" in args
     do_rebuild = "--rebuild" in args
     smart = "--smart" in args
 
-    # Parse sector filter
+    # Разбор фильтра по секторам
     sectors_filter = None
     if "--sector" in args:
         idx = args.index("--sector")
@@ -285,48 +292,50 @@ def main():
         profile = detect_profile(buzzword)
         sectors_filter = SMART_PROFILES[profile]
         if sectors_filter:
-            print(f"Smart mode: detected profile '{profile}', searching {len(sectors_filter)} sectors")
-            print(f"  ⚠ May miss cross-sector results. Use without --smart for full coverage.")
+            print(
+                f"Умный режим: профиль '{profile}', поиск по {len(sectors_filter)} секторам"
+            )
+            print("  Внимание: возможны пропуски межсекторальных совпадений. Для полного охвата запускайте без --smart.")
 
-    # Search
-    print(f"搜尋「{buzzword}」...")
+    # Поиск
+    print(f"Ищу «{buzzword}»...")
     results = search_reports(buzzword, sectors_filter)
 
-    # Report
+    # Отчёт
     print_report(results, buzzword)
 
-    # Apply wikilinks
+    # Применение [[wikilinks]]
     if do_apply and results:
         bare_count = sum(r["bare"] for r in results)
         if bare_count > 0:
             applied = apply_wikilinks(results, buzzword)
-            print(f"\n已將 {applied} 處「{buzzword}」加上 [[wikilink]] 標記。")
+            print(f"\nДобавлено {applied} вхождений [[{buzzword}]].")
         else:
-            print(f"\n所有提及均已標記為 [[{buzzword}]]。")
+            print(f"\nВсе упоминания уже размечены как [[{buzzword}]].")
 
-    # Rebuild themes and network
+    # Пересборка производных артефактов
     if do_rebuild:
-        print("\n重建主題頁面...")
+        print("\nПересобираю тематические страницы...")
         subprocess.run(
             [sys.executable, os.path.join(PROJECT_ROOT, "scripts", "build_themes.py")],
             cwd=PROJECT_ROOT,
         )
-        print("重建網路圖...")
+        print("Пересобираю сетевой граф...")
         subprocess.run(
             [sys.executable, os.path.join(PROJECT_ROOT, "scripts", "build_network.py")],
             cwd=PROJECT_ROOT,
         )
-        print("重建 wikilink 索引...")
+        print("Пересобираю индекс викалинков...")
         subprocess.run(
             [sys.executable, os.path.join(PROJECT_ROOT, "scripts", "build_wikilink_index.py")],
             cwd=PROJECT_ROOT,
         )
 
-    # Summary
+    # Итог
     linked = sum(1 for r in results if r["linked"] > 0)
     unlinked = sum(1 for r in results if r["bare"] > 0 and r["linked"] == 0)
-    print(f"\n總結：{len(results)} 家公司提及「{buzzword}」")
-    print(f"  已標記：{linked} | 未標記：{unlinked}")
+    print(f"\nИтог: {len(results)} компаний упоминают «{buzzword}»")
+    print(f"  Уже размечено: {linked} | Только голые упоминания: {unlinked}")
 
 
 if __name__ == "__main__":

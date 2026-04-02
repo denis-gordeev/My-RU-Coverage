@@ -1,14 +1,15 @@
 """
-build_network.py — Generate wikilink network graph data and interactive visualization.
+build_network.py — Строит данные и HTML-визуализацию графа викалинков.
 
-Scans all ticker reports for wikilink co-occurrences and generates:
-1. network/graph_data.json — node/edge data for visualization
-2. network/index.html — interactive D3.js force-directed graph
+Сканирует карточки эмитентов, считает совместную встречаемость `[[wikilinks]]`
+и создаёт:
+1. `network/graph_data.json` — данные узлов и связей
+2. `network/index.html` — интерактивный D3-граф
 
-Usage:
-  python scripts/build_network.py                # Default: min 5 co-occurrences
-  python scripts/build_network.py --min-weight 10  # Higher threshold = fewer edges
-  python scripts/build_network.py --top 100       # Only top N nodes by mention count
+Использование:
+  python scripts/build_network.py                 # порог по умолчанию: 5
+  python scripts/build_network.py --min-weight 10  # выше порог -> меньше рёбер
+  python scripts/build_network.py --top 100        # только топ-N узлов
 """
 
 import json
@@ -29,8 +30,8 @@ NETWORK_DIR = os.path.join(PROJECT_ROOT, "network")
 
 
 def scan_graph(min_weight=5, top_n=None):
-    """Scan all reports and build co-occurrence graph."""
-    # Step 1: collect wikilinks per file
+    """Собирает граф совместной встречаемости викалинков."""
+    # Шаг 1: собираем викалинки по файлам
     node_counts = defaultdict(int)
     wl_per_file = {}
 
@@ -51,16 +52,16 @@ def scan_graph(min_weight=5, top_n=None):
             for wl in wls:
                 node_counts[wl] += 1
 
-    # Step 2: filter to top N nodes if specified
+    # Шаг 2: при необходимости режем до топ-N узлов
     if top_n:
         top_nodes = set(
             name for name, _ in sorted(node_counts.items(), key=lambda x: -x[1])[:top_n]
         )
     else:
-        # At minimum, only include nodes that appear in >= 2 files
+        # Иначе оставляем хотя бы сущности, встречающиеся минимум в 2 файлах
         top_nodes = set(name for name, count in node_counts.items() if count >= 2)
 
-    # Step 3: count co-occurrences
+    # Шаг 3: считаем совместные появления
     edges = defaultdict(int)
     for ticker, wls in wl_per_file.items():
         filtered = sorted(wls & top_nodes)
@@ -68,10 +69,10 @@ def scan_graph(min_weight=5, top_n=None):
             for j in range(i + 1, len(filtered)):
                 edges[(filtered[i], filtered[j])] += 1
 
-    # Step 4: filter edges by weight
+    # Шаг 4: фильтруем рёбра по весу
     filtered_edges = {k: v for k, v in edges.items() if v >= min_weight}
 
-    # Step 5: only keep nodes that have at least one edge
+    # Шаг 5: оставляем только узлы хотя бы с одной связью
     active_nodes = set()
     for (a, b) in filtered_edges:
         active_nodes.add(a)
@@ -99,7 +100,7 @@ def scan_graph(min_weight=5, top_n=None):
 
 
 def build_html(nodes, edges):
-    """Generate self-contained D3.js interactive network visualization."""
+    """Генерирует автономную HTML-визуализацию на D3.js."""
     graph_json = json.dumps({"nodes": nodes, "links": edges}, ensure_ascii=False)
 
     legend_items = "".join(
@@ -271,14 +272,14 @@ def main():
     nodes, edges = scan_graph(min_weight=min_weight, top_n=top_n)
     print(f"Граф: узлов {len(nodes)}, связей {len(edges)}")
 
-    # Save JSON data
+    # Сохраняем JSON
     graph_data = {"nodes": nodes, "links": edges}
     json_path = os.path.join(NETWORK_DIR, "graph_data.json")
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(graph_data, f, ensure_ascii=False, indent=2)
     print(f"Сохранён файл: {json_path}")
 
-    # Generate HTML
+    # Генерируем HTML
     html = build_html(nodes, edges)
     html_path = os.path.join(NETWORK_DIR, "index.html")
     with open(html_path, "w", encoding="utf-8") as f:

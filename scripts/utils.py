@@ -260,7 +260,7 @@ APPLICATION_TERMS = {
 }
 
 CATEGORY_COLORS = {
-    "taiwan_company": "#e74c3c",
+    "local_company": "#e74c3c",
     "international_company": "#3498db",
     "technology": "#2ecc71",
     "material": "#f39c12",
@@ -268,7 +268,7 @@ CATEGORY_COLORS = {
 }
 
 CATEGORY_LABELS = {
-    "taiwan_company": "Локальная компания",
+    "local_company": "Локальная компания",
     "international_company": "Иностранная компания",
     "technology": "Технология / стандарт",
     "material": "Материал / подложка",
@@ -295,7 +295,7 @@ def classify_wikilink(name):
     if name in APPLICATION_TERMS:
         return "application"
     if is_local_language_name(name):
-        return "taiwan_company"
+        return "local_company"
     return "international_company"
 
 
