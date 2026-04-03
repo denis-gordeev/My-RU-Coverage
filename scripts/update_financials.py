@@ -28,9 +28,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import (
     find_ticker_files, parse_scope_args, setup_stdout,
     fetch_valuation_data, build_valuation_table, update_metadata,
-    DEFAULT_MARKET_SUFFIXES, get_market_profile,
+    update_company_classification, DEFAULT_MARKET_SUFFIXES, get_market_profile,
     FINANCIAL_SECTION_TITLE, ANNUAL_SECTION_TITLE, QUARTERLY_SECTION_TITLE,
-    SECTION_HEADER_REGEX,
+    SECTION_HEADER_REGEX, TICKER_SOURCE_OVERRIDES,
 )
 
 # Financial metrics to extract
@@ -170,74 +170,124 @@ def localize_metric_labels(df, suffix):
     return df.rename(index=labels)
 
 
-def fetch_financials(ticker):
-    """Fetch financial data. Tries local suffixes in configured priority order."""
+def get_source_candidates(ticker):
+    """Return ticker-specific finance source candidates in priority order."""
+    override = TICKER_SOURCE_OVERRIDES.get(ticker, {})
+    candidates = override.get("candidates")
+    if candidates:
+        return candidates
+    return [f"{ticker}{suffix}" for suffix in DEFAULT_MARKET_SUFFIXES]
+
+
+def infer_market_suffix(symbol):
     for suffix in DEFAULT_MARKET_SUFFIXES:
+        if symbol.endswith(suffix):
+            return suffix
+    return ".ME"
+
+
+def is_identity_match(ticker, symbol, info):
+    """Reject obvious symbol collisions such as `T` -> AT&T."""
+    override = TICKER_SOURCE_OVERRIDES.get(ticker, {})
+    keywords = override.get("identity_keywords", [])
+    if not keywords:
+        return True
+
+    haystack = " ".join(
+        str(info.get(key, "") or "")
+        for key in ("shortName", "longName", "displayName", "symbol")
+    ).lower()
+
+    if not haystack.strip():
+        return symbol == get_source_candidates(ticker)[0]
+
+    return any(keyword.lower() in haystack for keyword in keywords)
+
+
+def prepare_statement_df(df, suffix, max_columns):
+    if df.empty:
+        return df
+
+    if "Revenue" in df.index:
+        valid_cols = df.columns[df.loc["Revenue"].notna()]
+        df = df[valid_cols]
+    else:
+        df = df.dropna(axis=1, how="all")
+
+    df = df[sorted(df.columns, reverse=True)]
+    non_pct = [row for row in df.index if "%" not in row]
+    df.loc[non_pct] = df.loc[non_pct] / 1_000_000
+    df = df.iloc[:, :max_columns]
+    return localize_metric_labels(df, suffix)
+
+
+def score_source(data):
+    annual_cols = 0 if data["annual"] is None else len(data["annual"].columns)
+    quarterly_cols = 0 if data["quarterly"] is None else len(data["quarterly"].columns)
+    has_market_cap = 1 if data.get("market_cap") not in (None, "N/A") else 0
+    has_sector = 1 if data.get("sector") not in (None, "", "N/A", "Unknown") else 0
+    return (annual_cols + quarterly_cols, has_market_cap, has_sector)
+
+
+def fetch_financials(ticker):
+    """Fetch financial data with ticker-specific source overrides and validation."""
+    override = TICKER_SOURCE_OVERRIDES.get(ticker, {})
+    best_data = None
+    best_score = (-1, -1, -1)
+
+    for symbol in get_source_candidates(ticker):
         try:
-            stock = yf.Ticker(f"{ticker}{suffix}")
-            income = stock.income_stmt
-            if income is None or income.empty:
+            stock = yf.Ticker(symbol)
+            info = stock.info or {}
+            if not is_identity_match(ticker, symbol, info):
                 continue
 
-            df_annual = extract_metrics(stock.income_stmt, stock.cashflow)
-            if not df_annual.empty:
-                if "Revenue" in df_annual.index:
-                    valid_cols = df_annual.columns[df_annual.loc["Revenue"].notna()]
-                    df_annual = df_annual[valid_cols]
-                else:
-                    df_annual = df_annual.dropna(axis=1, how="all")
-                # Sort newest-first, take latest 3 years
-                df_annual = df_annual[sorted(df_annual.columns, reverse=True)]
-                non_pct = [r for r in df_annual.index if "%" not in r]
-                df_annual.loc[non_pct] = df_annual.loc[non_pct] / 1_000_000
-                df_annual = df_annual.iloc[:, :3]
-                df_annual = localize_metric_labels(df_annual, suffix)
-
-            df_quarterly = extract_metrics(
-                stock.quarterly_income_stmt, stock.quarterly_cashflow
+            suffix = infer_market_suffix(symbol)
+            df_annual = prepare_statement_df(
+                extract_metrics(stock.income_stmt, stock.cashflow), suffix, 3
             )
-            if not df_quarterly.empty:
-                # Drop quarters where Revenue is NaN (unreported)
-                if "Revenue" in df_quarterly.index:
-                    valid_cols = df_quarterly.columns[df_quarterly.loc["Revenue"].notna()]
-                    df_quarterly = df_quarterly[valid_cols]
-                else:
-                    df_quarterly = df_quarterly.dropna(axis=1, how="all")
-                # Sort newest-first, take latest 4 quarters
-                df_quarterly = df_quarterly[sorted(df_quarterly.columns, reverse=True)]
-                non_pct = [r for r in df_quarterly.index if "%" not in r]
-                df_quarterly.loc[non_pct] = df_quarterly.loc[non_pct] / 1_000_000
-                df_quarterly = df_quarterly.iloc[:, :4]
-                df_quarterly = localize_metric_labels(df_quarterly, suffix)
+            df_quarterly = prepare_statement_df(
+                extract_metrics(stock.quarterly_income_stmt, stock.quarterly_cashflow),
+                suffix,
+                4,
+            )
 
-            info = stock.info
             market_cap = (
                 f"{info['marketCap'] / 1_000_000:,.0f}"
                 if info.get("marketCap")
-                else None
+                else "N/A"
             )
             enterprise_value = (
                 f"{info['enterpriseValue'] / 1_000_000:,.0f}"
                 if info.get("enterpriseValue")
-                else None
+                else "N/A"
             )
 
             valuation = fetch_valuation_data(info)
             market_profile = get_market_profile(suffix)
-            return {
+            data = {
                 "annual": df_annual,
                 "quarterly": df_quarterly,
                 "valuation": valuation,
                 "market_cap": market_cap,
                 "enterprise_value": enterprise_value,
-                "sector": info.get("sector", "N/A"),
-                "industry": info.get("industry", "N/A"),
+                "sector": info.get("sector") or override.get("sector", "N/A"),
+                "industry": info.get("industry") or override.get("industry", "N/A"),
                 "suffix": suffix,
                 "unit_label": market_profile["unit_label"],
+                "source_symbol": symbol,
             }
+
+            if data["annual"].empty and data["quarterly"].empty and market_cap == "N/A" and enterprise_value == "N/A":
+                continue
+
+            data_score = score_source(data)
+            if data_score > best_score:
+                best_data = data
+                best_score = data_score
         except Exception:
             continue
-    return None
+    return best_data
 
 
 def df_to_clean_markdown(df):
@@ -298,14 +348,19 @@ def update_file(filepath, ticker, dry_run=False):
         data.get("enterprise_value"),
         data.get("unit_label", "млн руб."),
     )
+    new_content = update_company_classification(
+        new_content,
+        data.get("sector"),
+        data.get("industry"),
+    )
 
     if dry_run:
-        print(f"  {ticker}: черновое обновление ({data['suffix']})")
+        print(f"  {ticker}: черновое обновление ({data['source_symbol']})")
         return True
 
     with open(filepath, "w", encoding="utf-8") as f:
         f.write(new_content)
-    print(f"  {ticker}: обновлено ({data['suffix']})")
+    print(f"  {ticker}: обновлено ({data['source_symbol']})")
     return True
 
 

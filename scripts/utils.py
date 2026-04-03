@@ -37,6 +37,33 @@ MARKET_PROFILES = {
 DEFAULT_MARKET_SUFFIXES = [".ME", ".TW", ".TWO"]
 DEFAULT_UNIT_LABEL = MARKET_PROFILES[".ME"]["unit_label"]
 
+TICKER_SOURCE_OVERRIDES = {
+    "YDEX": {
+        "candidates": ["YDEX.ME", "YDEX"],
+        "sector": "Communication Services",
+        "industry": "Internet Content & Information",
+        "identity_keywords": ["Yandex", "Яндекс", "МКПАО Яндекс"],
+    },
+    "T": {
+        "candidates": ["TCSG.ME"],
+        "sector": "Financial Services",
+        "industry": "Financial Conglomerates",
+        "identity_keywords": ["T-Technologies", "TCS GROUP", "Т-Технологии"],
+    },
+    "OZON": {
+        "candidates": ["OZON.ME", "OZON"],
+        "sector": "Consumer Cyclical",
+        "industry": "Internet Retail",
+        "identity_keywords": ["Ozon", "Озон"],
+    },
+    "TATN": {
+        "candidates": ["TATN.ME", "TATNP.ME"],
+        "sector": "Energy",
+        "industry": "Oil & Gas Integrated",
+        "identity_keywords": ["Tatneft", "Татнефть"],
+    },
+}
+
 BUSINESS_SECTION_TITLE = "## Описание бизнеса"
 SUPPLY_CHAIN_SECTION_TITLE = "## Положение в цепочке поставок"
 CUSTOMERS_SECTION_TITLE = "## Ключевые клиенты и поставщики"
@@ -405,6 +432,17 @@ def update_metadata(content, market_cap, enterprise_value, unit_label=DEFAULT_UN
         content = re.sub(rf"({pattern}) .+", rf"\1 {market_cap_value} {unit_label}", content)
     for pattern in METADATA_LABEL_PATTERNS["enterprise_value"]:
         content = re.sub(rf"({pattern}) .+", rf"\1 {enterprise_value_value} {unit_label}", content)
+    return content
+
+
+def update_company_classification(content, sector=None, industry=None):
+    """Update sector and industry metadata when fresh values are available."""
+    if sector and sector not in {"", "N/A", "Unknown"}:
+        for pattern in METADATA_LABEL_PATTERNS["sector"]:
+            content = re.sub(rf"({pattern}) .+", rf"\1 {sector}", content)
+    if industry and industry not in {"", "N/A", "Unknown"}:
+        for pattern in METADATA_LABEL_PATTERNS["industry"]:
+            content = re.sub(rf"({pattern}) .+", rf"\1 {industry}", content)
     return content
 
 
