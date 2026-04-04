@@ -38,6 +38,12 @@ DEFAULT_MARKET_SUFFIXES = [".ME", ".TW", ".TWO"]
 DEFAULT_UNIT_LABEL = MARKET_PROFILES[".ME"]["unit_label"]
 
 TICKER_SOURCE_OVERRIDES = {
+    "SNGS": {
+        "candidates": ["SNGS.ME"],
+        "sector": "Energy",
+        "industry": "Oil & Gas Integrated",
+        "identity_keywords": ["Surgutneftegas", "Сургутнефтегаз"],
+    },
     "YDEX": {
         "candidates": ["YDEX.ME", "YDEX"],
         "sector": "Communication Services",
@@ -55,6 +61,12 @@ TICKER_SOURCE_OVERRIDES = {
         "sector": "Consumer Cyclical",
         "industry": "Internet Retail",
         "identity_keywords": ["Ozon", "Озон"],
+    },
+    "X5": {
+        "candidates": ["X5.ME", "X5"],
+        "sector": "Consumer Defensive",
+        "industry": "Grocery Stores",
+        "identity_keywords": ["X5", "ИКС 5", "Корпоративный центр ИКС 5"],
     },
     "TATN": {
         "candidates": ["TATN.ME", "TATNP.ME"],

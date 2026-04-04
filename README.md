@@ -68,6 +68,12 @@ python scripts/build_network.py
 python scripts/build_themes.py
 ```
 
+Проверить актуальное покрытие корзины `MOEXBC`:
+
+```bash
+python scripts/moex_blue_chip_queue.py
+```
+
 ## Правила данных
 
 - Используйте конкретные `[[wikilinks]]`, а не общие категории.
