@@ -68,10 +68,12 @@ python scripts/build_network.py
 python scripts/build_themes.py
 ```
 
-Проверить актуальное покрытие корзины `MOEXBC`:
+Проверить актуальное покрытие официальной очереди MOEX:
 
 ```bash
 python scripts/moex_blue_chip_queue.py
+python scripts/moex_blue_chip_queue.py --index MOEXBC
+python scripts/moex_blue_chip_queue.py --index MOEXBMI
 ```
 
 ## Правила данных
