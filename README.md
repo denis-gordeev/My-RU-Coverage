@@ -76,6 +76,14 @@ python scripts/moex_blue_chip_queue.py --index MOEXBC
 python scripts/moex_blue_chip_queue.py --index MOEXBMI
 ```
 
+Сгенерировать базовые MOEX-карточки из живой очереди:
+
+```bash
+python scripts/generate_moex_reports.py
+python scripts/generate_moex_reports.py --index MOEXBMI --top 5
+python scripts/generate_moex_reports.py DOMRF AKRN AFLT
+```
+
 ## Правила данных
 
 - Используйте конкретные `[[wikilinks]]`, а не общие категории.
