@@ -24,6 +24,40 @@ from utils import TICKER_PATTERN, extract_wikilinks
 REPORTS_DIR = os.path.join(os.path.dirname(__file__), "..", "Pilot_Reports")
 THEMES_DIR = os.path.join(os.path.dirname(__file__), "..", "themes")
 
+RU_THEME_TAGS = [
+    "банки",
+    "финтех",
+    "нефтегаз",
+    "природный газ",
+    "электроэнергетика",
+    "телеком",
+    "продуктовый ритейл",
+    "золото",
+    "сталь",
+    "алмазы",
+    "цветные металлы",
+    "экосистемы",
+    "интернет-платформы",
+    "маркетплейсы",
+    "биржевая инфраструктура",
+    "финансовый рынок",
+    "удобрения",
+    "агрохимия",
+]
+
+LEGACY_THEME_GROUPS = {
+    "Legacy / Тайвань: передовая упаковка": ["CoWoS", "HBM", "CPO"],
+    "Legacy / Тайвань: фотоника и compound semis": ["矽光子", "VCSEL", "碳化矽", "氮化鎵", "磷化銦"],
+    "Legacy / Тайвань: AI и дата-центры": ["AI 伺服器", "資料中心", "NVIDIA"],
+    "Legacy / Тайвань: электромобили и авто": ["電動車", "Tesla"],
+    "Legacy / Тайвань: связь": ["5G", "低軌衛星"],
+    "Legacy / Тайвань: процесс и оборудование": ["EUV"],
+    "Legacy / Тайвань: материалы": ["光阻液", "ABF 載板", "矽晶圓"],
+    "Legacy / Тайвань: брендовые цепочки": ["Apple"],
+}
+
+RU_PRIORITY_QUEUE = ["DOMRF", "AKRN", "AFLT", "CBOM", "BSPB"]
+
 # Curated themes with supply chain role hints
 # Format: theme_wikilink -> { display_name, description, related_tags }
 THEME_DEFINITIONS = {
@@ -368,74 +402,33 @@ def build_theme_page(theme_tag, theme_def, wl_map):
 def build_index(themes_built):
     """Build themes/README.md index."""
     lines = []
-    ru_theme_tags = [
-        "банки",
-        "финтех",
-        "нефтегаз",
-        "природный газ",
-        "электроэнергетика",
-        "телеком",
-        "продуктовый ритейл",
-        "золото",
-        "сталь",
-        "алмазы",
-        "цветные металлы",
-        "экосистемы",
-        "интернет-платформы",
-        "маркетплейсы",
-        "биржевая инфраструктура",
-        "финансовый рынок",
-        "удобрения",
-        "агрохимия",
-    ]
-    legacy_theme_tags = [
-        "CoWoS",
-        "HBM",
-        "CPO",
-        "矽光子",
-        "VCSEL",
-        "碳化矽",
-        "氮化鎵",
-        "磷化銦",
-        "AI 伺服器",
-        "資料中心",
-        "電動車",
-        "5G",
-        "低軌衛星",
-        "EUV",
-        "光阻液",
-        "ABF 載板",
-        "矽晶圓",
-        "Apple",
-        "NVIDIA",
-        "Tesla",
-    ]
-    ru_built = sum(1 for tag in ru_theme_tags if tag in themes_built)
+    legacy_theme_tags = []
+    for tags in LEGACY_THEME_GROUPS.values():
+        legacy_theme_tags.extend(tags)
+    ru_built = sum(1 for tag in RU_THEME_TAGS if tag in themes_built)
     legacy_built = sum(1 for tag in legacy_theme_tags if tag in themes_built)
+    ru_total_companies = sum(themes_built[tag] for tag in RU_THEME_TAGS if tag in themes_built)
 
     lines.append("# Тематические подборки")
     lines.append("")
     lines.append("> Автогенерируемые карты цепочек стоимости и смежных компаний.")
-    lines.append("> Навигация собрана в mixed-режиме: российские темы идут первыми, legacy-тайваньский корпус сохранён ниже для обратной совместимости.")
+    lines.append("> Навигация собрана с российским приоритетом: сначала активный RU-контур, ниже сохранён legacy-тайваньский корпус для обратной совместимости.")
     lines.append("> Пересборка: `python scripts/build_themes.py`")
     lines.append("")
     lines.append(f"> Российских тем в индексе: {ru_built}. Legacy/global тем: {legacy_built}.")
     lines.append("")
     lines.append("---")
     lines.append("")
+    lines.append("## Фокус текущего покрытия")
+    lines.append("")
+    lines.append(f"- Российский контур сейчас охватывает {ru_built} тем и {ru_total_companies} тематических вхождений компаний.")
+    lines.append(f"- Следующая автоматическая очередь `MOEXBMI`: {', '.join(f'`{ticker}`' for ticker in RU_PRIORITY_QUEUE)}.")
+    lines.append("- Legacy-разделы ниже сохранены как архивный справочник и не считаются приоритетом для новых automation round.")
+    lines.append("")
 
     # Group by category
-    categories = {
-        "Российский рынок": ru_theme_tags,
-        "Legacy / Тайвань: передовая упаковка": ["CoWoS", "HBM", "CPO"],
-        "Legacy / Тайвань: фотоника и compound semis": ["矽光子", "VCSEL", "碳化矽", "氮化鎵", "磷化銦"],
-        "Legacy / Тайвань: AI и дата-центры": ["AI 伺服器", "資料中心", "NVIDIA"],
-        "Legacy / Тайвань: электромобили и авто": ["電動車", "Tesla"],
-        "Legacy / Тайвань: связь": ["5G", "低軌衛星"],
-        "Legacy / Тайвань: процесс и оборудование": ["EUV"],
-        "Legacy / Тайвань: материалы": ["光阻液", "ABF 載板", "矽晶圓"],
-        "Legacy / Тайвань: брендовые цепочки": ["Apple", "NVIDIA", "Tesla"],
-    }
+    categories = {"Российский рынок": RU_THEME_TAGS}
+    categories.update(LEGACY_THEME_GROUPS)
 
     for cat_name, tags in categories.items():
         lines.append(f"## {cat_name}")
