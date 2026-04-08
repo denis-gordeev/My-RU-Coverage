@@ -2,13 +2,15 @@
 
 > 台積電 Chip-on-Wafer-on-Substrate 2.5D 先進封裝技術，AI 晶片關鍵製程
 
-**Количество компаний:** 39
+**Контур:** legacy-архив для обратной совместимости | [Ко всем темам](README.md)
+
+**Количество компаний:** 39 компаний
 
 **Связанные темы:** [[HBM]] (16) | [[2.5D 封裝]] (3) | [[3D 封裝]] (3) | [[ABF 載板]] (14)
 
 ---
 
-## Верхний контур (5)
+## Верхний контур (5 компаний)
 
 - **3167 大量** (Specialty Industrial Machinery)
 - **3580 友威科** (Specialty Industrial Machinery)
@@ -16,13 +18,13 @@
 - **6664 群翊** (Specialty Industrial Machinery)
 - **6706 惠特** (Specialty Industrial Machinery)
 
-## Ключевое звено (3)
+## Ключевое звено (3 компании)
 
 - **3535 晶彩科** (Computer Hardware)
 - **6742 澤米** (Electronic Components)
 - **1717 長興** (Specialty Chemicals)
 
-## Конечный спрос (11)
+## Конечный спрос (11 компаний)
 
 - **1721 三晃** (Chemicals)
 - **3577 泓格** (Communication Equipment)
@@ -36,7 +38,7 @@
 - **3131 弘塑** (Semiconductor Equipment & Materials)
 - **4755 三福化** (Specialty Chemicals)
 
-## Связанные компании (20)
+## Связанные компании (20 компаний)
 
 - **6570 維田** (Computer Hardware)
 - **3037 欣興** (Electronic Components)

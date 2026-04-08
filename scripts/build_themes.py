@@ -28,10 +28,13 @@ RU_THEME_TAGS = [
     "банки",
     "финтех",
     "нефтегаз",
+    "нефтепереработка",
     "природный газ",
     "электроэнергетика",
     "телеком",
     "продуктовый ритейл",
+    "доставка",
+    "электронная коммерция",
     "золото",
     "сталь",
     "алмазы",
@@ -75,7 +78,12 @@ THEME_DEFINITIONS = {
     "нефтегаз": {
         "name": "Нефтегазовый сектор",
         "desc": "Добыча, транспортировка, переработка и экспорт нефти и природного газа в российском контексте",
-        "related": ["природный газ", "СПГ"],
+        "related": ["нефтепереработка", "природный газ", "СПГ"],
+    },
+    "нефтепереработка": {
+        "name": "Нефтепереработка и топливный сбыт",
+        "desc": "Переработка нефти, выпуск моторных топлив, экспорт нефтепродуктов и сбыт через внутренние каналы реализации",
+        "related": ["нефтегаз", "АЗС", "трубная промышленность"],
     },
     "природный газ": {
         "name": "Природный газ",
@@ -90,7 +98,17 @@ THEME_DEFINITIONS = {
     "продуктовый ритейл": {
         "name": "Продуктовый ритейл",
         "desc": "Сети магазинов повседневного спроса, логистика FMCG и омниканальные форматы продаж",
-        "related": ["e-grocery", "экосистемы"],
+        "related": ["доставка", "электронная коммерция", "e-grocery", "экосистемы"],
+    },
+    "доставка": {
+        "name": "Доставка и last-mile сервисы",
+        "desc": "Курьерская логистика, доставка до дома и сервисные модели, ускоряющие оборот интернет-платформ и ритейла",
+        "related": ["электронная коммерция", "маркетплейсы", "продуктовый ритейл"],
+    },
+    "электронная коммерция": {
+        "name": "Электронная коммерция",
+        "desc": "Российские сервисы онлайн-заказа, цифровые витрины, merchant-tools и платёжно-логистическая инфраструктура вокруг e-commerce",
+        "related": ["маркетплейсы", "доставка", "интернет-платформы", "финтех"],
     },
     "цветные металлы": {
         "name": "Цветные металлы",
@@ -264,6 +282,22 @@ THEME_DEFINITIONS = {
 }
 
 
+def is_ru_theme(theme_tag):
+    return theme_tag in RU_THEME_TAGS
+
+
+def ru_plural(value, form1, form2, form5):
+    value = abs(value) % 100
+    if 11 <= value <= 19:
+        return form5
+    last = value % 10
+    if last == 1:
+        return form1
+    if 2 <= last <= 4:
+        return form2
+    return form5
+
+
 def scan_wikilinks():
     """Scan all reports, return {wikilink: [(ticker, company, sector, context)]}."""
     wl_map = defaultdict(list)
@@ -335,7 +369,14 @@ def build_theme_page(theme_tag, theme_def, wl_map):
     lines.append("")
     lines.append(f"> {theme_def['desc']}")
     lines.append("")
-    lines.append(f"**Количество компаний:** {len(entries)}")
+    if is_ru_theme(theme_tag):
+        lines.append("**Контур:** активная российская тема | [Ко всем темам](README.md)")
+        lines.append("")
+    else:
+        lines.append("**Контур:** legacy-архив для обратной совместимости | [Ко всем темам](README.md)")
+        lines.append("")
+    entry_count = len(entries)
+    lines.append(f"**Количество компаний:** {entry_count} {ru_plural(entry_count, 'компания', 'компании', 'компаний')}")
     lines.append("")
 
     # Related themes
@@ -373,25 +414,25 @@ def build_theme_page(theme_tag, theme_def, wl_map):
         return result
 
     if upstream:
-        lines.append(f"## Верхний контур ({len(upstream)})")
+        lines.append(f"## Верхний контур ({len(upstream)} {ru_plural(len(upstream), 'компания', 'компании', 'компаний')})")
         lines.append("")
         lines.extend(format_entries(upstream))
         lines.append("")
 
     if midstream:
-        lines.append(f"## Ключевое звено ({len(midstream)})")
+        lines.append(f"## Ключевое звено ({len(midstream)} {ru_plural(len(midstream), 'компания', 'компании', 'компаний')})")
         lines.append("")
         lines.extend(format_entries(midstream))
         lines.append("")
 
     if downstream:
-        lines.append(f"## Конечный спрос ({len(downstream)})")
+        lines.append(f"## Конечный спрос ({len(downstream)} {ru_plural(len(downstream), 'компания', 'компании', 'компаний')})")
         lines.append("")
         lines.extend(format_entries(downstream))
         lines.append("")
 
     if other:
-        lines.append(f"## Связанные компании ({len(other)})")
+        lines.append(f"## Связанные компании ({len(other)} {ru_plural(len(other), 'компания', 'компании', 'компаний')})")
         lines.append("")
         lines.extend(format_entries(other))
         lines.append("")
@@ -421,23 +462,37 @@ def build_index(themes_built):
     lines.append("")
     lines.append("## Фокус текущего покрытия")
     lines.append("")
-    lines.append(f"- Российский контур сейчас охватывает {ru_built} тем и {ru_total_companies} тематических вхождений компаний.")
+    lines.append(
+        f"- Российский контур сейчас охватывает {ru_built} {ru_plural(ru_built, 'тему', 'темы', 'тем')} "
+        f"и {ru_total_companies} тематических вхождений компаний."
+    )
     lines.append(f"- Следующая автоматическая очередь `MOEXBMI`: {', '.join(f'`{ticker}`' for ticker in RU_PRIORITY_QUEUE)}.")
-    lines.append("- Legacy-разделы ниже сохранены как архивный справочник и не считаются приоритетом для новых automation round.")
+    lines.append("- Legacy-разделы убраны в архивную нижнюю часть индекса и не считаются приоритетом для новых automation round.")
     lines.append("")
 
-    # Group by category
-    categories = {"Российский рынок": RU_THEME_TAGS}
-    categories.update(LEGACY_THEME_GROUPS)
+    lines.append("## Российский рынок")
+    lines.append("")
+    for tag in RU_THEME_TAGS:
+        if tag in themes_built:
+            count = themes_built[tag]
+            safe_name = tag.replace(" ", "_").replace("/", "_")
+            lines.append(f"- [{tag}]({safe_name}.md) — {count} {ru_plural(count, 'компания', 'компании', 'компаний')}")
+    lines.append("")
+    lines.append("---")
+    lines.append("")
+    lines.append("## Архивный legacy-корпус")
+    lines.append("")
+    lines.append("> Ниже сохранены старые тайваньские и global-темы. Они остаются доступными как справочник, но больше не формируют верхнюю навигацию российского workflow.")
+    lines.append("")
 
-    for cat_name, tags in categories.items():
-        lines.append(f"## {cat_name}")
+    for cat_name, tags in LEGACY_THEME_GROUPS.items():
+        lines.append(f"### {cat_name}")
         lines.append("")
         for tag in tags:
             if tag in themes_built:
                 count = themes_built[tag]
                 safe_name = tag.replace(" ", "_").replace("/", "_")
-                lines.append(f"- [{tag}]({safe_name}.md) — {count} компаний")
+                lines.append(f"- [{tag}]({safe_name}.md) — {count} {ru_plural(count, 'компания', 'компании', 'компаний')}")
         lines.append("")
 
     return "\n".join(lines)
@@ -479,7 +534,7 @@ def main():
                 f.write(page)
             count = len(wl_map.get(tag, []))
             themes_built[tag] = count
-            print(f"  {tag}: {count} компаний -> {safe_name}.md")
+            print(f"  {tag}: {count} {ru_plural(count, 'компания', 'компании', 'компаний')} -> {safe_name}.md")
 
     # Build index
     index = build_index(themes_built)

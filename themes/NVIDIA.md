@@ -2,13 +2,15 @@
 
 > NVIDIA GPU 及 AI 平台台灣供應鏈
 
-**Количество компаний:** 104
+**Контур:** legacy-архив для обратной совместимости | [Ко всем темам](README.md)
+
+**Количество компаний:** 104 компании
 
 **Связанные темы:** [[CoWoS]] (39) | [[HBM]] (16) | [[AI 伺服器]] (148) | [[台積電]] (182)
 
 ---
 
-## Верхний контур (42)
+## Верхний контур (42 компании)
 
 - **2345 智邦** (Communication Equipment)
 - **6245 立端** (Communication Equipment)
@@ -53,7 +55,7 @@
 - **6882 甲尚** (Software - Application)
 - **3045 台灣大** (Specialty Retail)
 
-## Конечный спрос (16)
+## Конечный спрос (16 компаний)
 
 - **3163 波若威** (Communication Equipment)
 - **3324 雙鴻** (Computer Hardware)
@@ -72,7 +74,7 @@
 - **7749 意騰-KY** (Software - Infrastructure)
 - **5607 遠雄港** (Specialty Business Services)
 
-## Связанные компании (46)
+## Связанные компании (46 компаний)
 
 - **2256 歐特明** (Auto Parts)
 - **6134 萬旭** (Communication Equipment)
