@@ -2,92 +2,25 @@
 
 Живой список задач по репозиторию. Обновляется после каждого automation round.
 
-## Выполнено в этом раунде (2026-04-08, automation round)
+## Выполнено в этом раунде (2026-04-09, automation round)
 
-- [x] Сгенерирована следующая волна `MOEXBMI`: `AFKS` (АФК Система), `ENPG` (ЭН+ ГРУП), `CNRU` (Циан), `BANEP` (Башнефть), `ASTR` (Астра) через `scripts/generate_moex_reports.py`.
-- [x] Обогащены карточки `AFKS`, `ENPG`, `CNRU`, `BANEP`, `ASTR`: добавлены русскоязычные описания бизнеса, положение в цепочке поставок, клиенты/поставщики и тематические `[[wikilinks]]`.
-- [x] `scripts/build_themes.py` расширен новыми российскими темами: `строительство`, `логистика`, `онлайн-реклама`, `недвижимость`, `импортозамещение`, `кибербезопасность`.
-- [x] Пересобраны `themes/`, `WIKILINKS.md` и `network/` после расширения RU-корпуса; локальные проверки пройдены через `.venv/bin/python -m py_compile scripts/build_themes.py scripts/generate_moex_reports.py scripts/add_ticker.py scripts/utils.py`.
-- [x] На 2026-04-08 повторно проверены внешние очереди через `gh`: и `gh issue list --repo denis-gordeev/My-RU-Coverage`, и `gh pr list --repo denis-gordeev/My-RU-Coverage --json number,title,headRefName,state` по-прежнему упираются в `HTTP 401`, поэтому GitHub queues сейчас недоступны без `gh auth login`.
-
-- [x] `scripts/build_themes.py` расширен новыми российскими темами `нефтепереработка`, `доставка`, `электронная коммерция`; темы подхватились из уже существующих `[[wikilinks]]` без ручной правки карточек.
-- [x] Тематические страницы переведены к более явной RU/legacy-навигации: каждая страница теперь помечает свой контур и даёт быстрый переход к общему индексу, а `themes/README.md` уводит legacy-раздел в архивный нижний блок.
-- [x] Локальная проверка изменений пройдена: `python3 -m py_compile scripts/build_themes.py` и `python3 scripts/build_themes.py`; пересобраны все файлы в `themes/`, включая новые страницы `нефтепереработка`, `доставка`, `электронная коммерция`.
-- [x] На 2026-04-08 повторно проверены внешние очереди через `gh`: и `gh issue list --repo denis-gordeev/My-RU-Coverage`, и `gh pr list --repo denis-gordeev/My-RU-Coverage --json number,title,headRefName,state` по-прежнему упираются в `HTTP 401`, поэтому GitHub queues сейчас недоступны без `gh auth login`.
-- [x] Обогащены карточки `DOMRF`, `AKRN`, `AFLT`, `CBOM`, `BSPB`: добавлены русскоязычные описания бизнеса, положение в цепочке поставок, клиенты/поставщики и тематические `[[wikilinks]]`.
-- [x] После обогащения карточек пересобраны `WIKILINKS.md`, `network/` и `themes/`; локальные проверки пройдены через `python3 scripts/build_wikilink_index.py`, `python3 scripts/build_network.py`, `python3 scripts/build_themes.py`.
-- [x] Внешние очереди перепроверены на 2026-04-06 через публичные страницы GitHub: в репозитории нет открытых issues (`Issues` -> `No results`) и нет открытых PR (`Pull requests` -> `0 Open`).
-- [x] Добавлен `scripts/generate_moex_reports.py`: отдельный MOEX-генератор базовых карточек теперь строит живую очередь из `MOEX ISS` и больше не опирается на legacy-Excel/тайваньский batch-контур.
-- [x] Через новый MOEX-генератор начато покрытие следующей волны `MOEXBMI`: созданы базовые карточки `DOMRF`, `AKRN`, `AFLT`, `CBOM`, `BSPB`.
-- [x] `README.md` обновлён под новый workflow генерации базовых MOEX-отчётов из официальной очереди.
-- [x] После старта новой волны пересобраны `WIKILINKS.md`, `network/` и `themes/`; локальные проверки пройдены через `.venv/bin/python -m py_compile scripts/generate_moex_reports.py scripts/add_ticker.py scripts/moex_blue_chip_queue.py`, `.venv/bin/python scripts/generate_moex_reports.py --dry-run --index MOEXBMI --top 5`, `.venv/bin/python scripts/build_wikilink_index.py`, `.venv/bin/python scripts/build_network.py`, `.venv/bin/python scripts/build_themes.py`.
-- [x] На 2026-04-05 повторно проверены внешние очереди через `gh`: и `gh issue list`, и `gh pr list --json number,title,headRefName,state` по-прежнему недоступны без авторизации и возвращают `HTTP 401`.
-- [x] `scripts/build_themes.py` и `themes/README.md` переведены к более явному российскому приоритету: в шапке индекса появился RU-фокус и следующая очередь `MOEXBMI`, а дубли `NVIDIA`/`Tesla` убраны из вторичного legacy-раздела брендовых цепочек.
-- [x] Локальная проверка изменений пройдена: `python3 -m py_compile scripts/build_themes.py` и `python3 scripts/build_themes.py`.
-- [x] `scripts/moex_blue_chip_queue.py` расширен от одной корзины `MOEXBC` к набору официальных индексов MOEX ISS: теперь по умолчанию проверяются `MOEXBC` и `MOEXBMI`, а на выходе строится агрегированная очередь следующих непокрытых эмитентов.
-- [x] Через обновлённый queue-check зафиксирована следующая автоматическая волна покрытия из `MOEXBMI`: первыми непокрытыми тикерами сейчас идут `DOMRF`, `AKRN`, `AFLT`, `CBOM`, `BSPB`, `AFKS`, `ENPG`, `CNRU`, `BANEP`, `ASTR`, `AQUA`, `BELU`, `ETLN`, `EUTR`, `DATA`, `APTK`, `BAZA`, `ELFV`.
-- [x] `README.md` обновлён под новый queue-check workflow: дефолтная команда теперь проверяет расширенную официальную очередь MOEX, а точечные прогоны по `MOEXBC` и `MOEXBMI` вынесены отдельными примерами.
-- [x] На 2026-04-04 повторно проверены внешние очереди через `gh`: и `gh issue list`, и `gh pr list --json number,title,headRefName,state` по-прежнему упираются в `HTTP 401`, поэтому GitHub queues сейчас недоступны без `gh auth login`.
-- [x] Через официальный `MOEX ISS` доверифицирована актуальная корзина `MOEXBC` на дату 2026-04-03; подтверждено, что после ноябрьской ребалансировки в живом составе было не покрыто только два тикера: `SNGS` и `X5`.
-- [x] Добавлен `scripts/moex_blue_chip_queue.py`, который берёт актуальный состав `MOEXBC` напрямую из `iss.moex.com` и показывает локальные пробелы покрытия без ручной сверки по PDF/factsheet.
-- [x] Реестр известных российских тикеров в `scripts/utils.py` расширен для `SNGS` и `X5`, чтобы будущие апдейты финансов и identity-проверки не зависели от legacy-эвристик.
-- [x] Добавлены новые MOEX-карточки `SNGS` и `X5`.
-- [x] Для `SNGS` и `X5` добавлены русскоязычные описания бизнеса, цепочки поставок и блоки клиентов/поставщиков.
-- [x] Пересобраны `themes/`, `WIKILINKS.md` и `network/` после закрытия текущей корзины `MOEXBC`; `scripts/moex_blue_chip_queue.py` теперь подтверждает полное покрытие живого состава `15/15`.
-- [x] На 2026-04-03 повторно проверены внешние очереди через `gh`: и `gh issue list`, и `gh pr list --json number,title,headRefName,state` по-прежнему упираются в `HTTP 401`, поэтому GitHub queues сейчас недоступны без `gh auth login`.
-- [x] `scripts/update_financials.py` и `scripts/utils.py` расширены реестром известных источников/alias для российских тикеров и проверкой identity, чтобы `T` не проваливался в нерелевантный тикер `AT&T`.
-- [x] Обновление финансов теперь допускает частичный успех источника: метаданные, сектор/отрасль и valuation snapshot можно подтянуть даже если `yfinance` не отдаёт полные таблицы отчётности.
-- [x] Для `T` найден и зафиксирован корректный источник `TCSG.ME`: карточка `Pilot_Reports/Financial Services/T_Т-Технологии.md` теперь заполняет капитализацию, EV и оценочные мультипликаторы из российского тикера.
-- [x] Для `TATN` подтверждён рабочий источник `TATN.ME`: карточка `Pilot_Reports/Energy/TATN_Татнефть.md` теперь заполняет сектор, капитализацию, EV, valuation snapshot и доступный годовой финансовый блок вместо пустого `N/A`.
-- [x] Добавлены новые RU-карточки `YDEX`, `T` и `OZON` и разложены по профильным секторам: `Internet Content & Information`, `Financial Services`, `Internet Retail`.
-- [x] Для `YDEX`, `T` и `OZON` добавлены русскоязычные описания бизнеса, цепочки поставок и блоки клиентов/поставщиков.
-- [x] `scripts/build_themes.py` расширен новыми российскими темами: `интернет-платформы`, `маркетплейсы`.
-- [x] Пересобраны `themes/`, `WIKILINKS.md` и `network/` после расширения RU-корпуса `YDEX`, `T`, `OZON`.
-- [x] Локальный аудит новых карточек `YDEX`, `T`, `OZON` пройден без замечаний.
-- [x] Повторно проверён внешний статус очередей на 2026-04-02: `gh pr list --json number,title,headRefName,state` вернул пустой список `[]`, `gh issue list` подтверждает, что GitHub Issues отключены.
-- [x] Уточнена следующая очередь ликвидных MOEX-тикеров по официальным источникам Московской биржи: по факту листа от 2025-11-27 и factsheet индекса голубых фишек от 2026-01-30 среди ещё не покрытых RU-карточками подтверждены `YDEX`, `T` и `OZON`.
-- [x] `scripts/build_themes.py` переведён к более явной mixed-навигации: российские темы теперь явно приоритизированы в `themes/README.md`, а legacy-тайваньские блоки ниже помечаются как legacy.
-- [x] Подтверждён внешний статус очередей: `gh pr list --json number,title,headRefName,state` вернул пустой список `[]`, `gh issue list` по-прежнему сообщает об отключённых GitHub Issues.
-- [x] Подтверждено, что в очереди ликвидных MOEX-тикеров из предыдущего TODO уже присутствуют `GMKN`, `MGNT`, `MTSS` и `TATN`; реально отсутствовали только `NVTK` и `NLMK`.
-- [x] Добавлены новые MOEX-карточки `NVTK` и `NLMK`.
-- [x] Для `NVTK` и `NLMK` добавлены русскоязычные описания бизнеса, цепочки поставок и блоки клиентов/поставщиков.
-- [x] Исправлена генерация метаданных в `scripts/add_ticker.py` и `scripts/utils.py`: пустой `enterprise_value`/`market_cap` теперь нормализуется в `N/A`, а не попадает в отчёты как `None`.
-- [x] Пересобраны `themes/`, `WIKILINKS.md` и `network/` после расширения MOEX-корпуса `NVTK` и `NLMK`.
-- [x] Подтверждён внешний статус очередей: `gh pr list` пуст, `gh issue list` возвращает отключённые GitHub Issues.
-- [x] Добавлены новые MOEX-карточки `PLZL`, `CHMF`, `MAGN`, `ALRS` и `IRAO`.
-- [x] Для `PLZL`, `CHMF`, `MAGN`, `ALRS` и `IRAO` добавлены русскоязычные описания бизнеса, цепочки поставок и блоки клиентов/поставщиков.
-- [x] `scripts/build_themes.py` расширен российскими темами: `золото`, `сталь`, `алмазы`, `электроэнергетика`.
-- [x] `scripts/utils.py`, `scripts/build_wikilink_index.py`, `scripts/build_network.py` и `scripts/audit_batch.py` научены корректно разбирать `[[wikilink|подпись]]`.
-- [x] Пересобраны `themes/`, `WIKILINKS.md` и `network/` после новой партии MOEX-эмитентов и исправления парсинга викалинков.
-- [x] Подтверждён внешний статус очередей: `gh pr list` пуст, `gh issue list` возвращает отключённые GitHub Issues.
-- [x] Добавлены новые MOEX-карточки `ROSN`, `TATN` и `VTBR`.
-- [x] Для `ROSN`, `TATN` и `VTBR` добавлены русскоязычные описания бизнеса, цепочки поставок и блоки клиентов/поставщиков.
-- [x] `TATN` перенесён из `Pilot_Reports/Unknown/` в `Pilot_Reports/Energy/`, чтобы не засорять неразмеченный сектор.
-- [x] Пересобраны `themes/`, `WIKILINKS.md` и `network/` после расширения MOEX-корпуса.
-- [x] Создан `TODO.md` как единый список текущих задач и статуса работ.
-- [x] Русифицированы и обогащены карточки `SBER` и `GAZP`: описание бизнеса, положение в цепочке поставок, клиенты и поставщики.
-- [x] В карточки российских эмитентов добавлены тематические `[[wikilinks]]` под российские реалии.
-- [x] `scripts/build_themes.py` расширен российскими темами: `банки`, `финтех`, `нефтегаз`, `природный газ`, `телеком`, `продуктовый ритейл`, `цветные металлы`, `экосистемы`.
-- [x] Пересобраны `themes/` и сгенерированы первые российские тематические страницы.
-- [x] Русифицированы CLI-сообщения и статусы в основных рабочих скриптах `scripts/*.py`, используемых в текущем российском workflow.
-- [x] Дорусифицированы `scripts/discover.py`, индекс викалинков и сетевой граф: help/CLI, smart-поиск по русским ключевым словам и нейтральная категория `local_company` вместо legacy `taiwan_company`.
-- [x] Пересобраны `WIKILINKS.md` и `network/graph_data.json` после обновления скриптов.
-- [x] `task.md` разделён на текущий российский workflow и legacy-архив тайваньских batch-задач.
-- [x] Генераторы в `scripts/generators/` проверены и явно помечены как legacy-утилиты тайваньского корпуса.
-- [x] Добавлены и обогащены новые MOEX-карточки `LKOH`, `MOEX` и `PHOR` с русским описанием бизнеса, цепочки поставок и контрагентов.
-- [x] `scripts/build_themes.py` расширен новыми российскими темами: `биржевая инфраструктура`, `финансовый рынок`, `удобрения`, `агрохимия`.
-- [x] Пересобраны `themes/`, `WIKILINKS.md` и `network/` после расширения российского корпуса.
+- [x] Сгенерирована следующая волна `MOEXBMI`: `AQUA` (Инарктика), `BELU` (НоваБев Групп), `ETLN` (Эталон), `EUTR` (ЕвроТранс), `DATA` (Аренадата) через `scripts/generate_moex_reports.py`.
+- [x] Обогащены карточки `AQUA`, `BELU`, `ETLN`, `EUTR`, `DATA`: добавлены русскоязычные описания бизнеса, положение в цепочке поставок, клиенты/поставщики и тематические `[[wikilinks]]`.
+- [x] `ETLN` перенесён в `Real Estate/`, `EUTR` — в `Industrials/`, `DATA` — в `Technology/`.
+- [x] `scripts/build_themes.py` расширен новыми российскими темами: `автомобилестроение`, `АЗС`, `конгломерат`, `программное обеспечение`.
+- [x] Пересобраны `themes/`, `WIKILINKS.md` и `network/` после расширения RU-корпуса; локальные проверки пройдены через `.venv/bin/python -m py_compile scripts/build_themes.py scripts/generate_moex_reports.py scripts/add_ticker.py scripts/utils.py scripts/build_wikilink_index.py scripts/build_network.py`.
+- [x] На 2026-04-09 повторно проверена очередь `MOEXBMI`: покрыто 17 из 20, остались `APTK`, `BAZA`, `ELFV`.
+- [x] На 2026-04-09 `gh issue list` и `gh pr list` по-прежнему недоступны без `gh auth login` (HTTP 401).
 
 ## Следующие действия
 
-- [ ] Продолжить следующую подочередь `MOEXBMI` после второй пятёрки: `AQUA`, `BELU`, `ETLN`, `EUTR`, `DATA`.
+- [ ] Продолжить следующую подочередь `MOEXBMI`: `APTK`, `BAZA`, `ELFV`.
 - [ ] Дожать источник финансовых данных для `X5`: карточка уже заведена по официальному составу `MOEXBC`, но текущий `yfinance` не отдаёт пригодные метаданные, valuation snapshot и финансовые таблицы.
 - [ ] Дожать источник финансовых данных для `YDEX` и `OZON`: текущий `yfinance` по-прежнему не отдаёт пригодные метаданные и финансовые таблицы даже после явных alias-кандидатов.
 - [ ] Найти источник полных финансовых таблиц для `T`: `TCSG.ME` уже даёт капитализацию, EV и valuation snapshot, но годовые и квартальные формы в `yfinance` остаются пустыми.
-- [ ] Продолжить перевод `themes/` к преобладающе российскому набору: следующими кандидатами идут `автомобилестроение`, `АЗС`, `конгломерат`, `программное обеспечение` и другие повторяющиеся русскоязычные `wikilinks`.
 - [ ] Рассмотреть архивацию legacy-тайваньского корпуса (1,734 файла) в отдельную директорию `Pilot_Reports_LEGACY/` для уменьшения шума в автогенерируемых артефактах.
 
 ## Внешние очереди
 
-- [ ] Открытые issues: на 2026-04-08 `gh issue list --repo denis-gordeev/My-RU-Coverage` недоступен без авторизации и возвращает `HTTP 401: Requires authentication`; нужна авторизация через `gh auth login` или публичная ручная перепроверка.
-- [ ] Открытые PR: на 2026-04-08 `gh pr list --repo denis-gordeev/My-RU-Coverage --json number,title,headRefName,state` недоступен без авторизации и возвращает `HTTP 401: Requires authentication`; нужна авторизация через `gh auth login` или публичная ручная перепроверка.
+- [ ] Открытые issues: на 2026-04-09 `gh issue list --repo denis-gordeev/My-RU-Coverage` недоступен без авторизации и возвращает `HTTP 401: Requires authentication`; нужна авторизация через `gh auth login` или публичная ручная перепроверка.
+- [ ] Открытые PR: на 2026-04-09 `gh pr list --repo denis-gordeev/My-RU-Coverage --json number,title,headRefName,state` недоступен без авторизации и возвращает `HTTP 401: Requires authentication`; нужна авторизация через `gh auth login` или публичная ручная перепроверка.
