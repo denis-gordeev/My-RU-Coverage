@@ -40,16 +40,16 @@ PLACEHOLDER_STRINGS = [
 ]
 
 REQUIRED_METADATA = [
-    [r"板塊:", r"Сектор:"],
-    [r"產業:", r"Отрасль:"],
-    [r"市值:", r"Рыночная капитализация:"],
-    [r"企業價值:", r"Стоимость предприятия \(EV\):"],
+    r"Сектор:",
+    r"Отрасль:",
+    r"Рыночная капитализация:",
+    r"Стоимость предприятия \(EV\):",
 ]
 REQUIRED_SECTIONS = [
-    r"## (?:Описание бизнеса|業務簡介)",
-    r"## (?:Положение в цепочке поставок|供應鏈位置)",
-    r"## (?:Ключевые клиенты и поставщики|主要客戶及供應商)",
-    r"## (?:Финансовый обзор|財務概況)",
+    r"## Описание бизнеса",
+    r"## Положение в цепочке поставок",
+    r"## Ключевые клиенты и поставщики",
+    r"## Финансовый обзор",
 ]
 
 ENGLISH_INDICATORS = [
@@ -69,16 +69,15 @@ def find_generic_wikilinks(wikilinks):
 
 def check_metadata(content):
     issues = []
-    for variants in REQUIRED_METADATA:
-        if not any(re.search(field, content) for field in variants):
-            issues.append(f"Отсутствует метадата: {variants[-1]}")
+    for field in REQUIRED_METADATA:
+        if not re.search(field, content):
+            issues.append(f"Отсутствует метадата: {field.rstrip(':')}")
         else:
             for line in content.split("\n"):
-                matched = next((field for field in variants if re.search(field, line)), None)
-                if matched:
-                    after_field = re.split(matched, line, maxsplit=1)[1].strip()
-                    if not after_field or "(待更新)" in line:
-                        issues.append(f"Пустая метадата: {variants[-1]}")
+                if re.search(field, line):
+                    after_field = re.split(field, line, maxsplit=1)[1].strip()
+                    if not after_field:
+                        issues.append(f"Пустая метадата: {field.rstrip(':')}")
                     break
     return issues
 
@@ -90,7 +89,7 @@ def check_sections(content):
 def check_section_depth(content):
     issues = []
     sc_match = re.search(
-        r"## (?:Положение в цепочке поставок|供應鏈位置)\n(.*?)(?=\n## (?:Ключевые клиенты и поставщики|主要客戶及供應商)|\Z)",
+        r"## Положение в цепочке поставок\n(.*?)(?=\n## Ключевые клиенты и поставщики|\Z)",
         content,
         re.DOTALL,
     )
@@ -100,7 +99,7 @@ def check_section_depth(content):
             issues.append(f"Слишком короткий блок цепочки поставок ({len(sc_lines)} строк)")
 
     cs_match = re.search(
-        r"## (?:Ключевые клиенты и поставщики|主要客戶及供應商)\n(.*?)(?=\n## (?:Финансовый обзор|財務概況)|\Z)",
+        r"## Ключевые клиенты и поставщики\n(.*?)(?=\n## Финансовый обзор|\Z)",
         content,
         re.DOTALL,
     )

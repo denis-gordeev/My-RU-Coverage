@@ -22,19 +22,9 @@ MARKET_PROFILES = {
         "price_symbol": "₽",
         "scope_label": "российский рынок",
     },
-    ".TW": {
-        "unit_label": "млн тайв. долл.",
-        "price_symbol": "NT$",
-        "scope_label": "тайваньский рынок",
-    },
-    ".TWO": {
-        "unit_label": "млн тайв. долл.",
-        "price_symbol": "NT$",
-        "scope_label": "тайваньский OTC-рынок",
-    },
 }
 
-DEFAULT_MARKET_SUFFIXES = [".ME", ".TW", ".TWO"]
+DEFAULT_MARKET_SUFFIXES = [".ME"]
 DEFAULT_UNIT_LABEL = MARKET_PROFILES[".ME"]["unit_label"]
 
 TICKER_SOURCE_OVERRIDES = {
@@ -85,20 +75,20 @@ ANNUAL_SECTION_TITLE = "### Ключевые финансовые показат
 QUARTERLY_SECTION_TITLE = "### Ключевые финансовые показатели по кварталам (4 квартала)"
 
 SECTION_HEADER_REGEX = {
-    "business": r"## (?:Описание бизнеса|業務簡介)",
-    "supply_chain": r"## (?:Положение в цепочке поставок|供應鏈位置)",
-    "customers": r"## (?:Ключевые клиенты и поставщики|主要客戶及供應商)",
-    "financial": r"## (?:Финансовый обзор|財務概況)",
-    "valuation": r"### (?:Оценочные мультипликаторы|估值指標)",
-    "annual": r"### (?:Ключевые финансовые показатели по годам \(3 года\)|年度關鍵財務數據 \(近 3 年\))",
-    "quarterly": r"### (?:Ключевые финансовые показатели по кварталам \(4 квартала\)|季度關鍵財務數據 \(近 4 季\))",
+    "business": r"## Описание бизнеса",
+    "supply_chain": r"## Положение в цепочке поставок",
+    "customers": r"## Ключевые клиенты и поставщики",
+    "financial": r"## Финансовый обзор",
+    "valuation": r"### Оценочные мультипликаторы",
+    "annual": r"### Ключевые финансовые показатели по годам \(3 года\)",
+    "quarterly": r"### Ключевые финансовые показатели по кварталам \(4 квартала\)",
 }
 
 METADATA_LABEL_PATTERNS = {
-    "sector": [r"\*\*Сектор:\*\*", r"\*\*板塊:\*\*"],
-    "industry": [r"\*\*Отрасль:\*\*", r"\*\*產業:\*\*"],
-    "market_cap": [r"\*\*Рыночная капитализация:\*\*", r"\*\*市值:\*\*"],
-    "enterprise_value": [r"\*\*Стоимость предприятия \(EV\):\*\*", r"\*\*企業價值:\*\*"],
+    "sector": [r"\*\*Сектор:\*\*"],
+    "industry": [r"\*\*Отрасль:\*\*"],
+    "market_cap": [r"\*\*Рыночная капитализация:\*\*"],
+    "enterprise_value": [r"\*\*Стоимость предприятия \(EV\):\*\*"],
 }
 
 
@@ -204,23 +194,8 @@ def setup_stdout():
 # =============================================================================
 
 # Canonical name mapping: alias -> canonical
-# Local companies use local naming, foreign companies use global naming.
+# Foreign companies: local-language aliases -> English canonical.
 WIKILINK_ALIASES = {
-    # Local market companies: English -> Chinese aliases kept for legacy corpus
-    "TSMC": "台積電", "MediaTek": "聯發科", "Foxconn": "鴻海",
-    "UMC": "聯電", "ASE": "日月光投控", "SPIL": "矽品",
-    "Pegatron": "和碩", "Compal": "仁寶", "Quanta": "廣達",
-    "Wistron": "緯創", "Inventec": "英業達",
-    "ASUS": "華碩", "Acer": "宏碁", "Realtek": "瑞昱",
-    "Novatek": "聯詠", "Himax": "奇景光電",
-    "AUO": "友達", "Innolux": "群創",
-    "Yageo": "國巨", "GlobalWafers": "環球晶",
-    "KYEC": "京元電子", "ChipMOS": "南茂",
-    "Unimicron": "欣興", "Delta": "台達電", "Lite-On": "光寶",
-    "Largan": "大立光", "CTCI": "中鼎", "PTI": "力成",
-    "WIN Semi": "穩懋", "Walsin": "華新科",
-    "日月光": "日月光投控",
-    # Foreign companies: local-language aliases -> English canonical
     "艾司摩爾": "ASML", "應用材料": "Applied Materials", "AMAT": "Applied Materials",
     "東京威力": "Tokyo Electron", "TEL": "Tokyo Electron",
     "科林研發": "Lam Research", "科磊": "KLA", "愛德萬": "Advantest",
