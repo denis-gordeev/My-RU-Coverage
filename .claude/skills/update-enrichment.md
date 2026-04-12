@@ -4,58 +4,58 @@ description: Update business descriptions, supply chain, and customer/supplier s
 user_invocable: true
 ---
 
-# Update Enrichment
+# Обновление обогащения
 
-Re-research and update the enrichment content (業務簡介, 供應鏈位置, 主要客戶及供應商) for existing ticker reports. Financial tables are preserved.
+Повторное исследование и обновление разделов обогащения (Описание бизнеса, Позиция в цепочке поставок, Основные клиенты и поставщики) для существующих отчётов. Финансовые таблицы сохраняются.
 
-## Usage
+## Использование
 
-- `/update-enrichment 2330` — single ticker
-- `/update-enrichment 2330 2317 3034` — multiple tickers
-- `/update-enrichment --batch 101` — all tickers in a batch
-- `/update-enrichment --sector Semiconductors` — entire sector folder
-- `/update-enrichment` — all tickers (will ask for confirmation first)
+- `/update-enrichment SBER` — один тикер
+- `/update-enrichment SBER YDEX OZON` — несколько тикеров
+- `/update-enrichment --batch 101` — все тикеры партии
+- `/update-enrichment --sector Financial Services` — весь сектор
+- `/update-enrichment` — все тикеры (запросит подтверждение)
 
-## Instructions
+## Инструкции
 
-### Step 1: Identify targets
+### Шаг 1: Определение целей
 
-Parse the user's scope from their message. If scope is "all" or very large (>50 tickers), ask for confirmation.
+Определите область действия из сообщения пользователя. Если область — «все» или очень большая (>50 тикеров), запросите подтверждение.
 
-### Step 2: Research
+### Шаг 2: Исследование
 
-For each ticker in scope:
-1. Read the current file to understand existing content
-2. Web search: `[Ticker] 法說會`, `[Ticker] 年報 主要客戶`, `[Company] supplier customer`
-3. **VERIFY**: company name in filename matches research (Golden Rule #2)
-4. Prepare enrichment with:
-   - `desc`: Traditional Chinese business description with [[wikilinks]] for companies, technologies, and materials
-   - `supply_chain`: Segmented upstream/midstream/downstream with specific names
-   - `cust`: Customers and suppliers by business segment with specific names
+Для каждого тикера:
+1. Прочитайте текущий файл, чтобы понять существующий контент
+2. Веб-поиск: `[Тикер] investor relations`, `[Тикер] годовая отчёт`, `[Компания] инвестпрезентация основные клиенты`
+3. **ПРОВЕРКА**: название компании в файле совпадает с исследованием (Золотое правило #2)
+4. Подготовьте обогащение:
+   - `desc`: Описание бизнеса на русском языке с [[викилинками]] для компаний, технологий и материалов
+   - `supply_chain`: Сегментированная цепочка поставок (поставщики/производство/клиенты) с конкретными названиями
+   - `cust`: Клиенты и поставщики по бизнес-сегментам с конкретными названиями
 
-### Step 3: Apply
+### Шаг 3: Применение
 
-Write enrichment data as a JSON file, then run:
-
-```bash
-cd "f:\My TW Coverage" && python scripts/update_enrichment.py --data enrichment.json [scope]
-```
-
-Scope options: `2330`, `2330 2317`, `--batch 101`, `--sector Semiconductors`, or omit for all entries in JSON.
-
-### Step 4: Audit
+Запишите данные обогащения в JSON-файл, затем запустите:
 
 ```bash
-python scripts/audit_batch.py <batch> -v
+python scripts/update_enrichment.py --data enrichment.json [область]
 ```
 
-Verify all targets pass (8+ wikilinks, no generics, no placeholders, no English).
+Опции области: `SBER`, `SBER YDEX`, `--batch 101`, `--sector Financial Services`, или пропустите для всех записей в JSON.
 
-### Quality Rules (from CLAUDE.md)
+### Шаг 4: Аудит
 
-- Every `[[wikilink]]` must be a specific proper noun
-- Minimum 8 wikilinks per file
-- Technology/material wikilinks equally important: `[[CoWoS]]`, `[[HBM]]`, `[[光阻液]]`, `[[碳化矽]]`
-- NO generic words inside brackets: 供應商, 客戶, 大廠, 企業
-- All content in Traditional Chinese
-- Supply chain must be segmented by category, not single-line stubs
+```bash
+python scripts/audit_batch.py <партия> -v
+```
+
+Проверьте, что все цели проходят (8+ викилинков, нет обобщений, нет placeholder'ов, нет английского).
+
+### Правила качества (из CLAUDE.md)
+
+- Каждый [[викилинк]] — конкретное имя собственное
+- Минимум 8 викилинков на файл
+- Технологические и материальные викилинки равнозначны: `[[Kubernetes]]`, `[[HBM]]`, `[[фоторезист]]`, `[[карбид кремния]]`
+- НЕТ общих слов в скобках: поставщик, клиент, компания, предприятие
+- Весь контент на русском языке
+- Цепочка поставок сегментирована по категориям, не однострочными заметками

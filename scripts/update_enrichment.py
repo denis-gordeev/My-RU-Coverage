@@ -1,18 +1,18 @@
 """
-update_enrichment.py — Update enrichment content (desc, supply chain, customers)
-in ticker reports. Preserves financial tables.
+update_enrichment.py — Обновление контента обогащения (описание, цепочка поставок, клиенты)
+в отчётах тикеров. Сохраняет финансовые таблицы.
 
-This script applies enrichment data from a JSON file or inline DATA dict
-to ticker report files. It replaces the business, supply-chain, and
-counterparty sections while preserving metadata and the financial block.
+Этот скрипт применяет данные обогащения из JSON-файла или встроенного словаря DATA
+к файлам отчётов тикеров. Заменяет разделы бизнеса, цепочки поставок и контрагентов,
+сохраняя метаданные и финансовый блок.
 
-Usage:
-  python scripts/update_enrichment.py --data enrichment.json          # From JSON file
-  python scripts/update_enrichment.py --data enrichment.json SBER     # Single ticker from JSON
+Использование:
+  python scripts/update_enrichment.py --data enrichment.json          # Из JSON-файла
+  python scripts/update_enrichment.py --data enrichment.json SBER     # Один тикер из JSON
   python scripts/update_enrichment.py --data enrichment.json --batch 101
   python scripts/update_enrichment.py --data enrichment.json --sector Energy
 
-JSON format:
+Формат JSON:
 {
   "SBER": {
     "desc": "Русскоязычное описание с [[wikilinks]]...",
@@ -21,10 +21,10 @@ JSON format:
   }
 }
 
-When called by Claude via /update-enrichment skill, Claude:
-1. Researches tickers via web search
-2. Writes enrichment.json
-3. Runs this script
+При вызове через Claude /update-enrichment skill, Claude:
+1. Исследует тикеры через веб-поиск
+2. Записывает enrichment.json
+3. Запускает этот скрипт
 """
 
 import os
@@ -41,7 +41,7 @@ from utils import (
 
 
 def apply_enrichment(filepath, ticker, data):
-    """Apply enrichment data to a single file. Preserves metadata and financials."""
+    """Применяет данные обогащения к одному файлу. Сохраняет метаданные и финансовые данные."""
     with open(filepath, "r", encoding="utf-8") as f:
         content = f.read()
 
@@ -106,7 +106,7 @@ def apply_enrichment(filepath, ticker, data):
 
 
 def load_enrichment_data(json_path):
-    """Load enrichment data from a JSON file."""
+    """Загружает данные обогащения из JSON-файла."""
     with open(json_path, "r", encoding="utf-8") as f:
         return json.load(f)
 

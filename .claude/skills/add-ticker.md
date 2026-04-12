@@ -4,55 +4,55 @@ description: Add a new ticker to the coverage database with financials and enric
 user_invocable: true
 ---
 
-# Add Ticker
+# Добавление тикера
 
-Add a new Taiwan-listed company to the coverage database. Generates the .md report file with financials, then researches and enriches it.
+Добавляет новую компанию, торгующуюся на Мосбирже (MOEX), в базу покрытия. Генерирует .md отчёт с финансовыми данными, затем исследует и обогащает его.
 
-## Usage
+## Использование
 
-- `/add-ticker 2330 台積電` — auto-detect sector from yfinance
-- `/add-ticker 2330 台積電 --sector Semiconductors` — specify sector
+- `/add-ticker SBER Сбер` — автоопределение сектора через yfinance
+- `/add-ticker SBER Сбер --sector Financial Services` — указать сектор вручную
 
-## Instructions
+## Инструкции
 
-### Step 1: Generate the base file
+### Шаг 1: Генерация базового файла
 
 ```bash
-cd "f:\My TW Coverage" && python scripts/add_ticker.py <ticker> <name> [--sector <sector>]
+python scripts/add_ticker.py <тикер> <название> [--sector <сектор>]
 ```
 
-This creates the .md file with metadata + financials from yfinance and placeholder enrichment sections.
+Создаёт .md файл с метаданными и финансовыми данными из yfinance (суффикс `.ME` для MOEX), а также placeholder-секции для обогащения.
 
-### Step 2: Research and enrich
+### Шаг 2: Исследование и обогащение
 
-After generating, research the company:
-1. Web search: `[Ticker] 法說會`, `[Ticker] 年報 主要客戶`, `[Company] supplier customer`
-2. **VERIFY**: the company name from filename matches your research (CLAUDE.md Golden Rule #2)
-3. Write enrichment data as JSON:
+После генерации исследуйте компанию:
+1. Веб-поиск: `[Тикер] investor relations`, `[Тикер] годовая отчёт`, `[Компания] инвестпрезентация`
+2. **ПРОВЕРКА**: название компании в файле совпадает с результатами исследования (Золотое правило CLAUDE #2)
+3. Запишите данные обогащения в формате JSON:
 
 ```json
 {
-  "XXXX": {
-    "desc": "Traditional Chinese description with [[wikilinks]]...",
-    "supply_chain": "**上游:**\n- ...\n**中游:**\n- ...\n**下游:**\n- ...",
-    "cust": "### 主要客戶\n- ...\n\n### 主要供應商\n- ..."
+  "SBER": {
+    "desc": "Описание бизнеса с [[викилинками]]...",
+    "supply_chain": "**Поставщики:**\n- ...\n**Производство:**\n- ...\n**Клиенты:**\n- ...",
+    "cust": "### Основные клиенты\n- ...\n\n### Основные поставщики\n- ..."
   }
 }
 ```
 
-4. Save to a temp file and apply:
+4. Сохраните во временный файл и примените:
 ```bash
-python scripts/update_enrichment.py --data /tmp/enrich.json <ticker>
+python scripts/update_enrichment.py --data /tmp/enrich.json <тикер>
 ```
 
-### Step 3: Audit
+### Шаг 3: Аудит
 
 ```bash
-python scripts/audit_batch.py --all -v 2>&1 | grep <ticker>
+python scripts/audit_batch.py --all -v 2>&1 | grep <тикер>
 ```
 
-Or just read the file and verify it meets Golden Rules (8+ wikilinks, no generics, no English).
+Или прочитайте файл и проверьте соответствие золотым правилам (8+ викилинков, нет обобщений, нет английского).
 
-### Step 4: Add to task.md if applicable
+### Шаг 4: Добавление в task.md (если применимо)
 
-If the ticker belongs to an existing batch, add it. Otherwise note it as a standalone addition.
+Если тикер принадлежит существующей партии, добавьте его. Иначе пометите как самостоятельное добавление.

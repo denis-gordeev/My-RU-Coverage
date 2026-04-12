@@ -1,17 +1,17 @@
 """
-update_valuation.py — Refresh ONLY the valuation multiples in ticker reports.
+update_valuation.py — Обновление ТОЛЬКО оценочных мультипликаторов в отчётах тикеров.
 
-Much faster than update_financials.py since it only fetches stock.info (no financial statements).
-Updates: P/E (TTM), Forward P/E, P/S, P/B, EV/EBITDA, stock price, and period dates.
-Preserves all other content including financial tables.
+Гораздо быстрее, чем update_financials.py, так как загружает только stock.info (без финансовых отчётов).
+Обновляет: P/E (TTM), Forward P/E, P/S, P/B, EV/EBITDA, цену акции и даты периодов.
+Сохраняет весь остальной контент, включая финансовые таблицы.
 
-Usage:
-  python scripts/update_valuation.py                     # ALL tickers
-  python scripts/update_valuation.py SBER                # Single ticker
-  python scripts/update_valuation.py SBER GAZP LKOH      # Multiple tickers
-  python scripts/update_valuation.py --batch 101         # By batch
-  python scripts/update_valuation.py --sector Energy     # By sector
-  python scripts/update_valuation.py --dry-run SBER      # Preview without writing
+Использование:
+  python scripts/update_valuation.py                     # ВСЕ тикеры
+  python scripts/update_valuation.py SBER                # Один тикер
+  python scripts/update_valuation.py SBER GAZP LKOH      # Несколько тикеров
+  python scripts/update_valuation.py --batch 101         # По пакету
+  python scripts/update_valuation.py --sector Energy     # По сектору
+  python scripts/update_valuation.py --dry-run SBER      # Предпросмотр без записи
 """
 
 import os
@@ -31,7 +31,7 @@ from utils import (
 
 
 def fetch_valuation(ticker):
-    """Fetch valuation multiples only. Tries local suffixes in priority order."""
+    """Загружает только оценочные мультипликаторы. Пробует суффиксы в приоритетном порядке."""
     for suffix in DEFAULT_MARKET_SUFFIXES:
         try:
             stock = yf.Ticker(f"{ticker}{suffix}")
@@ -65,7 +65,7 @@ def fetch_valuation(ticker):
 
 
 def update_file(filepath, ticker, dry_run=False):
-    """Update only the valuation section in a ticker file."""
+    """Обновляет только раздел оценки в файле тикера."""
     with open(filepath, "r", encoding="utf-8") as f:
         content = f.read()
 

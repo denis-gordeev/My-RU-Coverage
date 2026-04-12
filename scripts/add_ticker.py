@@ -1,17 +1,17 @@
 """
-add_ticker.py — Generate a new ticker report with financials and base structure.
+add_ticker.py — Генерация отчёта нового тикера с финансовыми данными и базовой структурой.
 
-Creates a new .md file under Pilot_Reports/{sector}/ with:
-- Title with wikilinked company name
-- Metadata (sector, industry, market cap, enterprise value)
-- Placeholder sections for enrichment
-- Financial tables from yfinance (annual 3yr + quarterly 4Q)
+Создаёт новый .md файл в Pilot_Reports/{сектор}/ с:
+- Заголовком с викилинком на название компании
+- Метаданными (сектор, отрасль, рыночная кап., стоимость предприятия)
+- Placeholder-секциями для обогащения
+- Финансовыми таблицами из yfinance (годовые 3г + квартальные 4кв)
 
-Usage:
-  python scripts/add_ticker.py GAZP Газпром                    # Auto-detect sector
-  python scripts/add_ticker.py GAZP Газпром --sector Energy    # Specify sector
+Использование:
+  python scripts/add_ticker.py GAZP Газпром                    # Автоопределение сектора
+  python scripts/add_ticker.py GAZP Газпром --sector Energy    # Указать сектор
 
-After generating, use update_enrichment.py to add business descriptions.
+После генерации используйте update_enrichment.py для добавления описаний бизнеса.
 """
 
 import os
@@ -30,7 +30,7 @@ from update_financials import fetch_financials, build_financial_section
 
 
 def generate_report(ticker, name, sector=None, industry=None):
-    """Generate a complete report file for a new ticker."""
+    """Генерирует полный файл отчёта для нового тикера."""
     # Fetch financial data (also gives us sector/industry if not specified)
     fin_data = fetch_financials(ticker)
 
@@ -39,8 +39,8 @@ def generate_report(ticker, name, sector=None, industry=None):
             sector = fin_data.get("sector", "Unknown")
         if not industry:
             industry = fin_data.get("industry", "Unknown")
-        market_cap = fin_data.get("market_cap") or "N/A"
-        enterprise_value = fin_data.get("enterprise_value") or "N/A"
+        market_cap = fin_data.get("market_cap") or "Н/Д"
+        enterprise_value = fin_data.get("enterprise_value") or "Н/Д"
         unit_label = fin_data.get("unit_label", "млн руб.")
         fin_section = build_financial_section(fin_data)
     else:
@@ -48,8 +48,8 @@ def generate_report(ticker, name, sector=None, industry=None):
             sector = "Unknown"
         if not industry:
             industry = "Unknown"
-        market_cap = "N/A"
-        enterprise_value = "N/A"
+        market_cap = "Н/Д"
+        enterprise_value = "Н/Д"
         unit_label = "млн руб."
         fin_section = (
             f"{FINANCIAL_SECTION_TITLE} (единицы: {unit_label}, маржа указана в %)\n"
@@ -79,7 +79,7 @@ def generate_report(ticker, name, sector=None, industry=None):
 
 
 def sanitize_folder_name(name):
-    """Clean up sector name for use as folder name."""
+    """Очищает название сектора для использования в имени папки."""
     # Replace characters that are problematic in Windows paths
     return re.sub(r'[<>:"/\\|?*]', "", name).strip()
 

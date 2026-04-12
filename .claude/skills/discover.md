@@ -1,90 +1,90 @@
 ---
 name: discover
-description: Reverse discovery — find Taiwan-listed companies related to a buzzword, with web research fallback when no results exist in the database
+description: Reverse discovery — find MOEX-listed companies related to a buzzword, with web research fallback when no results exist in the database
 user_invocable: true
 ---
 
-# Discover Companies by Buzzword
+# Поиск компаний по ключевым словам
 
-Find every Taiwan-listed company related to a keyword, technology, or trend. Two modes:
+Находит все компании на Мосбирже, связанные с ключевым словом, технологией или трендом. Два режима:
 
-1. **Database search** — instant scan of all 1,733 reports for existing mentions
-2. **Web research fallback** — when no results found, research online and enrich the database
+1. **Поиск по базе** — мгновенный скан всех отчётов на упоминания
+2. **Веб-исследование** — если результатов нет, поиск в интернете и обогащение базы
 
-## Usage
+## Использование
 
-- `/discover 液冷散熱` — find all companies mentioning liquid cooling
-- `/discover 核融合` — find companies related to nuclear fusion
-- `/discover CoWoS` — find the CoWoS supply chain
-- `/discover 鈣鈦礦` — find perovskite solar cell players
+- `/discover импортозамещение` — найти компании, связанные с импортозамещением
+- `/discover ядерная энергетика` — найти компании в сфере ядерной энергетики
+- `/discover AI серверы` — найти цепочку поставок AI-серверов
+- `/discover перовскит` — найти компании с перовскитными технологиями
 
-## Instructions
+## Инструкции
 
-### Step 1: Database Search
+### Шаг 1: Поиск по базе
 
-Run the discover script to scan existing reports:
+Запускает скрипт discover для сканирования существующих отчётов:
 
 ```bash
-cd "f:\My TW Coverage" && python scripts/discover.py "<BUZZWORD>"
+python scripts/discover.py "<КЛЮЧЕВОЕ_СЛОВО>"
 ```
 
-Report the results to the user: how many companies found, grouped by relationship type.
+Сообщите результаты: сколько компаний найдено, группировка по типу связи.
 
-### Step 2: If Results Found
+### Шаг 2: Если результаты найдены
 
-Ask the user:
-- "是否要將未標記的提及加上 [[wikilink]]？" (Apply wikilinks?)
-- If yes, run: `python scripts/discover.py "<BUZZWORD>" --apply --rebuild`
-- Report how many wikilinks were added and which files were updated.
+Спросите пользователя:
+- «Хотите добавить [[викилинки]] к ненайденным упоминаниям?»
+- Если да: `python scripts/discover.py "<КЛЮЧЕВОЕ_СЛОВО>" --apply --rebuild`
+- Сообщите, сколько викилинков добавлено и какие файлы обновлены.
 
-### Step 3: If NO Results Found (Web Research Fallback)
+### Шаг 3: Если результатов НЕТ (веб-исследование)
 
-This is the key differentiator. When the database has zero mentions:
+Ключевой сценарий. Когда база не содержит упоминаний:
 
-1. **Research the buzzword** using web search:
-   - Search: `"<BUZZWORD>" 台灣 上市 供應鏈 概念股`
-   - Search: `"<BUZZWORD>" Taiwan listed company supply chain`
-   - Search: `"<BUZZWORD>" 台股 相關個股`
+1. **Исследование ключевого слова** через веб-поиск:
+   - Поиск: `"<КЛЮЧЕВОЕ_СЛОВО>" Мосбиржа акции`
+   - Поиск: `"<КЛЮЧЕВОЕ_СЛОВО>" MOEX listed company`
+   - Поиск: `"<КЛЮЧЕВОЕ_СЛОВО>" российский рынок акции`
 
-2. **Identify companies** from search results. For each company found:
-   - Verify it exists in our database (match ticker or company name to a file in Pilot_Reports/)
-   - Note the relationship: supplier, manufacturer, customer, technology developer, etc.
+2. **Определение компаний** по результатам поиска:
+   - Проверьте, существует ли компания в базе (совпадение тикера или названия с файлом в Pilot_Reports/)
+   - Укажите тип связи: поставщик, производитель, клиент, разработчик технологии и т.д.
 
-3. **Present findings** to the user in a structured format:
+3. **Представьте результаты** в структурированном формате:
    ```
-   Web 研究結果：「<BUZZWORD>」相關台灣上市櫃公司
+   Результаты веб-исследования: компании, связанные с «<КЛЮЧЕВОЕ_СЛОВО>»
 
-   已在資料庫中：
-   - XXXX 公司名 (Sector) — 關係描述
-   - YYYY 公司名 (Sector) — 關係描述
+   Уже в базе:
+   - XXXX Название (Сектор) — описание связи
+   - YYYY Название (Сектор) — описание связи
 
-   不在資料庫中：
-   - ZZZZ 公司名 — 需要新增 ticker
+   Нет в базе:
+   - ZZZZ Название — нужно добавить тикер
    ```
 
-4. **Ask the user** which companies to update:
-   - "是否要將這些公司的報告加入「<BUZZWORD>」相關描述？"
-   - If yes, for each confirmed company:
-     a. Read the existing ticker .md file
-     b. Add the buzzword as a [[wikilink]] in the relevant section (業務簡介 or 供應鏈位置)
-     c. Preserve all existing content — only ADD, don't rewrite
-     d. Run wikilink normalization after writing
+4. **Спросите пользователя**, какие компании обновить:
+   - «Хотите добавить описание «<КЛЮЧЕВОЕ_СЛОВО>» в отчёты этих компаний?»
+   - Если да, для каждой подтверждённой компании:
+     a. Прочитайте существующий .md файл
+     b. Добавьте ключевое слово как [[викилинк]] в соответствующий раздел (Описание бизнеса or Позиция в цепочке поставок)
+     c. Сохраните весь существующий контент — только ДОБАВЛЯЙТЕ, не перезаписывайте
+     d. Запустите нормализацию викилинков после записи
 
-5. **Rebuild indexes** after all updates:
+5. **Пересоберите индексы** после всех обновлений:
    ```bash
-   cd "f:\My TW Coverage" && python scripts/discover.py "<BUZZWORD>" --rebuild
+   python scripts/discover.py "<КЛЮЧЕВОЕ_СЛОВО>" --rebuild
    ```
 
-### Step 4: Offer to Create Theme
+### Шаг 4: Предложите создать тему
 
-If the buzzword has 5+ related companies, offer:
-- "「<BUZZWORD>」有 N 家相關公司，是否要建立主題投資頁？"
-- If yes, add the buzzword to `THEME_DEFINITIONS` in `scripts/build_themes.py` and rebuild.
+Если 5+ компаний связаны с ключевым словом, предложите:
+- «У «<КЛЮЧЕВОЕ_СЛОВО>» N связанных компаний. Создать тематическую страницу?»
+- Если да, добавьте ключевое слово в `THEME_DEFINITIONS` в `scripts/build_themes.py` и пересоберите.
 
-## Quality Rules (from CLAUDE.md)
+## Правила качества (из CLAUDE.md)
 
-- The buzzword MUST be a specific proper noun or named technology — not a generic term
-- When editing ticker files, follow ALL Golden Rules (wikilink standards, no generic terms, etc.)
-- VERIFY company identity matches filename before editing
-- Preserve financial tables (財務概況) — never modify them
-- Run `python scripts/audit_batch.py --all` after bulk edits to verify no quality regressions
+- Ключевое слово ДОЛЖНО быть конкретным именем собственным или названной технологией — не общим термином
+- При редактировании файлов тикеров следуйте ВСЕМ золотым правилам (стандарты викилинков, нет обобщений, нет английского)
+- ПРОВЕРЬТЕ идентичность компании по имени файла перед редактированием
+- Сохраняйте финансовые таблицы — никогда их не изменяйте
+- Запустите `python scripts/audit_batch.py --all` после массовых правок для проверки качества

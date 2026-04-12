@@ -1,16 +1,16 @@
 """
-build_themes.py — Generate thematic investment screens from wikilink graph.
+build_themes.py — Генерация тематических инвестиционных экранов из графа викилинков.
 
-Scans all ticker reports for wikilinks, groups companies by theme (technology,
-material, application), and generates markdown pages showing the full value chain
-for each theme.
+Сканирует все отчёты тикеров на викилинки, группирует компании по темам (технология,
+материал, применение) и генерирует markdown-страницы с полной цепочкой создания
+для каждой темы.
 
-Usage:
-  python scripts/build_themes.py              # Rebuild all themes
-  python scripts/build_themes.py --list       # List available themes
-  python scripts/build_themes.py "CoWoS"      # Rebuild single theme
+Использование:
+  python scripts/build_themes.py              # Пересобрать все темы
+  python scripts/build_themes.py --list       # Список доступных тем
+  python scripts/build_themes.py "CoWoS"      # Пересобрать одну тему
 
-Output: themes/ folder with one .md per theme.
+Вывод: папка themes/ с одним .md на тему.
 """
 
 import os
@@ -419,7 +419,7 @@ def scan_wikilinks():
 
 
 def build_theme_page(theme_tag, theme_def, wl_map):
-    """Build a single theme markdown page."""
+    """Строит страницу темы в формате markdown."""
     entries = wl_map.get(theme_tag, [])
     if not entries:
         return None

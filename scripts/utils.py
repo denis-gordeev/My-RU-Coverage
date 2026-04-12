@@ -1,8 +1,9 @@
 """
-utils.py — Shared utilities for all scripts.
+utils.py — Общие утилиты для всех скриптов.
 
-Provides: file discovery, batch parsing, scope parsing, wikilink normalization,
-category classification, valuation table rendering, metadata updates.
+Обеспечивает: поиск файлов, разбор пакетов, определение области,
+нормализацию викилинков, классификацию категорий, рендер таблиц оценки,
+обновление метаданных.
 """
 
 import os
@@ -97,8 +98,8 @@ METADATA_LABEL_PATTERNS = {
 # =============================================================================
 
 def find_ticker_files(tickers=None, sector=None):
-    """Find report files matching given tickers or sector.
-    Returns dict: {ticker: filepath}
+    """Находит файлы отчётов по заданным тикерам или сектору.
+    Возвращает dict: {тикер: путь_к_файлу}
     """
     files = {}
     for fp in glob.glob(os.path.join(REPORTS_DIR, "**", "*.md"), recursive=True):
@@ -120,7 +121,7 @@ def find_ticker_files(tickers=None, sector=None):
 
 
 def get_ticker_from_filename(filepath):
-    """Extract ticker number and company name from a report filename."""
+    """Извлекает тикер и название компании из имени файла отчёта."""
     fn = os.path.basename(filepath)
     m = re.match(rf"^({TICKER_PATTERN})_(.+)\.md$", fn, re.IGNORECASE)
     if m:
@@ -133,7 +134,7 @@ def get_ticker_from_filename(filepath):
 # =============================================================================
 
 def get_batch_tickers(batch_num):
-    """Get ticker list for a batch from task.md."""
+    """Получает список тикеров для пакета из task.md."""
     try:
         with open(TASK_FILE, "r", encoding="utf-8") as f:
             content = f.read()
@@ -158,8 +159,8 @@ def get_batch_tickers(batch_num):
 
 
 def parse_scope_args(args):
-    """Parse CLI arguments into scope: tickers list, sector, or None (all).
-    Returns (tickers_list_or_None, sector_or_None, description_string)
+    """Разбирает аргументы CLI в область действия: список тикеров, сектор или None (все).
+    Возвращает (список_тикеров_или_None, сектор_или_None, строка_описания)
     """
     if not args:
         return None, None, "все тикеры"
@@ -184,7 +185,7 @@ def parse_scope_args(args):
 
 
 def setup_stdout():
-    """Configure stdout for UTF-8 on Windows."""
+    """Настраивает stdout для UTF-8 на Windows."""
     if sys.platform == "win32":
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
@@ -194,38 +195,42 @@ def setup_stdout():
 # =============================================================================
 
 # Canonical name mapping: alias -> canonical
-# Foreign companies: local-language aliases -> English canonical.
+# Russian market: Cyrillic aliases -> canonical names.
 WIKILINK_ALIASES = {
-    "艾司摩爾": "ASML", "應用材料": "Applied Materials", "AMAT": "Applied Materials",
-    "東京威力": "Tokyo Electron", "TEL": "Tokyo Electron",
-    "科林研發": "Lam Research", "科磊": "KLA", "愛德萬": "Advantest",
-    "英特爾": "Intel", "高通": "Qualcomm", "博通": "Broadcom",
-    "輝達": "NVIDIA", "美光": "Micron", "海力士": "SK Hynix",
-    "英飛凌": "Infineon", "恩智浦": "NXP", "瑞薩": "Renesas",
-    "德州儀器": "Texas Instruments", "意法半導體": "STMicroelectronics",
-    "安森美": "ON Semiconductor",
-    "蘋果": "Apple", "三星": "Samsung", "索尼": "Sony",
-    "谷歌": "Google", "微軟": "Microsoft", "特斯拉": "Tesla",
-    "亞馬遜": "Amazon", "戴爾": "Dell", "惠普": "HP",
-    "聯想": "Lenovo", "思科": "Cisco",
-    "新思": "Synopsys", "益華": "Cadence", "安謀": "Arm", "ARM": "Arm",
-    "博世": "Bosch", "電裝": "Denso",
-    "信越": "Shin-Etsu", "信越化學": "Shin-Etsu",
-    "Sumco": "SUMCO", "味之素": "Ajinomoto",
-    "西門子": "Siemens", "霍尼韋爾": "Honeywell", "漢威": "Honeywell",
-    "勞斯萊斯": "Rolls-Royce", "奇異": "GE Aerospace",
-    "耐吉": "Nike", "耐克": "Nike", "愛迪達": "Adidas", "戴森": "Dyson",
-    # Tech terms: standardize
-    "SiC": "碳化矽", "GaN": "氮化鎵", "InP": "磷化銦", "GaAs": "砷化鎵",
-    "共封裝光學": "CPO", "Co-Packaged Optics": "CPO",
-    "IoT": "物聯網", "EV": "電動車", "印刷電路板": "PCB",
+    # Российские компании: кириллические алиасы -> канонические имена
+    "Сбер": "SBER", "Сбербанк": "SBER",
+    "Газпром": "GAZP", "Газпром нефть": "GAZP",
+    "Яндекс": "YDEX", "МКПАО Яндекс": "YDEX",
+    "Лукойл": "LKOH", "Роснефть": "ROSN", "НОВАТЭК": "NVTK",
+    "Т-Технологии": "T", "Тинькофф": "T", "ТCS GROUP": "T",
+    "Татнефть": "TATN",
+    "Сургутнефтегаз": "SNGS",
+    "Дом.РФ": "DOMRF", "ДОМ.РФ": "DOMRF",
+    "Эталон": "ETLN",
+    "ЕвроТранс": "EUTR",
+    "Башнефть": "BANEP", "Башнефть ап": "BANEP",
+    "Озон": "OZON",
+    "ИКС 5": "X5", "X5 Group": "X5",
+    "Аптеки 36.6": "APTK", "Аптеки 36 и 6": "APTK",
+    "Астра": "ASTR",
+    "Циан": "CNRU",
+    "Аренадата": "DATA",
+    "БАЗИС": "BAZA",
+    "ЭЛ5-Энерго": "ELFV",
+    # Иностранные компании: русские алиасы -> английские канонические
+    "Эпл": "Apple", "Гугл": "Google", "Майкрософт": "Microsoft",
+    "Тесла": "Tesla", "Амазон": "Amazon",
+    # Технологические термины: стандартизация
+    "SiC": "карбид кремния", "GaN": "нитрид галлия", "InP": "фосфид индия", "GaAs": "арсенид галлия",
+    "IoT": "интернет вещей", "EV": "электромобиль",
+    "ПК": "PCB", "Печатная плата": "PCB",
 }
 
 
 def normalize_wikilinks(content):
-    """Normalize all wikilinks in content to canonical names.
-    Also collapses duplicate parentheticals like [[X]] ([[X]]).
-    Only operates on text before the financial section to protect tables.
+    """Нормализует все викилинки в контенте к каноническим именам.
+    Также схлопывает дубликаты с круглыми скобками вроде [[X]] ([[X]]).
+    Работает только на тексте до секции финансов для защиты таблиц.
     """
     split_parts = split_before_financial_section(content)
     if split_parts is None:
@@ -248,7 +253,7 @@ def normalize_wikilinks(content):
 
 
 def extract_wikilinks(content):
-    """Extract canonical wikilink targets, ignoring optional display aliases."""
+    """Извлекает канонические цели викилинков, игнорируя опциональные алиасы."""
     wikilinks = []
     for raw in re.findall(r"\[\[([^\]]+)\]\]", content):
         wikilinks.append(raw.split("|", 1)[0].strip())
@@ -260,28 +265,42 @@ def extract_wikilinks(content):
 # =============================================================================
 
 TECH_TERMS = {
-    "AI", "PCB", "5G", "HBM", "CoWoS", "InFO", "EUV", "CPO", "FOPLP",
+    "AI", "PCB", "5G", "HBM", "CoWoS", "EUV", "CPO", "FOPLP",
     "VCSEL", "EML", "MLCC", "MOSFET", "IGBT", "DRAM", "NAND", "SSD",
     "DDR5", "DDR4", "PCIe", "USB", "WiFi", "Bluetooth", "OLED", "AMOLED",
     "Mini LED", "Micro LED", "MCU", "SoC", "ASIC", "FPGA", "RF", "IC",
     "LED", "LCD", "TFT", "CMP", "CVD", "PVD", "ALD", "AOI", "SMT",
-    "BGA", "QFN", "SOP", "ABF 載板", "BT 載板", "ABF", "SerDes", "PMIC",
-    "LDO", "NOR Flash", "NAND Flash", "矽光子", "光收發模組",
+    "BGA", "QFN", "SOP", "SerDes", "PMIC",
+    "LDO", "NOR Flash", "NAND Flash",
+    "карбид кремния", "нитрид галлия", "фосфид индия", "арсенид галлия",
+    "кремниевая фотоника", "оптический трансивер",
+    "Astra Linux", "152-ФЗ", "ФСТЭК", "импортозамещение",
 }
 
 MATERIAL_TERMS = {
-    "碳化矽", "氮化鎵", "磷化銦", "砷化鎵", "矽晶圓", "銅箔", "玻纖布",
-    "光阻液", "研磨液", "超純水", "氦氣", "氖氣", "鈦酸鋇", "聚醯亞胺",
-    "導線架", "探針卡", "BT 樹脂", "銀漿", "銅漿", "氧化鋁",
+    "карбид кремния", "нитрид галлия", "фосфид индия", "арсенид галлия",
+    "кремниевая подложка", "медная фольга", "стеклоткань",
+    "фоторезист", "полировальная жидкость", "сверхчистая вода",
+    "гелий", "неон", "титанат бария", "полиимид",
+    "выводная рамка", "зондовая карта", "BT смола",
+    "серебряная паста", "медная паста", "оксид алюминия",
     "золото", "алмазы", "железная руда", "коксующийся уголь", "сталь",
 }
 
 APPLICATION_TERMS = {
-    "AI 伺服器", "電動車", "物聯網", "資料中心", "低軌衛星", "5G",
-    "智慧家庭", "車用電子", "消費電子", "綠能", "太陽能", "風電",
-    "儲能系統", "離岸風電", "自動駕駛", "智慧城市", "行車記錄器", "無人機",
+    "AI серверы", "электромобиль", "интернет вещей", "центр обработки данных",
+    "низкоорбитальный спутник", "5G",
+    "умный дом", "автомобильная электроника", "потребительская электроника",
+    "зелёная энергетика", "солнечная энергия", "ветроэнергетика",
+    "система хранения энергии", "офшорная ветроэнергетика", "автономное вождение",
+    "умный город", "видеорегистратор", "беспилотник",
     "электроэнергетика", "строительство", "машиностроение", "автопром",
     "трубная промышленность", "ювелирный рынок", "драгоценные металлы",
+    "САПР", "ЧПУ", "ИТ-компании", "ОРЭМ", "ДПМ", "АТС", "СО ЕЭС", "ЖКХ",
+    "Честный ЗНАК", "льготное лекарственное обеспечение", "дженерики", "биоаналоги",
+    "технологический суверенитет", "Байкал Электроник", "Эльбрус (процессор)",
+    "Р7-Офис", "МойОфис", "Selectel", "Yandex Cloud", "BaaS", "DRaaS",
+    "Авито Недвижимость", "Домклик", "ПИК", "Самолет", "ЕГРН", "ипотека",
 }
 
 CATEGORY_COLORS = {
@@ -302,7 +321,7 @@ CATEGORY_LABELS = {
 
 
 def is_local_language_name(s):
-    """Check if a string is primarily written in a local non-Latin script."""
+    """Проверяет, записана ли строка преимущественно на локальном нелатинском алфавите."""
     if not s:
         return False
 
@@ -312,7 +331,7 @@ def is_local_language_name(s):
 
 
 def classify_wikilink(name):
-    """Classify a wikilink into a category."""
+    """Классифицирует викилинк по категории."""
     if name in TECH_TERMS:
         return "technology"
     if name in MATERIAL_TERMS:
@@ -325,12 +344,12 @@ def classify_wikilink(name):
 
 
 def get_market_profile(suffix=None):
-    """Return unit/price settings for a ticker suffix."""
+    """Возвращает настройки единиц измерения для суффикса тикера."""
     return MARKET_PROFILES.get(suffix, MARKET_PROFILES[".ME"])
 
 
 def split_before_financial_section(content):
-    """Split content into pre-financial text and the financial section."""
+    """Разделяет контент на текст до финансовой секции и саму финансовую секцию."""
     match = re.search(SECTION_HEADER_REGEX["financial"], content)
     if not match:
         return None
@@ -342,8 +361,8 @@ def split_before_financial_section(content):
 # =============================================================================
 
 def fetch_valuation_data(info):
-    """Extract valuation multiples from yfinance info dict.
-    Returns dict with display values and metadata.
+    """Извлекает мультипликаторы оценки из словаря info yfinance.
+    Возвращает dict с отображаемыми значениями и метаданными.
     """
     valuation = {}
     for key, label in [
@@ -362,13 +381,12 @@ def fetch_valuation_data(info):
     currency = (info.get("currency") or "").upper()
     valuation["_currency_symbol"] = {
         "RUB": "₽",
-        "TWD": "NT$",
         "USD": "$",
         "EUR": "€",
         "CNY": "¥",
         "JPY": "¥",
         "HKD": "HK$",
-    }.get(currency, "$")
+    }.get(currency, "₽")
 
     # Period info
     mrq = info.get("mostRecentQuarter")
@@ -384,7 +402,7 @@ def fetch_valuation_data(info):
 
 
 def build_valuation_table(v):
-    """Build the valuation markdown section from valuation dict."""
+    """Строит раздел оценки оценки в формате markdown из словаря v."""
     headers = ["P/E (TTM)", "Forward P/E", "P/S (TTM)", "P/B", "EV/EBITDA"]
     values = [v.get(h, "N/A") for h in headers]
     widths = [max(len(h), len(val)) for h, val in zip(headers, values)]
@@ -411,9 +429,9 @@ def build_valuation_table(v):
 
 
 def update_metadata(content, market_cap, enterprise_value, unit_label=DEFAULT_UNIT_LABEL):
-    """Update market cap and EV metadata in file content."""
-    market_cap_value = market_cap if market_cap not in (None, "", "None") else "N/A"
-    enterprise_value_value = enterprise_value if enterprise_value not in (None, "", "None") else "N/A"
+    """Обновляет метаданные рыночной капитализации и стоимости предприятия в содержимом файла."""
+    market_cap_value = market_cap if market_cap not in (None, "", "None") else "Н/Д"
+    enterprise_value_value = enterprise_value if enterprise_value not in (None, "", "None") else "Н/Д"
 
     for pattern in METADATA_LABEL_PATTERNS["market_cap"]:
         content = re.sub(rf"({pattern}) .+", rf"\1 {market_cap_value} {unit_label}", content)
@@ -423,11 +441,11 @@ def update_metadata(content, market_cap, enterprise_value, unit_label=DEFAULT_UN
 
 
 def update_company_classification(content, sector=None, industry=None):
-    """Update sector and industry metadata when fresh values are available."""
-    if sector and sector not in {"", "N/A", "Unknown"}:
+    """Обновляет метаданные сектора и отрасли, когда доступны свежие значения."""
+    if sector and sector not in {"", "Н/Д", "Unknown"}:
         for pattern in METADATA_LABEL_PATTERNS["sector"]:
             content = re.sub(rf"({pattern}) .+", rf"\1 {sector}", content)
-    if industry and industry not in {"", "N/A", "Unknown"}:
+    if industry and industry not in {"", "Н/Д", "Unknown"}:
         for pattern in METADATA_LABEL_PATTERNS["industry"]:
             content = re.sub(rf"({pattern}) .+", rf"\1 {industry}", content)
     return content
@@ -438,8 +456,8 @@ def update_company_classification(content, sector=None, industry=None):
 # =============================================================================
 
 def replace_section(content, section_header, new_body, next_section_header=None):
-    """Replace content between section_header and next_section_header.
-    If next_section_header is None, replaces to end of file.
+    """Заменяет содержимое между section_header и next_section_header.
+    Если next_section_header равен None, заменяет до конца файла.
     """
     if next_section_header:
         pattern = rf"({re.escape(section_header)}\n)(.*?)(?=\n{re.escape(next_section_header)})"

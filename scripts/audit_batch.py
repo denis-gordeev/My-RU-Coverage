@@ -1,12 +1,12 @@
 """
-audit_batch.py — Quality audit for ticker reports.
+audit_batch.py — Контроль качества отчётов по тикерам.
 
-Checks: wikilink count, generic wikilinks, placeholders, English text,
-metadata completeness, section depth.
+Проверяет: количество викилинков, общие викилинки, плейсхолдеры, английский текст,
+полноту метаданных, глубину разделов.
 
-Usage:
-  python scripts/audit_batch.py <batch_number> [-v]     Audit a single batch
-  python scripts/audit_batch.py --all [-v]              Audit all completed batches
+Использование:
+  python scripts/audit_batch.py <номер_пакета> [-v]     Аудит одного пакета
+  python scripts/audit_batch.py --all [-v]              Аудит всех завершённых пакетов
 """
 
 import os
@@ -24,10 +24,9 @@ from utils import (
 MIN_WIKILINKS = 8
 
 GENERIC_WIKILINK_MARKERS = [
-    "大廠", "供應商", "客戶", "廠商", "原廠", "經銷商",
-    "製造商", "業者", "企業", "公司", "代理商", "品牌商",
-    "營運商", "貿易商", "通路商", "零售商", "承包商",
-    "開發商", "服務商", "整合商",
+    "поставщик", "клиент", "компания", "предприятие", "агент",
+    "производитель", "оператор", "разработчик", "сервис", "бренд",
+    "дистрибьютор", "ритейлер", "подрядчик", "интегратор",
 ]
 
 PLACEHOLDER_STRINGS = [
@@ -56,6 +55,7 @@ ENGLISH_INDICATORS = [
     "Business Description", "Inc.", "Ltd.", "manufactures",
     "provides", "is a company", "headquartered", "was founded",
     "specializes in", "engages in", "operates through",
+    "was established", "company is", "engaged in the business",
 ]
 def find_generic_wikilinks(wikilinks):
     generic = []
@@ -122,7 +122,7 @@ def check_english(content):
 
 
 def audit_ticker(content):
-    """Run all quality checks. Returns (is_clean, issues_list)."""
+    """Запускает все проверки качества. Возвращает (чисто, список_замечаний)."""
     issues = []
 
     if len(content) < 200:
@@ -156,7 +156,7 @@ def audit_ticker(content):
 
 
 def find_batch_files(tickers):
-    """Find files for a list of tickers."""
+    """Находит файлы для списка тикеров."""
     found = {}
     for root, dirs, files in os.walk(REPORTS_DIR):
         for file in files:
@@ -229,7 +229,7 @@ def audit_batch(batch_num, verbose=False):
 
 
 def audit_all_completed(verbose=False):
-    """Audit all batches marked [x] in task.md."""
+    """Аудирует все пакеты, отмеченные [x] в task.md."""
     try:
         with open(TASK_FILE, "r", encoding="utf-8") as f:
             content = f.read()

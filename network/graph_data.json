@@ -1,16 +1,16 @@
 {
   "nodes": [
     {
-      "id": "MOEX",
-      "count": 12,
-      "category": "international_company",
-      "color": "#3498db"
-    },
-    {
       "id": "Россия",
       "count": 12,
       "category": "local_company",
       "color": "#e74c3c"
+    },
+    {
+      "id": "MOEX",
+      "count": 12,
+      "category": "international_company",
+      "color": "#3498db"
     }
   ],
   "links": [

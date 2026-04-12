@@ -1,19 +1,19 @@
 """
-update_financials.py — Refresh financial tables in ticker reports.
+update_financials.py — Обновление финансовых таблиц в отчётах тикеров.
 
-Fetches latest annual (3yr) and quarterly (4Q) data from yfinance,
-then replaces ONLY the `## Финансовый обзор` section in each report file.
-All enrichment content (business description, supply chain, counterparties) is preserved.
+Загружает последние годовые (3 года) и квартальные (4 кв.) данные из yfinance,
+затем заменяет ТОЛЬКО раздел `## Финансовый обзор` в каждом файле отчёта.
+Весь контент обогащения (описание бизнеса, цепочка поставок, контрагенты) сохраняется.
 
-Usage:
-  python scripts/update_financials.py                  # Update ALL tickers
-  python scripts/update_financials.py SBER             # Single ticker
-  python scripts/update_financials.py SBER GAZP LKOH   # Multiple tickers
-  python scripts/update_financials.py --batch 101      # All tickers in a batch
-  python scripts/update_financials.py --sector Energy  # Entire sector
-  python scripts/update_financials.py --dry-run SBER   # Preview without writing
+Использование:
+  python scripts/update_financials.py                  # Обновить ВСЕ тикеры
+  python scripts/update_financials.py SBER             # Один тикер
+  python scripts/update_financials.py SBER GAZP LKOH   # Несколько тикеров
+  python scripts/update_financials.py --batch 101      # Все тикеры из пакета
+  python scripts/update_financials.py --sector Energy  # Весь сектор
+  python scripts/update_financials.py --dry-run SBER   # Предпросмотр без записи
 
-Units depend on the exchange suffix: `.ME` -> млн руб., `.TW/.TWO` -> млн тайв. долл.
+Единицы измерения зависят от суффикса биржи: `.ME` -> млн руб.
 """
 
 import os
@@ -49,22 +49,6 @@ METRICS_KEYS = {
 }
 
 METRIC_ROW_LABELS = {
-    "default": {
-        "Revenue": "Revenue",
-        "Gross Profit": "Gross Profit",
-        "Gross Margin (%)": "Gross Margin (%)",
-        "Selling & Marketing Exp": "Selling & Marketing Exp",
-        "R&D Exp": "R&D Exp",
-        "General & Admin Exp": "General & Admin Exp",
-        "Operating Income": "Operating Income",
-        "Operating Margin (%)": "Operating Margin (%)",
-        "Net Income": "Net Income",
-        "Net Margin (%)": "Net Margin (%)",
-        "Op Cash Flow": "Op Cash Flow",
-        "Investing Cash Flow": "Investing Cash Flow",
-        "Financing Cash Flow": "Financing Cash Flow",
-        "CAPEX": "CAPEX",
-    },
     ".ME": {
         "Revenue": "Выручка",
         "Gross Profit": "Валовая прибыль",
@@ -100,7 +84,7 @@ def calc_margin(numerator, denominator):
 
 
 def calc_admin_exp(income_stmt):
-    """Get G&A expense, falling back to SGA - Selling if G&A is missing."""
+    """Получает административные расходы, при отсутствии — вычисляет как SGA - Selling."""
     admin = get_series(income_stmt, METRICS_KEYS["admin_exp"])
     selling = get_series(income_stmt, METRICS_KEYS["selling_exp"])
     sga = get_series(income_stmt, ["Selling General And Administration"])
@@ -165,13 +149,13 @@ def extract_metrics(income_stmt, cashflow):
 
 
 def localize_metric_labels(df, suffix):
-    """Rename financial metric rows for market-specific report language."""
-    labels = METRIC_ROW_LABELS.get(suffix, METRIC_ROW_LABELS["default"])
+    """Переименовывает строки финансовых метрик в язык отчёта для конкретного рынка."""
+    labels = METRIC_ROW_LABELS.get(suffix, METRIC_ROW_LABELS[".ME"])
     return df.rename(index=labels)
 
 
 def get_source_candidates(ticker):
-    """Return ticker-specific finance source candidates in priority order."""
+    """Возвращает приоритизированный список кандидатов источников финансов для тикера."""
     override = TICKER_SOURCE_OVERRIDES.get(ticker, {})
     candidates = override.get("candidates")
     if candidates:
@@ -187,7 +171,7 @@ def infer_market_suffix(symbol):
 
 
 def is_identity_match(ticker, symbol, info):
-    """Reject obvious symbol collisions such as `T` -> AT&T."""
+    """Отклоняет очевидные совпадения символов, например `T` -> AT&T."""
     override = TICKER_SOURCE_OVERRIDES.get(ticker, {})
     keywords = override.get("identity_keywords", [])
     if not keywords:
@@ -224,13 +208,13 @@ def prepare_statement_df(df, suffix, max_columns):
 def score_source(data):
     annual_cols = 0 if data["annual"] is None else len(data["annual"].columns)
     quarterly_cols = 0 if data["quarterly"] is None else len(data["quarterly"].columns)
-    has_market_cap = 1 if data.get("market_cap") not in (None, "N/A") else 0
-    has_sector = 1 if data.get("sector") not in (None, "", "N/A", "Unknown") else 0
+    has_market_cap = 1 if data.get("market_cap") not in (None, "Н/Д") else 0
+    has_sector = 1 if data.get("sector") not in (None, "", "Н/Д", "Unknown") else 0
     return (annual_cols + quarterly_cols, has_market_cap, has_sector)
 
 
 def fetch_financials(ticker):
-    """Fetch financial data with ticker-specific source overrides and validation."""
+    """Загружает финансовые данные с проверкой приоритета источников."""
     override = TICKER_SOURCE_OVERRIDES.get(ticker, {})
     best_data = None
     best_score = (-1, -1, -1)
@@ -255,12 +239,12 @@ def fetch_financials(ticker):
             market_cap = (
                 f"{info['marketCap'] / 1_000_000:,.0f}"
                 if info.get("marketCap")
-                else "N/A"
+                else "Н/Д"
             )
             enterprise_value = (
                 f"{info['enterpriseValue'] / 1_000_000:,.0f}"
                 if info.get("enterpriseValue")
-                else "N/A"
+                else "Н/Д"
             )
 
             valuation = fetch_valuation_data(info)
@@ -291,7 +275,7 @@ def fetch_financials(ticker):
 
 
 def df_to_clean_markdown(df):
-    """Format DataFrame to markdown with .2f precision, then replace NaN with -."""
+    """Форматирует DataFrame в markdown с точностью .2f, затем заменяет NaN на -."""
     # Format numbers first while dtype is still float
     md = df.to_markdown(floatfmt=".2f")
     # Replace nan strings that to_markdown generates for NaN values

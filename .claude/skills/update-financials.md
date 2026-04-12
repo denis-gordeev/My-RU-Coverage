@@ -4,47 +4,47 @@ description: Update financial tables (annual 3yr + quarterly 4Q) for ticker repo
 user_invocable: true
 ---
 
-# Update Financials
+# Обновление финансовых данных
 
-Refresh the `## 財務概況` section in ticker reports with the latest financial data from yfinance. Also updates market cap and enterprise value in metadata.
+Обновляет секцию `## Финансовый обзор` в отчётах тикеров последними финансовыми данными из yfinance. Также обновляет рыночную капитализацию и стоимость предприятия в метаданных.
 
-**All enrichment content (業務簡介, 供應鏈, 客戶供應商) is preserved — only financials are replaced.**
+**Весь контент обогащения (Описание бизнеса, Цепочка поставок, Клиенты и поставщики) сохраняется — заменяются только финансовые данные.**
 
-## Usage
+## Использование
 
-The user can specify scope in their message:
+Пользователь может указать область действия в сообщении:
 
-- **All tickers**: `/update-financials` (no arguments — updates all 1,733 reports)
-- **Single ticker**: `/update-financials 2330`
-- **Multiple tickers**: `/update-financials 2330 2317 3034`
-- **By batch**: `/update-financials --batch 101`
-- **By sector**: `/update-financials --sector Semiconductors`
-- **Dry run**: add `--dry-run` to preview without writing
+- **Все тикеры**: `/update-financials` (без аргументов — обновляет все отчёты)
+- **Один тикер**: `/update-financials SBER`
+- **Несколько тикеров**: `/update-financials SBER YDEX OZON`
+- **По партии**: `/update-financials --batch 101`
+- **По сектору**: `/update-financials --sector Financial Services`
+- **Dry run**: добавьте `--dry-run` для предпросмотра без записи
 
-## Instructions
+## Инструкции
 
-1. Parse the user's arguments from their message.
-2. Run the update script:
+1. Разберите аргументы пользователя из сообщения.
+2. Запустите скрипт обновления:
 
 ```bash
-cd "f:\My TW Coverage" && python scripts/update_financials.py [ARGS]
+python scripts/update_financials.py [АРГУМЕНТЫ]
 ```
 
-3. Report results: how many updated, skipped, failed.
-4. If updating ALL tickers, warn the user this will take a while (~15-30 min for 1,733 tickers due to yfinance rate limits) and ask for confirmation before proceeding.
-5. After completion, ask if the user wants to commit the changes.
+3. Сообщите результаты: сколько обновлено, пропущено, с ошибками.
+4. При обновлении ВСЕХ тикеров предупредите пользователя о времени выполнения (~15-30 мин для ~60 тикеров из-за ограничений yfinance) и запросите подтверждение.
+5. После завершения спросите, хочет ли пользователь закоммитить изменения.
 
-## What Gets Updated
+## Что обновляется
 
-| Field | Source | Location |
+| Поле | Источник | Расположение |
 |---|---|---|
-| **市值** (Market Cap) | `stock.info['marketCap']` | Metadata block |
-| **企業價值** (Enterprise Value) | `stock.info['enterpriseValue']` | Metadata block |
-| **年度財務 (3yr)** | `stock.income_stmt` + `stock.cashflow` | `### 年度關鍵財務數據` table |
-| **季度財務 (4Q)** | `stock.quarterly_income_stmt` + `stock.quarterly_cashflow` | `### 季度關鍵財務數據` table |
+| **Рыночная кап.** (Market Cap) | `stock.info['marketCap']` | Блок метаданных |
+| **Стоимость предприятия** (Enterprise Value) | `stock.info['enterpriseValue']` | Блок метаданных |
+| **Годовые данные (3 года)** | `stock.income_stmt` + `stock.cashflow` | Таблица `### Годовые ключевые финансовые данные` |
+| **Квартальные данные (4 кв.)** | `stock.quarterly_income_stmt` + `stock.quarterly_cashflow` | Таблица `### Квартальные ключевые финансовые данные` |
 
-All monetary values in **百萬台幣** (Million NTD). Margins in **%**.
+Все денежные значения в **млн руб.** (для тикеров `.ME`). Маржинальность в **%**.
 
-## Metrics Tracked
+## Отслеживаемые метрики
 
-Revenue, Gross Profit, Gross Margin %, Selling & Marketing Exp, General & Admin Exp, Operating Income, Operating Margin %, Net Income, Net Margin %, Op Cash Flow, Investing Cash Flow, Financing Cash Flow, CAPEX.
+Выручка, Валовая прибыль, Маржинальность валовой прибыли %, Коммерческие расходы, Управленческие расходы, Операционная прибыль, Операционная маржинальность %, Чистая прибыль, Маржинальность чистой прибыли %, Операционный денежный поток, Инвестиционный денежный поток, Финансовый денежный поток, КАПЭКС.
