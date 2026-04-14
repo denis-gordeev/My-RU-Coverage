@@ -1,11 +1,10 @@
 """
-generate_moex_reports.py — Generate base MOEX reports from official ISS queues.
+generate_moex_reports.py — Генерация базовых MOEX-отчётов из официальной очереди ISS.
 
-Builds a live queue from MOEX ISS and creates missing placeholder reports via
-the Russian-localized add_ticker workflow instead of the legacy Taiwan batch
-generator.
+Формирует живую очередь из MOEX ISS и создаёт отсутствующие карточки через
+русскоязычный workflow add_ticker вместо устаревшего тайваньского генератора.
 
-Usage:
+Применение:
   python scripts/generate_moex_reports.py
   python scripts/generate_moex_reports.py --index MOEXBMI --top 5
   python scripts/generate_moex_reports.py DOMRF AKRN AFLT

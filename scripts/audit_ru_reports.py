@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Audit all Russian (MOEX) reports in Pilot_Reports/ for quality issues."""
+"""Аудит всех российских (MOEX) отчётов в Pilot_Reports/ на качество."""
 import os
 import re
 import sys
@@ -121,7 +121,7 @@ def main():
     if all_issues:
         sys.exit(1)
     else:
-        print("All reports pass quality checks.")
+        print("Все отчёты проходят проверку качества.")
         sys.exit(0)
 
 
