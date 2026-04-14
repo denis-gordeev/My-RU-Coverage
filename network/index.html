@@ -32,7 +32,7 @@
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
-const fullData = {"nodes": [{"id": "нефтегаз", "count": 7, "category": "local_company", "color": "#e74c3c"}, {"id": "MOEX", "count": 12, "category": "international_company", "color": "#3498db"}, {"id": "Россия", "count": 13, "category": "local_company", "color": "#e74c3c"}, {"id": "Московская биржа", "count": 16, "category": "local_company", "color": "#e74c3c"}], "links": [{"source": "MOEX", "target": "Россия", "weight": 12}, {"source": "MOEX", "target": "Московская биржа", "weight": 6}, {"source": "Московская биржа", "target": "Россия", "weight": 7}, {"source": "Россия", "target": "нефтегаз", "weight": 5}]};
+const fullData = {"nodes": [{"id": "нефтегаз", "count": 7, "category": "local_company", "color": "#e74c3c"}, {"id": "MOEX", "count": 12, "category": "international_company", "color": "#3498db"}, {"id": "Россия", "count": 13, "category": "local_company", "color": "#e74c3c"}, {"id": "Московская биржа", "count": 16, "category": "local_company", "color": "#e74c3c"}], "links": [{"source": "MOEX", "target": "Московская биржа", "weight": 6}, {"source": "MOEX", "target": "Россия", "weight": 12}, {"source": "Московская биржа", "target": "Россия", "weight": 7}, {"source": "Россия", "target": "нефтегаз", "weight": 5}]};
 const width = window.innerWidth, height = window.innerHeight;
 
 const svg = d3.select("svg");

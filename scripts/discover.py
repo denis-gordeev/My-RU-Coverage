@@ -32,8 +32,14 @@ from collections import defaultdict
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import REPORTS_DIR, PROJECT_ROOT, setup_stdout, TICKER_PATTERN, SECTION_HEADER_REGEX
 
-# Группы секторов для умной фильтрации
+# Группы секторов для умной фильтрации (русские названия папок)
 TECH_SECTORS = {
+    "Полупроводники", "Оборудование для полупроводников",
+    "Электронные компоненты", "Компьютерное оборудование", "Коммуникационное оборудование",
+    "Потребительская электроника", "Программное обеспечение — приложения", "Программное обеспечение — инфраструктура",
+    "Электроника и компьютерная дистрибуция", "ИТ-услуги",
+    "Научные и технические инструменты",
+    # Legacy English fallbacks (для обратной совместимости)
     "Semiconductors", "Semiconductor Equipment & Materials",
     "Electronic Components", "Computer Hardware", "Communication Equipment",
     "Consumer Electronics", "Software (Application)", "Software (Infrastructure)",
@@ -42,6 +48,12 @@ TECH_SECTORS = {
 }
 
 INDUSTRIAL_SECTORS = {
+    "Специальное промышленное оборудование", "Промышленная дистрибуция",
+    "Металлообработка", "Электрооборудование и детали",
+    "Контроль загрязнений", "Конгломераты",
+    "Инжиниринг и строительство", "Строительные продукты и оборудование",
+    "Инструменты и аксессуары", "Автозапчасти", "Аэрокосмическая оборона",
+    # Legacy English fallbacks
     "Specialty Industrial Machinery", "Industrial Distribution",
     "Metal Fabrication", "Electrical Equipment & Parts",
     "Pollution & Treatment Controls", "Conglomerates",
@@ -50,16 +62,28 @@ INDUSTRIAL_SECTORS = {
 }
 
 MATERIALS_SECTORS = {
+    "Химикаты", "Специальные химикаты", "Сталь", "Алюминий",
+    "Медь", "Прочие промышленные металлы и добыча",
+    # Legacy English fallbacks
     "Chemicals", "Specialty Chemicals", "Steel", "Aluminum",
     "Copper", "Other Industrial Metals & Mining",
 }
 
 ENERGY_SECTORS = {
+    "Солнечная энергетика", "Коммунальные услуги — возобновляемая",
+    "Коммунальные услуги — регулируемая электроэнергетика",
+    "Нефтегазовое оборудование и услуги",
+    # Legacy English fallbacks
     "Solar", "Utilities - Renewable", "Utilities - Regulated Electric",
     "Oil & Gas Equipment & Services",
 }
 
 CONSUMER_SECTORS = {
+    "Обувь и аксессуары", "Текстильное производство",
+    "Товары для дома и личной гигиены", "Упаковка и контейнеры",
+    "Мебель, фурнитура и бытовая техника", "Досуг",
+    "Рестораны", "Продуктовые магазины", "Специализированная розница",
+    # Legacy English fallbacks
     "Footwear & Accessories", "Textile Manufacturing",
     "Household & Personal Products", "Packaging & Containers",
     "Furnishings, Fixtures & Appliances", "Leisure",
@@ -67,12 +91,19 @@ CONSUMER_SECTORS = {
 }
 
 FINANCE_SECTORS = {
+    "Банки — диверсифицированные", "Банки — региональные", "Страхование — жизнь",
+    "Страхование — имущество и ответственность", "Рынки капитала",
+    "Финансовые — кредитные услуги", "Финансовые конгломераты",
+    # Legacy English fallbacks
     "Banks - Diversified", "Banks - Regional", "Insurance - Life",
     "Insurance - Property & Casualty", "Capital Markets",
     "Financial - Credit Services", "Financial Conglomerates",
 }
 
 REAL_ESTATE_SECTORS = {
+    "Недвижимость — девелопмент", "Недвижимость — диверсифицированная",
+    "REIT — диверсифицированные",
+    # Legacy English fallbacks
     "Real Estate - Development", "Real Estate - Diversified",
     "REIT - Diversified",
 }

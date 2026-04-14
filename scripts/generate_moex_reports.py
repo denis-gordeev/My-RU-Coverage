@@ -25,8 +25,8 @@ from utils import REPORTS_DIR, find_ticker_files, setup_stdout
 REPORT_OVERRIDES = {
     "DOMRF": {
         "name": "ДОМ.РФ",
-        "sector": "Financial Services",
-        "industry": "Credit Services",
+        "sector": "Финансовые услуги",
+        "industry": "Кредитные услуги",
     },
     "AKRN": {
         "name": "Акрон",
@@ -36,13 +36,13 @@ REPORT_OVERRIDES = {
     },
     "CBOM": {
         "name": "Московский кредитный банк",
-        "sector": "Financial Services",
-        "industry": "Banks - Regional",
+        "sector": "Финансовые услуги",
+        "industry": "Банки — региональные",
     },
     "BSPB": {
         "name": "Банк Санкт-Петербург",
-        "sector": "Financial Services",
-        "industry": "Banks - Regional",
+        "sector": "Финансовые услуги",
+        "industry": "Банки — региональные",
     },
     "AFKS": {
         "name": "АФК Система",

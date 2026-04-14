@@ -31,41 +31,126 @@ DEFAULT_UNIT_LABEL = MARKET_PROFILES[".ME"]["unit_label"]
 TICKER_SOURCE_OVERRIDES = {
     "SNGS": {
         "candidates": ["SNGS.ME"],
-        "sector": "Energy",
-        "industry": "Oil & Gas Integrated",
+        "sector": "Энергетика",
+        "industry": "Нефтегазовая интегрированная",
         "identity_keywords": ["Surgutneftegas", "Сургутнефтегаз"],
     },
     "YDEX": {
         "candidates": ["YDEX.ME", "YDEX"],
-        "sector": "Communication Services",
-        "industry": "Internet Content & Information",
+        "sector": "Связь",
+        "industry": "Интернет-контент и информация",
         "identity_keywords": ["Yandex", "Яндекс", "МКПАО Яндекс"],
     },
     "T": {
         "candidates": ["TCSG.ME"],
-        "sector": "Financial Services",
-        "industry": "Financial Conglomerates",
+        "sector": "Финансовые услуги",
+        "industry": "Финансовые конгломераты",
         "identity_keywords": ["T-Technologies", "TCS GROUP", "Т-Технологии"],
     },
     "OZON": {
         "candidates": ["OZON.ME", "OZON"],
-        "sector": "Consumer Cyclical",
-        "industry": "Internet Retail",
+        "sector": "Потребительские товары и услуги",
+        "industry": "Интернет-розница",
         "identity_keywords": ["Ozon", "Озон"],
     },
     "X5": {
         "candidates": ["X5.ME", "X5"],
-        "sector": "Consumer Defensive",
-        "industry": "Grocery Stores",
+        "sector": "Потребительские товары повседневного спроса",
+        "industry": "Продуктовые магазины",
         "identity_keywords": ["X5", "ИКС 5", "Корпоративный центр ИКС 5"],
     },
     "TATN": {
         "candidates": ["TATN.ME", "TATNP.ME"],
-        "sector": "Energy",
-        "industry": "Oil & Gas Integrated",
+        "sector": "Энергетика",
+        "industry": "Нефтегазовая интегрированная",
         "identity_keywords": ["Tatneft", "Татнефть"],
     },
 }
+
+# Маппинг английских названий секторов/отраслей на русские (для обратной совместимости и миграции)
+SECTOR_TRANSLATION = {
+    "Energy": "Энергетика",
+    "Financial Services": "Финансовые услуги",
+    "Communication Services": "Связь",
+    "Consumer Defensive": "Потребительские товары повседневного спроса",
+    "Consumer Cyclical": "Потребительские товары и услуги",
+    "Technology": "Технологии",
+    "Healthcare": "Здравоохранение",
+    "Industrials": "Промышленность",
+    "Basic Materials": "Основные материалы",
+    "Materials": "Материалы",
+    "Steel": "Сталь",
+    "Telecom Services": "Телекоммуникации",
+    "Real Estate": "Недвижимость",
+    "Real Estate Services": "Услуги в сфере недвижимости",
+    "Other Industrial Metals & Mining": "Прочие промышленные металлы и добыча",
+    "Agricultural Inputs": "Сельскохозяйственные ресурсы",
+    "Software - Application": "Программное обеспечение — приложения",
+    "Utilities - Regulated Electric": "Коммунальные услуги — регулируемая электроэнергетика",
+    "Utilities": "Коммунальные услуги",
+    "Grocery Stores": "Продуктовые магазины",
+    "Internet Retail": "Интернет-розница",
+    "Internet Content & Information": "Интернет-контент и информация",
+    "Unknown": "Не определено",
+}
+
+INDUSTRY_TRANSLATION = {
+    # Energy
+    "Oil & Gas Integrated": "Нефтегазовая интегрированная",
+    "Oil & Gas E&P": "Нефтегазовая разведка и добыча",
+    # Financial Services
+    "Banks - Regional": "Банки — региональные",
+    "Financial Conglomerates": "Финансовые конгломераты",
+    "Credit Services": "Кредитные услуги",
+    "Financial Data & Stock Exchanges": "Финансовые данные и фондовые биржи",
+    # Communication Services
+    "Telecom Services": "Телекоммуникационные услуги",
+    "Internet Content & Information": "Интернет-контент и информация",
+    # Consumer Defensive
+    "Grocery Stores": "Продуктовые магазины",
+    "Farm Products": "Сельскохозяйственная продукция",
+    "Beverages - Wineries & Distilleries": "Напитки — виноделие и ликёро-водочная продукция",
+    # Consumer Cyclical
+    "Internet Retail": "Интернет-розница",
+    "Discount Stores": "Магазины низких цен",
+    # Technology
+    "Software - Application": "Программное обеспечение — приложения",
+    "Software - Infrastructure": "Программное обеспечение — инфраструктура",
+    "Information Technology Services": "ИТ-услуги",
+    # Industrials
+    "Airlines": "Авиакомпании",
+    "Railroads": "Железные дороги",
+    # Materials / Basic Materials
+    "Aluminum": "Алюминий",
+    "Gold": "Золото",
+    "Steel": "Сталь",
+    "Agricultural Inputs": "Сельскохозяйственные ресурсы",
+    # Other Industrial Metals & Mining
+    "Other Industrial Metals & Mining": "Прочие промышленные металлы и добыча",
+    "Other Precious Metals & Mining": "Прочие драгоценные металлы и добыча",
+    # Real Estate
+    "Real Estate - Development": "Недвижимость — девелопмент",
+    "Real Estate Services": "Услуги в сфере недвижимости",
+    # Healthcare
+    "Pharmaceutical Retailers": "Аптечные сети",
+    # Utilities
+    "Utilities - Regulated Electric": "Коммунальные услуги — регулируемая электроэнергетика",
+    "Utilities - Renewable": "Коммунальные услуги — возобновляемая энергетика",
+}
+
+
+def translate_sector(sector: str) -> str:
+    """Переводит название сектора на русский, если есть в маппинге."""
+    if not sector:
+        return sector
+    return SECTOR_TRANSLATION.get(sector, sector)
+
+
+def translate_industry(industry: str) -> str:
+    """Переводит название отрасли на русский, если есть в маппинге."""
+    if not industry:
+        return industry
+    return INDUSTRY_TRANSLATION.get(industry, industry)
 
 BUSINESS_SECTION_TITLE = "## Описание бизнеса"
 SUPPLY_CHAIN_SECTION_TITLE = "## Положение в цепочке поставок"
@@ -441,11 +526,15 @@ def update_metadata(content, market_cap, enterprise_value, unit_label=DEFAULT_UN
 
 
 def update_company_classification(content, sector=None, industry=None):
-    """Обновляет метаданные сектора и отрасли, когда доступны свежие значения."""
+    """Обновляет метаданные сектора и отрасли, когда доступны свежие значения.
+    Автоматически переводит английские названия на русский.
+    """
     if sector and sector not in {"", "Н/Д", "Unknown"}:
+        sector = translate_sector(sector)
         for pattern in METADATA_LABEL_PATTERNS["sector"]:
             content = re.sub(rf"({pattern}) .+", rf"\1 {sector}", content)
     if industry and industry not in {"", "Н/Д", "Unknown"}:
+        industry = translate_industry(industry)
         for pattern in METADATA_LABEL_PATTERNS["industry"]:
             content = re.sub(rf"({pattern}) .+", rf"\1 {industry}", content)
     return content
