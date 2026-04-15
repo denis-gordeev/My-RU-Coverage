@@ -58,17 +58,6 @@ RU_THEME_TAGS = [
     "программное обеспечение",
 ]
 
-LEGACY_THEME_GROUPS = {
-    "Legacy / Тайвань: передовая упаковка": ["CoWoS", "HBM", "CPO"],
-    "Legacy / Тайвань: фотоника и compound semis": ["矽光子", "VCSEL", "碳化矽", "氮化鎵", "磷化銦"],
-    "Legacy / Тайвань: AI и дата-центры": ["AI 伺服器", "資料中心", "NVIDIA"],
-    "Legacy / Тайвань: электромобили и авто": ["電動車", "Tesla"],
-    "Legacy / Тайвань: связь": ["5G", "低軌衛星"],
-    "Legacy / Тайвань: процесс и оборудование": ["EUV"],
-    "Legacy / Тайвань: материалы": ["光阻液", "ABF 載板", "矽晶圓"],
-    "Legacy / Тайвань: брендовые цепочки": ["Apple"],
-}
-
 RU_PRIORITY_QUEUE = ["DOMRF", "AKRN", "AFLT", "CBOM", "BSPB"]
 
 # Curated themes with supply chain role hints
@@ -230,120 +219,7 @@ THEME_DEFINITIONS = {
         "desc": "Российские разработчики ОС, СУБД, офисных и корпоративных решений, ориентированные на импортозамещение",
         "related": ["импортозамещение", "кибербезопасность", "интернет-платформы"],
     },
-    # === Advanced Packaging ===
-    "CoWoS": {
-        "name": "CoWoS 先進封裝",
-        "desc": "台積電 Chip-on-Wafer-on-Substrate 2.5D 先進封裝技術，AI 晶片關鍵製程",
-        "related": ["HBM", "2.5D 封裝", "3D 封裝", "ABF 載板", "矽中介層"],
-    },
-    "HBM": {
-        "name": "HBM 高頻寬記憶體",
-        "desc": "High Bandwidth Memory，AI 加速器必備的高速堆疊記憶體",
-        "related": ["CoWoS", "AI 伺服器", "DRAM"],
-    },
-    "CPO": {
-        "name": "CPO 共封裝光學",
-        "desc": "Co-Packaged Optics，將光學元件整合於晶片封裝中以突破頻寬瓶頸",
-        "related": ["矽光子", "光收發模組", "AI 伺服器", "資料中心"],
-    },
-    # === Photonics ===
-    "矽光子": {
-        "name": "矽光子 Silicon Photonics",
-        "desc": "以矽基製程整合光學元件，實現高速光互連，下一代資料中心核心技術",
-        "related": ["CPO", "EML", "VCSEL", "光收發模組", "資料中心"],
-    },
-    "VCSEL": {
-        "name": "VCSEL 垂直共振腔面射型雷射",
-        "desc": "3D 感測、光通訊及 LiDAR 核心光源元件",
-        "related": ["矽光子", "光收發模組", "砷化鎵"],
-    },
-    # === Compound Semiconductors ===
-    "碳化矽": {
-        "name": "碳化矽 SiC",
-        "desc": "第三代半導體材料，耐高壓高溫，電動車逆變器及充電樁關鍵材料",
-        "related": ["電動車", "MOSFET", "IGBT", "氮化鎵"],
-    },
-    "氮化鎵": {
-        "name": "氮化鎵 GaN",
-        "desc": "第三代半導體材料，高頻高效，5G 基站、快充及衛星通訊核心",
-        "related": ["5G", "碳化矽", "磷化銦"],
-    },
-    "磷化銦": {
-        "name": "磷化銦 InP",
-        "desc": "III-V 族化合物半導體，光通訊雷射及高速光電元件基板材料",
-        "related": ["矽光子", "EML", "光收發模組", "砷化鎵"],
-    },
-    # === AI / Data Center ===
-    "AI 伺服器": {
-        "name": "AI 伺服器供應鏈",
-        "desc": "AI 訓練與推論伺服器完整供應鏈，從晶片到系統到散熱",
-        "related": ["CoWoS", "HBM", "NVIDIA", "CPO", "資料中心"],
-    },
-    "資料中心": {
-        "name": "資料中心供應鏈",
-        "desc": "超大規模資料中心基礎設施，涵蓋伺服器、網通、電源、散熱",
-        "related": ["AI 伺服器", "CPO", "矽光子", "PCB"],
-    },
-    # === EV / Automotive ===
-    "電動車": {
-        "name": "電動車供應鏈",
-        "desc": "電動車完整供應鏈，從電池材料到功率元件到車用電子",
-        "related": ["碳化矽", "IGBT", "MOSFET", "車用電子"],
-    },
-    # === Applications ===
-    "5G": {
-        "name": "5G 通訊供應鏈",
-        "desc": "5G 基礎建設與終端應用，涵蓋基站、天線、射頻前端、濾波器",
-        "related": ["氮化鎵", "RF", "低軌衛星"],
-    },
-    "低軌衛星": {
-        "name": "低軌衛星 LEO Satellite",
-        "desc": "低軌道衛星通訊供應鏈，天線、地面站、射頻模組",
-        "related": ["5G", "氮化鎵", "RF"],
-    },
-    # === Process / Equipment ===
-    "EUV": {
-        "name": "EUV 極紫外光微影",
-        "desc": "先進製程關鍵微影技術，7nm 以下節點必備",
-        "related": ["光阻液", "ASML"],
-    },
-    # === Materials ===
-    "光阻液": {
-        "name": "光阻液 Photoresist",
-        "desc": "半導體微影製程關鍵化學材料",
-        "related": ["EUV", "微影"],
-    },
-    "ABF 載板": {
-        "name": "ABF 載板",
-        "desc": "Ajinomoto Build-up Film 載板，高階 IC 封裝基板",
-        "related": ["CoWoS", "AI 伺服器", "PCB"],
-    },
-    "矽晶圓": {
-        "name": "矽晶圓",
-        "desc": "半導體製造最基礎的原材料",
-        "related": ["碳化矽", "磊晶"],
-    },
-    # === Key customers (cross-industry) ===
-    "Apple": {
-        "name": "Apple 蘋果供應鏈",
-        "desc": "蘋果公司台灣供應鏈成員",
-        "related": ["台積電", "鴻海"],
-    },
-    "NVIDIA": {
-        "name": "NVIDIA 輝達供應鏈",
-        "desc": "NVIDIA GPU 及 AI 平台台灣供應鏈",
-        "related": ["CoWoS", "HBM", "AI 伺服器", "台積電"],
-    },
-    "Tesla": {
-        "name": "Tesla 特斯拉供應鏈",
-        "desc": "特斯拉電動車台灣供應鏈成員",
-        "related": ["電動車", "碳化矽"],
-    },
 }
-
-
-def is_ru_theme(theme_tag):
-    return theme_tag in RU_THEME_TAGS
 
 
 def ru_plural(value, form1, form2, form5):
@@ -429,12 +305,8 @@ def build_theme_page(theme_tag, theme_def, wl_map):
     lines.append("")
     lines.append(f"> {theme_def['desc']}")
     lines.append("")
-    if is_ru_theme(theme_tag):
-        lines.append("**Контур:** активная российская тема | [Ко всем темам](README.md)")
-        lines.append("")
-    else:
-        lines.append("**Контур:** legacy-архив для обратной совместимости | [Ко всем темам](README.md)")
-        lines.append("")
+    lines.append("**Контур:** активная российская тема | [Ко всем темам](README.md)")
+    lines.append("")
     entry_count = len(entries)
     lines.append(f"**Количество компаний:** {entry_count} {ru_plural(entry_count, 'компания', 'компании', 'компаний')}")
     lines.append("")
@@ -503,20 +375,16 @@ def build_theme_page(theme_tag, theme_def, wl_map):
 def build_index(themes_built):
     """Build themes/README.md index."""
     lines = []
-    legacy_theme_tags = []
-    for tags in LEGACY_THEME_GROUPS.values():
-        legacy_theme_tags.extend(tags)
     ru_built = sum(1 for tag in RU_THEME_TAGS if tag in themes_built)
-    legacy_built = sum(1 for tag in legacy_theme_tags if tag in themes_built)
     ru_total_companies = sum(themes_built[tag] for tag in RU_THEME_TAGS if tag in themes_built)
 
     lines.append("# Тематические подборки")
     lines.append("")
     lines.append("> Автогенерируемые карты цепочек стоимости и смежных компаний.")
-    lines.append("> Навигация собрана с российским приоритетом: сначала активный RU-контур, ниже сохранён legacy-тайваньский корпус для обратной совместимости.")
+    lines.append("> Навигация собрана с российским приоритетом: только российские темы.")
     lines.append("> Пересборка: `python scripts/build_themes.py`")
     lines.append("")
-    lines.append(f"> Российских тем в индексе: {ru_built}. Legacy/global тем: {legacy_built}.")
+    lines.append(f"> Тем в индексе: {ru_built}.")
     lines.append("")
     lines.append("---")
     lines.append("")
@@ -527,7 +395,6 @@ def build_index(themes_built):
         f"и {ru_total_companies} тематических вхождений компаний."
     )
     lines.append(f"- Следующая автоматическая очередь `MOEXBMI`: {', '.join(f'`{ticker}`' for ticker in RU_PRIORITY_QUEUE)}.")
-    lines.append("- Legacy-разделы убраны в архивную нижнюю часть индекса и не считаются приоритетом для новых automation round.")
     lines.append("")
 
     lines.append("## Российский рынок")
@@ -538,22 +405,6 @@ def build_index(themes_built):
             safe_name = tag.replace(" ", "_").replace("/", "_")
             lines.append(f"- [{tag}]({safe_name}.md) — {count} {ru_plural(count, 'компания', 'компании', 'компаний')}")
     lines.append("")
-    lines.append("---")
-    lines.append("")
-    lines.append("## Архивный legacy-корпус")
-    lines.append("")
-    lines.append("> Ниже сохранены старые тайваньские и global-темы. Они остаются доступными как справочник, но больше не формируют верхнюю навигацию российского workflow.")
-    lines.append("")
-
-    for cat_name, tags in LEGACY_THEME_GROUPS.items():
-        lines.append(f"### {cat_name}")
-        lines.append("")
-        for tag in tags:
-            if tag in themes_built:
-                count = themes_built[tag]
-                safe_name = tag.replace(" ", "_").replace("/", "_")
-                lines.append(f"- [{tag}]({safe_name}.md) — {count} {ru_plural(count, 'компания', 'компании', 'компаний')}")
-        lines.append("")
 
     return "\n".join(lines)
 
