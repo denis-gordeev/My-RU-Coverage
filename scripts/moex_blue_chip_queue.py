@@ -1,12 +1,13 @@
 """
-moex_blue_chip_queue.py — Inspect official MOEX constituent baskets via ISS.
+moex_blue_chip_queue.py — Проверка официальных корзин MOEX через ISS.
 
-Shows the current constituents for one or more MOEX indices and highlights
-which tickers do not yet have local coverage reports in Pilot_Reports/.
-By default, combines the fully covered blue-chip basket (MOEXBC) with the
-broader liquid market basket (MOEXBMI) to surface the next coverage wave.
+Показывает актуальный состав одного или нескольких индексов MOEX и отмечает,
+для каких тикеров в `Pilot_Reports/` ещё нет локальных карточек покрытия.
+По умолчанию объединяет полностью покрытую корзину голубых фишек (`MOEXBC`)
+и более широкий ликвидный индекс (`MOEXBMI`), чтобы сформировать следующую
+очередь для исследования.
 
-Usage:
+Использование:
   python scripts/moex_blue_chip_queue.py
   python scripts/moex_blue_chip_queue.py --index MOEXBC
   python scripts/moex_blue_chip_queue.py --index MOEXBMI --date 2026-04-03

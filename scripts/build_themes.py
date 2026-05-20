@@ -8,7 +8,7 @@ build_themes.py — Генерация тематических инвестиц
 Использование:
   python scripts/build_themes.py              # Пересобрать все темы
   python scripts/build_themes.py --list       # Список доступных тем
-  python scripts/build_themes.py "CoWoS"      # Пересобрать одну тему
+  python scripts/build_themes.py "нефтегаз"   # Пересобрать одну тему
 
 Вывод: папка themes/ с одним .md на тему.
 """
@@ -60,8 +60,8 @@ RU_THEME_TAGS = [
 
 RU_PRIORITY_QUEUE = ["DOMRF", "AKRN", "AFLT", "CBOM", "BSPB"]
 
-# Curated themes with supply chain role hints
-# Format: theme_wikilink -> { display_name, description, related_tags }
+# Кураторские определения тем и связанных тегов.
+# Формат: theme_wikilink -> { name, desc, related }
 THEME_DEFINITIONS = {
     # === Russia / CIS market themes ===
     "банки": {
@@ -235,7 +235,7 @@ def ru_plural(value, form1, form2, form5):
 
 
 def scan_wikilinks():
-    """Scan all reports, return {wikilink: [(ticker, company, sector, context)]}."""
+    """Просканировать все отчёты и вернуть карту викалинков с контекстом."""
     wl_map = defaultdict(list)
 
     for sector_dir in os.listdir(REPORTS_DIR):
@@ -253,7 +253,7 @@ def scan_wikilinks():
             with open(filepath, "r", encoding="utf-8") as fh:
                 content = fh.read()
 
-            # Split content into sections for context
+            # Делим текст на секции, чтобы сохранить контекст упоминаний.
             sections = {
                 "desc": "",
                 "supply_chain": "",
