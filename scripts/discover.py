@@ -39,12 +39,7 @@ TECH_SECTORS = {
     "Потребительская электроника", "Программное обеспечение — приложения", "Программное обеспечение — инфраструктура",
     "Электроника и компьютерная дистрибуция", "ИТ-услуги",
     "Научные и технические инструменты",
-    # Legacy English fallbacks (для обратной совместимости)
-    "Semiconductors", "Semiconductor Equipment & Materials",
-    "Electronic Components", "Computer Hardware", "Communication Equipment",
-    "Consumer Electronics", "Software (Application)", "Software (Infrastructure)",
-    "Electronics & Computer Distribution", "Information Technology Services",
-    "Scientific & Technical Instruments",
+    "Технологии", "Связь",
 }
 
 INDUSTRIAL_SECTORS = {
@@ -53,29 +48,20 @@ INDUSTRIAL_SECTORS = {
     "Контроль загрязнений", "Конгломераты",
     "Инжиниринг и строительство", "Строительные продукты и оборудование",
     "Инструменты и аксессуары", "Автозапчасти", "Аэрокосмическая оборона",
-    # Legacy English fallbacks
-    "Specialty Industrial Machinery", "Industrial Distribution",
-    "Metal Fabrication", "Electrical Equipment & Parts",
-    "Pollution & Treatment Controls", "Conglomerates",
-    "Engineering & Construction", "Building Products & Equipment",
-    "Tools & Accessories", "Auto Parts", "Aerospace & Defense",
+    "Промышленность",
 }
 
 MATERIALS_SECTORS = {
     "Химикаты", "Специальные химикаты", "Сталь", "Алюминий",
     "Медь", "Прочие промышленные металлы и добыча",
-    # Legacy English fallbacks
-    "Chemicals", "Specialty Chemicals", "Steel", "Aluminum",
-    "Copper", "Other Industrial Metals & Mining",
+    "Основные материалы",
 }
 
 ENERGY_SECTORS = {
     "Солнечная энергетика", "Коммунальные услуги — возобновляемая",
     "Коммунальные услуги — регулируемая электроэнергетика",
     "Нефтегазовое оборудование и услуги",
-    # Legacy English fallbacks
-    "Solar", "Utilities - Renewable", "Utilities - Regulated Electric",
-    "Oil & Gas Equipment & Services",
+    "Энергетика", "Коммунальные услуги",
 }
 
 CONSUMER_SECTORS = {
@@ -83,29 +69,20 @@ CONSUMER_SECTORS = {
     "Товары для дома и личной гигиены", "Упаковка и контейнеры",
     "Мебель, фурнитура и бытовая техника", "Досуг",
     "Рестораны", "Продуктовые магазины", "Специализированная розница",
-    # Legacy English fallbacks
-    "Footwear & Accessories", "Textile Manufacturing",
-    "Household & Personal Products", "Packaging & Containers",
-    "Furnishings, Fixtures & Appliances", "Leisure",
-    "Restaurants", "Grocery Stores", "Specialty Retail",
+    "Потребительские товары повседневного спроса", "Потребительские товары и услуги",
 }
 
 FINANCE_SECTORS = {
     "Банки — диверсифицированные", "Банки — региональные", "Страхование — жизнь",
     "Страхование — имущество и ответственность", "Рынки капитала",
     "Финансовые — кредитные услуги", "Финансовые конгломераты",
-    # Legacy English fallbacks
-    "Banks - Diversified", "Banks - Regional", "Insurance - Life",
-    "Insurance - Property & Casualty", "Capital Markets",
-    "Financial - Credit Services", "Financial Conglomerates",
+    "Финансовые услуги",
 }
 
 REAL_ESTATE_SECTORS = {
     "Недвижимость — девелопмент", "Недвижимость — диверсифицированная",
     "REIT — диверсифицированные",
-    # Legacy English fallbacks
-    "Real Estate - Development", "Real Estate - Diversified",
-    "REIT - Diversified",
+    "Недвижимость",
 }
 
 # Карта профилей: тип темы -> какие группы секторов искать
@@ -118,20 +95,18 @@ SMART_PROFILES = {
 
 # Подсказки для автоопределения профиля
 TECH_KEYWORDS = [
-    "半導體", "晶片", "IC", "AI", "伺服器", "封裝", "製程", "光電",
-    "通訊", "5G", "衛星", "記憶體", "電池", "充電", "散熱", "矽",
-    "雷射", "光纖", "感測", "量子", "ASIC", "GPU", "HBM", "PCB",
-    "LED", "OLED", "EUV", "SiC", "GaN", "MEMS", "RF", "CPO",
     "полупровод", "чип", "микросхем", "сервер", "дата-центр", "ЦОД",
     "связь", "телеком", "спутник", "батаре", "заряд", "охлажден",
     "квант", "фотон", "оптик", "GPU", "ASIC", "CPO",
+    "AI", "IC", "5G", "HBM", "PCB", "LED", "OLED", "EUV",
+    "SiC", "GaN", "MEMS", "RF", "IoT",
+    "импортозамещ", "кибербезопасн", "цифров",
 ]
 
 ENERGY_KEYWORDS = [
-    "能源", "電力", "風電", "太陽能", "儲能", "氫能", "核", "碳",
-    "綠電", "充電", "電網",
     "энерг", "электро", "ветер", "солнеч", "накопител",
     "водород", "атом", "углерод", "сеть", "нефт", "газ", "СПГ", "LNG",
+    "ДПМ", "ОРЭМ", "генераци", "электрич",
 ]
 
 

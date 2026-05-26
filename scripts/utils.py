@@ -308,7 +308,6 @@ WIKILINK_ALIASES = {
     # Технологические термины: стандартизация
     "SiC": "карбид кремния", "GaN": "нитрид галлия", "InP": "фосфид индия", "GaAs": "арсенид галлия",
     "IoT": "интернет вещей", "EV": "электромобиль",
-    "ПК": "PCB", "Печатная плата": "PCB",
 }
 
 
@@ -406,13 +405,12 @@ CATEGORY_LABELS = {
 
 
 def is_local_language_name(s):
-    """Проверяет, записана ли строка преимущественно на локальном нелатинском алфавите."""
+    """Проверяет, записана ли строка преимущественно на кириллице."""
     if not s:
         return False
 
-    cjk = sum(1 for c in s if "\u4e00" <= c <= "\u9fff")
     cyrillic = sum(1 for c in s if "\u0400" <= c <= "\u04FF")
-    return (cjk + cyrillic) > len(s) * 0.3
+    return cyrillic > len(s) * 0.3
 
 
 def classify_wikilink(name):

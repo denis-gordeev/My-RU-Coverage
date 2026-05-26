@@ -1,12 +1,6 @@
 {
   "nodes": [
     {
-      "id": "MOEX",
-      "count": 12,
-      "category": "international_company",
-      "color": "#3498db"
-    },
-    {
       "id": "нефтегаз",
       "count": 7,
       "category": "local_company",
@@ -17,6 +11,12 @@
       "count": 13,
       "category": "local_company",
       "color": "#e74c3c"
+    },
+    {
+      "id": "MOEX",
+      "count": 12,
+      "category": "international_company",
+      "color": "#3498db"
     },
     {
       "id": "Московская биржа",

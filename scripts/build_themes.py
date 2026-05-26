@@ -261,11 +261,11 @@ def scan_wikilinks():
             }
             parts = re.split(r"## ", content)
             for part in parts:
-                if re.match(r"^(?:Описание бизнеса|業務簡介)", part):
+                if re.match(r"^Описание бизнеса", part):
                     sections["desc"] = part
-                elif re.match(r"^(?:Положение в цепочке поставок|供應鏈位置)", part):
+                elif re.match(r"^Положение в цепочке поставок", part):
                     sections["supply_chain"] = part
-                elif re.match(r"^(?:Ключевые клиенты и поставщики|主要客戶及供應商)", part):
+                elif re.match(r"^Ключевые клиенты и поставщики", part):
                     sections["customers"] = part
 
             # Find all wikilinks in non-financial sections
@@ -275,11 +275,11 @@ def scan_wikilinks():
                 role = "related"
                 if wl in sections["supply_chain"]:
                     context = sections["supply_chain"].split(wl)[0][-100:].lower()
-                    if "上游" in context or "верх" in context:
+                    if "верх" in context:
                         role = "upstream"
-                    elif "下游" in context or "ниж" in context:
+                    elif "ниж" in context:
                         role = "downstream"
-                    elif "中游" in context or "средн" in context:
+                    elif "средн" in context or "ключев" in context:
                         role = "midstream"
 
                 wl_map[wl].append(

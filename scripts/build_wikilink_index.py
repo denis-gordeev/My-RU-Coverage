@@ -14,52 +14,13 @@ import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from utils import extract_wikilinks
+from utils import (
+    extract_wikilinks, is_local_language_name,
+    TECH_TERMS, MATERIAL_TERMS, APPLICATION_TERMS,
+)
 
 REPORTS_DIR = os.path.join(os.path.dirname(__file__), "..", "Pilot_Reports")
 OUTPUT_FILE = os.path.join(os.path.dirname(__file__), "..", "WIKILINKS.md")
-
-# --- Classification sets ---
-
-TECH_TERMS = {
-    "AI", "PCB", "5G", "HBM", "CoWoS", "InFO", "EUV", "CPO", "FOPLP",
-    "VCSEL", "EML", "MLCC", "MOSFET", "IGBT", "DRAM", "NAND", "SSD",
-    "DDR5", "DDR4", "PCIe", "USB", "WiFi", "Bluetooth",
-    "OLED", "AMOLED", "Mini LED", "Micro LED",
-    "MCU", "SoC", "ASIC", "FPGA", "RF", "IC", "LED", "LCD", "TFT",
-    "CMP", "CVD", "PVD", "ALD", "AOI", "SMT", "BGA", "QFN", "SOP",
-    "ABF 載板", "BT 載板", "ABF", "SerDes", "PMIC", "LDO",
-    "TSV", "RDL", "WLCSP", "FC-BGA", "FCCSP",
-    "NOR Flash", "NAND Flash", "eMMC", "UFS",
-    "MEMS", "CIS", "ToF", "LiDAR",
-    "矽光子", "光收發模組",
-    "磊晶", "蝕刻", "微影", "封裝測試", "晶圓代工",
-    "2.5D 封裝", "3D 封裝",
-}
-
-MATERIAL_TERMS = {
-    "碳化矽", "氮化鎵", "磷化銦", "砷化鎵", "矽晶圓",
-    "銅箔", "玻纖布", "光阻液", "研磨液", "超純水",
-    "氦氣", "氖氣", "鈦酸鋇", "聚醯亞胺",
-    "導線架", "探針卡", "BT 樹脂", "銀漿", "銅漿", "氧化鋁",
-    "золото", "алмазы", "железная руда", "коксующийся уголь", "сталь",
-}
-
-APP_TERMS = {
-    "AI 伺服器", "電動車", "物聯網", "資料中心", "低軌衛星",
-    "智慧家庭", "車用電子", "消費電子", "綠能", "太陽能",
-    "風電", "儲能系統", "離岸風電", "自動駕駛", "智慧城市",
-    "行車記錄器", "無人機",
-    "электроэнергетика", "строительство", "машиностроение", "автопром",
-    "трубная промышленность", "ювелирный рынок", "драгоценные металлы",
-}
-
-
-def is_local_script(s):
-    """Проверяет, написано ли имя преимущественно на кириллице или CJK."""
-    cjk = sum(1 for c in s if "\u4e00" <= c <= "\u9fff")
-    cyrillic = sum(1 for c in s if "\u0400" <= c <= "\u04FF")
-    return (cjk + cyrillic) > len(s) * 0.3
 
 
 def collect_wikilinks():
@@ -89,11 +50,11 @@ def categorize(wikilinks):
             technologies[name] = count
         elif name in MATERIAL_TERMS:
             materials[name] = count
-        elif name in APP_TERMS:
+        elif name in APPLICATION_TERMS:
             applications[name] = count
-        elif is_local_script(name) and count >= 2:
+        elif is_local_language_name(name) and count >= 2:
             companies_local[name] = count
-        elif not is_local_script(name) and count >= 2:
+        elif not is_local_language_name(name) and count >= 2:
             companies_intl[name] = count
         # Единичные упоминания в индекс не включаем
 
@@ -140,7 +101,7 @@ def main():
     lines.extend(build_section("Материалы и подложки", mat))
     lines.extend(build_section("Конечные рынки и применения", app))
     lines.extend(build_section("Иностранные компании", intl, limit=200))
-    lines.extend(build_section("Локальные компании", local, limit=300))
+    lines.extend(build_section("Российские компании", local, limit=300))
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
@@ -150,7 +111,7 @@ def main():
     print(f"  Материалы: {len(mat)}")
     print(f"  Применения: {len(app)}")
     print(f"  Иностранные компании: {len(intl)}")
-    print(f"  Локальные компании: {len(local)}")
+    print(f"  Российские компании: {len(local)}")
 
 
 if __name__ == "__main__":
