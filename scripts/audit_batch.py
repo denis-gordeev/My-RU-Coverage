@@ -19,7 +19,7 @@ from utils import (
     get_batch_tickers, setup_stdout, extract_wikilinks,
 )
 
-# --- Quality Rules (aligned with CLAUDE.md Golden Rules) ---
+# --- Правила качества (согласованы с CLAUDE.md Golden Rules) ---
 
 MIN_WIKILINKS = 8
 

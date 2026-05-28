@@ -136,7 +136,7 @@ def main():
         return
 
     print("=" * 50)
-    print("  MOEX Coverage Status")
+    print("  Статус покрытия MOEX")
     print("=" * 50)
     print()
     print(f"  Карточки:       {report_count}")

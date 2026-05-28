@@ -2,7 +2,7 @@
 discover.py — Обратный поиск компаний по ключевому слову или теме.
 
 Если нужно понять, какие эмитенты связаны с темой вроде "импортозамещение",
-"редкоземы", "СПГ" или "CPO", скрипт:
+"редкоземы", "СПГ" или "карбид кремния", скрипт:
 
 1. Ищет упоминания по всем релевантным карточкам эмитентов
 2. При необходимости добавляет [[wikilinks]] для найденного термина
@@ -12,10 +12,10 @@ discover.py — Обратный поиск компаний по ключево
 Примеры:
   python scripts/discover.py "импортозамещение"                            # искать по всем секторам
   python scripts/discover.py "СПГ" --apply                                 # проставить [[wikilinks]]
-  python scripts/discover.py "CPO" --apply --rebuild                       # + пересобрать темы/граф/индекс
+  python scripts/discover.py "СПГ" --apply --rebuild                       # + пересобрать темы/граф/индекс
   python scripts/discover.py "редкоземы" --smart                           # автофильтр секторов
-  python scripts/discover.py "CPO" --sector Semiconductors                 # ограничить одним сектором
-  python scripts/discover.py "CPO" --sectors "Semiconductors,Electronic Components"
+  python scripts/discover.py "нефтегаз" --sector Энергетика               # ограничить одним сектором
+  python scripts/discover.py "нефтегаз" --sectors "Энергетика,Финансовые услуги"
 
 Фильтрация секторов:
   Технологические ключевые слова обычно пропускают банки, страхование,
@@ -271,7 +271,7 @@ def main():
         print("Использование:")
         print('  python scripts/discover.py "импортозамещение"        # искать по всем секторам')
         print('  python scripts/discover.py "СПГ" --smart              # автофильтр секторов')
-        print('  python scripts/discover.py "CPO" --sector Semiconductors')
+        print('  python scripts/discover.py "нефтегаз" --sector Энергетика')
         print('  python scripts/discover.py "редкоземы" --apply        # проставить [[wikilinks]]')
         print('  python scripts/discover.py "СПГ" --apply --rebuild    # + пересобрать темы/граф')
         sys.exit(1)

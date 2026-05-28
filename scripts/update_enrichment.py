@@ -46,7 +46,7 @@ def apply_enrichment(filepath, ticker, data):
         content = f.read()
 
     # Add metadata block if missing
-    if not re.search(r"\*\*(?:Сектор|板塊):\*\*", content) and not re.search(r"\*\*(?:Рыночная капитализация|市值):\*\*", content):
+    if not re.search(r"\*\*Сектор:\*\*", content) and not re.search(r"\*\*Рыночная капитализация:\*\*", content):
         sector = data.get("sector", "N/A")
         industry = data.get("industry", "N/A")
         meta = (
@@ -62,7 +62,7 @@ def apply_enrichment(filepath, ticker, data):
         def repl_desc(m):
             return f"{m.group(1)}{data['desc']}\n"
         content = re.sub(
-            r"((?:## (?:Описание бизнеса|業務簡介))\n(?:.*?(?:Стоимость предприятия \(EV\)|企業價值):.*?\n\n|))(.*?)(?=\n(?:## (?:Положение в цепочке поставок|供應鏈位置)))",
+            r"((?:## Описание бизнеса)\n(?:.*?(?:Стоимость предприятия \(EV\)):.*?\n\n|))(.*?)(?=\n(?:## Положение в цепочке поставок))",
             repl_desc,
             content,
             flags=re.DOTALL,
@@ -72,7 +72,7 @@ def apply_enrichment(filepath, ticker, data):
     if "supply_chain" in data:
         sc = data["supply_chain"] + "\n"
         content = re.sub(
-            r"((?:## (?:Положение в цепочке поставок|供應鏈位置))\n)(.*?)(?=\n(?:## (?:Ключевые клиенты и поставщики|主要客戶及供應商)))",
+            r"((?:## Положение в цепочке поставок)\n)(.*?)(?=\n(?:## Ключевые клиенты и поставщики))",
             rf"\g<1>{sc}",
             content,
             flags=re.DOTALL,
@@ -82,7 +82,7 @@ def apply_enrichment(filepath, ticker, data):
     if "cust" in data:
         ct = data["cust"] + "\n"
         content = re.sub(
-            r"((?:## (?:Ключевые клиенты и поставщики|主要客戶及供應商))\n)(.*?)(?=\n(?:## (?:Финансовый обзор|財務概況)))",
+            r"((?:## Ключевые клиенты и поставщики)\n)(.*?)(?=\n(?:## Финансовый обзор))",
             rf"\g<1>{ct}",
             content,
             flags=re.DOTALL,
