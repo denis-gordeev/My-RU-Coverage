@@ -6,12 +6,11 @@ update_financials.py — Обновление финансовых таблиц 
 Весь контент обогащения (описание бизнеса, цепочка поставок, контрагенты) сохраняется.
 
 Использование:
-  python scripts/update_financials.py                  # Обновить ВСЕ тикеры
-  python scripts/update_financials.py SBER             # Один тикер
-  python scripts/update_financials.py SBER GAZP LKOH   # Несколько тикеров
-  python scripts/update_financials.py --batch 101      # Все тикеры из пакета
-  python scripts/update_financials.py --sector Energy  # Весь сектор
-  python scripts/update_financials.py --dry-run SBER   # Предпросмотр без записи
+  python scripts/update_financials.py                       # Обновить ВСЕ тикеры
+  python scripts/update_financials.py SBER                  # Один тикер
+  python scripts/update_financials.py SBER GAZP LKOH        # Несколько тикеров
+  python scripts/update_financials.py --sector Энергетика   # Весь сектор
+  python scripts/update_financials.py --dry-run SBER        # Предпросмотр без записи
 
 Единицы измерения зависят от суффикса биржи: `.ME` -> млн руб.
 """

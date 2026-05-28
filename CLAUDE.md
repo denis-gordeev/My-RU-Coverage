@@ -1,7 +1,7 @@
 # My RU Coverage — Project Rules
 
 ## Purpose
-Репозиторий ведётся как база coverage-заметок по компаниям с фокусом на российский рынок и русскоязычный контекст. Legacy-тайваньский корпус пока остаётся в проекте, поэтому любые изменения должны сохранять обратную совместимость.
+Репозиторий ведётся как база coverage-заметок по компаниям с фокусом на российский рынок и русскоязычный контекст. Legacy-тайваньский корпус сохранён в `Pilot_Reports_LEGACY/` как архив и не влияет на текущий workflow.
 
 ## Golden Rules
 
@@ -12,7 +12,7 @@
 Перед обогащением файла убедитесь, что исследуете именно ту компанию, которая указана в имени файла: `<ticker>_<company>.md`.
 
 ### 3. Новые описания пишутся по-русски
-Для новых и обновляемых материалов основной язык описаний — русский. Legacy-секции на китайском допустимы только там, где файл ещё не мигрирован.
+Для новых и обновляемых материалов основной язык описаний — русский. Legacy-секции на китайском допустимы только в `Pilot_Reports_LEGACY/`.
 
 ### 4. Финансовый блок не редактируется руками
 `## Финансовый обзор` обновляется только скриптами. Не меняйте таблицы вручную.
@@ -61,6 +61,11 @@ Pilot_Reports/{Industry}/{Ticker}_{CompanyName}.md
 - `python scripts/update_enrichment.py --data enrichment.json SBER`
 - `python scripts/build_wikilink_index.py`
 - `python scripts/build_network.py`
+- `python scripts/audit_ru_reports.py`
+- `python scripts/moex_status.py`
+- `python scripts/moex_blue_chip_queue.py`
+- `python scripts/generate_moex_reports.py`
+- `python scripts/discover.py "импортозамещение"`
 
 ## Research Priorities
 
@@ -72,5 +77,3 @@ Pilot_Reports/{Industry}/{Ticker}_{CompanyName}.md
 - годовой отчёт;
 - презентации для инвесторов;
 - отраслевые обзоры и профильные СМИ.
-
-Для legacy-тайваньских файлов допустим прежний набор источников, если вы правите старый материал.

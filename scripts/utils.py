@@ -14,7 +14,6 @@ from datetime import date, datetime
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPORTS_DIR = os.path.join(PROJECT_ROOT, "Pilot_Reports")
-TASK_FILE = os.path.join(PROJECT_ROOT, "task.md")
 TICKER_PATTERN = r"[A-Z0-9][A-Z0-9._-]{0,11}"
 
 MARKET_PROFILES = {
@@ -215,33 +214,8 @@ def get_ticker_from_filename(filepath):
 
 
 # =============================================================================
-# Batch & Scope Parsing
+# Scope Parsing
 # =============================================================================
-
-def get_batch_tickers(batch_num):
-    """Получает список тикеров для пакета из task.md."""
-    try:
-        with open(TASK_FILE, "r", encoding="utf-8") as f:
-            content = f.read()
-    except Exception as e:
-        print(f"Не удалось прочитать task.md: {e}")
-        return []
-
-    pattern = re.compile(
-        r"Batch\s+" + str(batch_num) + r"\*\*.*?:[:\s]*(.*)$",
-        re.IGNORECASE | re.MULTILINE,
-    )
-    match = pattern.search(content)
-    if match:
-        raw = match.group(1).strip().rstrip(".")
-        return [
-            re.search(r"(\d{4})", t).group(1)
-            for t in raw.split(",")
-            if re.search(r"\d{4}", t)
-        ]
-    print(f"Пакет {batch_num} не найден в task.md")
-    return []
-
 
 def parse_scope_args(args):
     """Разбирает аргументы CLI в область действия: список тикеров, сектор или None (все).
@@ -249,13 +223,6 @@ def parse_scope_args(args):
     """
     if not args:
         return None, None, "все тикеры"
-    elif args[0] == "--batch":
-        if len(args) < 2:
-            print("Параметр --batch требует номер пакета")
-            sys.exit(1)
-        batch_num = args[1]
-        tickers = get_batch_tickers(batch_num)
-        return tickers, None, f"{len(tickers)} тикеров из пакета {batch_num}"
     elif args[0] == "--sector":
         if len(args) < 2:
             print("Параметр --sector требует название сектора")
