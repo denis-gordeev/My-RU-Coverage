@@ -90,7 +90,7 @@ SMART_PROFILES = {
     "tech": TECH_SECTORS | INDUSTRIAL_SECTORS | MATERIALS_SECTORS,
     "energy": TECH_SECTORS | INDUSTRIAL_SECTORS | ENERGY_SECTORS | MATERIALS_SECTORS,
     "consumer": CONSUMER_SECTORS | TECH_SECTORS,
-    "all": None,  # None = search everything
+    "all": None,  # None = искать по всем секторам
 }
 
 # Подсказки для автоопределения профиля

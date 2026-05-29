@@ -25,7 +25,7 @@ from utils import (
     FINANCIAL_SECTION_TITLE, ANNUAL_SECTION_TITLE, QUARTERLY_SECTION_TITLE,
 )
 
-# Import financials fetcher
+# Импорт загрузчика финансовых данных
 from update_financials import fetch_financials, build_financial_section
 
 

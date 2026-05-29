@@ -311,7 +311,7 @@ def build_theme_page(theme_tag, theme_def, wl_map):
     lines.append(f"**Количество компаний:** {entry_count} {ru_plural(entry_count, 'компания', 'компании', 'компаний')}")
     lines.append("")
 
-    # Related themes
+    # Связанные темы
     related = theme_def.get("related", [])
     related_with_counts = []
     for r in related:
@@ -325,14 +325,14 @@ def build_theme_page(theme_tag, theme_def, wl_map):
     lines.append("---")
     lines.append("")
 
-    # Group by role
+    # Группировка по роли
     upstream = [e for e in entries if e["role"] == "upstream"]
     midstream = [e for e in entries if e["role"] == "midstream"]
     downstream = [e for e in entries if e["role"] == "downstream"]
     other = [e for e in entries if e["role"] == "related"]
 
     def format_entries(entries):
-        # Group by sector
+        # Группировка по сектору
         by_sector = defaultdict(list)
         for e in entries:
             by_sector[e["sector"]].append(e)
@@ -426,7 +426,7 @@ def main():
     wl_map = scan_wikilinks()
     print(f"Найдено уникальных викалинков: {len(wl_map)}.\n")
 
-    # Filter to requested theme or build all
+    # Фильтр по запрошенной теме или сборка всех
     if args and args[0] != "--list":
         themes_to_build = {args[0]: THEME_DEFINITIONS.get(args[0])}
         if not themes_to_build[args[0]]:
@@ -447,7 +447,7 @@ def main():
             themes_built[tag] = count
             print(f"  {tag}: {count} {ru_plural(count, 'компания', 'компании', 'компаний')} -> {safe_name}.md")
 
-    # Build index
+    # Сборка индекса
     index = build_index(themes_built)
     with open(os.path.join(THEMES_DIR, "README.md"), "w", encoding="utf-8") as f:
         f.write(index)

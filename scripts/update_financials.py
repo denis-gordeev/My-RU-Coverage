@@ -53,7 +53,7 @@ METRIC_ROW_LABELS = {
         "Валовая прибыль": "Валовая прибыль",
         "Валовая маржа (%)": "Валовая маржа (%)",
         "Коммерческие расходы": "Коммерческие расходы",
-        "Расходы на R&D": "Расходы на R&D",
+        "Расходы на НИОКР": "Расходы на НИОКР",
         "Общехозяйственные расходы": "Общехозяйственные расходы",
         "Операционная прибыль": "Операционная прибыль",
         "Операционная маржа (%)": "Операционная маржа (%)",
@@ -68,7 +68,7 @@ METRIC_ROW_LABELS = {
         "Gross Profit": "Валовая прибыль",
         "Gross Margin (%)": "Валовая маржа (%)",
         "Selling & Marketing Exp": "Коммерческие расходы",
-        "R&D Exp": "Расходы на R&D",
+        "R&D Exp": "Расходы на НИОКР",
         "General & Admin Exp": "Общехозяйственные расходы",
         "Operating Income": "Операционная прибыль",
         "Operating Margin (%)": "Операционная маржа (%)",
@@ -269,14 +269,14 @@ def fetch_financials(ticker):
                 "valuation": valuation,
                 "market_cap": market_cap,
                 "enterprise_value": enterprise_value,
-                "sector": info.get("sector") or override.get("sector", "N/A"),
-                "industry": info.get("industry") or override.get("industry", "N/A"),
+                "sector": info.get("sector") or override.get("sector", "Н/Д"),
+                "industry": info.get("industry") or override.get("industry", "Н/Д"),
                 "suffix": suffix,
                 "unit_label": market_profile["unit_label"],
                 "source_symbol": symbol,
             }
 
-            if data["annual"].empty and data["quarterly"].empty and market_cap == "N/A" and enterprise_value == "N/A":
+            if data["annual"].empty and data["quarterly"].empty and market_cap == "Н/Д" and enterprise_value == "Н/Д":
                 continue
 
             data_score = score_source(data)
@@ -305,7 +305,7 @@ def build_financial_section(data):
     unit_label = data.get("unit_label", "млн руб.")
     section = f"{FINANCIAL_SECTION_TITLE} (единицы: {unit_label}, маржа указана в %)\n"
 
-    # Valuation snapshot
+    # Снимок оценочных мультипликаторов
     v = data.get("valuation", {})
     if v:
         section += build_valuation_table(v) + "\n\n"

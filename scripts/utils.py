@@ -94,45 +94,45 @@ SECTOR_TRANSLATION = {
 }
 
 INDUSTRY_TRANSLATION = {
-    # Energy
+    # Энергетика
     "Oil & Gas Integrated": "Нефтегазовая интегрированная",
     "Oil & Gas E&P": "Нефтегазовая разведка и добыча",
-    # Financial Services
+    # Финансовые услуги
     "Banks - Regional": "Банки — региональные",
     "Financial Conglomerates": "Финансовые конгломераты",
     "Credit Services": "Кредитные услуги",
     "Financial Data & Stock Exchanges": "Финансовые данные и фондовые биржи",
-    # Communication Services
+    # Связь
     "Telecom Services": "Телекоммуникационные услуги",
     "Internet Content & Information": "Интернет-контент и информация",
-    # Consumer Defensive
+    # Потребительские товары повседневного спроса
     "Grocery Stores": "Продуктовые магазины",
     "Farm Products": "Сельскохозяйственная продукция",
     "Beverages - Wineries & Distilleries": "Напитки — виноделие и ликёро-водочная продукция",
-    # Consumer Cyclical
+    # Потребительские товары и услуги
     "Internet Retail": "Интернет-розница",
     "Discount Stores": "Магазины низких цен",
-    # Technology
+    # Технологии
     "Software - Application": "Программное обеспечение — приложения",
     "Software - Infrastructure": "Программное обеспечение — инфраструктура",
     "Information Technology Services": "ИТ-услуги",
-    # Industrials
+    # Промышленность
     "Airlines": "Авиакомпании",
     "Railroads": "Железные дороги",
-    # Materials / Basic Materials
+    # Материалы / Основные материалы
     "Aluminum": "Алюминий",
     "Gold": "Золото",
     "Steel": "Сталь",
     "Agricultural Inputs": "Сельскохозяйственные ресурсы",
-    # Other Industrial Metals & Mining
+    # Прочие промышленные металлы и добыча
     "Other Industrial Metals & Mining": "Прочие промышленные металлы и добыча",
     "Other Precious Metals & Mining": "Прочие драгоценные металлы и добыча",
-    # Real Estate
+    # Недвижимость
     "Real Estate - Development": "Недвижимость — девелопмент",
     "Real Estate Services": "Услуги в сфере недвижимости",
-    # Healthcare
+    # Здравоохранение
     "Pharmaceutical Retailers": "Аптечные сети",
-    # Utilities
+    # Коммунальные услуги
     "Utilities - Regulated Electric": "Коммунальные услуги — регулируемая электроэнергетика",
     "Utilities - Renewable": "Коммунальные услуги — возобновляемая энергетика",
 }
@@ -275,6 +275,7 @@ WIKILINK_ALIASES = {
     # Технологические термины: стандартизация
     "SiC": "карбид кремния", "GaN": "нитрид галлия", "InP": "фосфид индия", "GaAs": "арсенид галлия",
     "IoT": "интернет вещей", "EV": "электромобиль",
+    "FMCG": "ТНП",
 }
 
 
@@ -352,6 +353,7 @@ APPLICATION_TERMS = {
     "технологический суверенитет", "Байкал Электроник", "Эльбрус (процессор)",
     "Р7-Офис", "МойОфис", "Selectel", "Yandex Cloud", "BaaS", "DRaaS",
     "Авито Недвижимость", "Домклик", "ПИК", "Самолет", "ЕГРН", "ипотека",
+    "ТНП",
 }
 
 CATEGORY_COLORS = {
@@ -416,9 +418,9 @@ def fetch_valuation_data(info):
     """
     valuation = {}
     for key, label in [
-        ("trailingPE", "P/E (TTM)"),
-        ("forwardPE", "Forward P/E"),
-        ("priceToSalesTrailing12Months", "P/S (TTM)"),
+        ("trailingPE", "P/E (за 12 мес.)"),
+        ("forwardPE", "Прогнозный P/E"),
+        ("priceToSalesTrailing12Months", "P/S (за 12 мес.)"),
         ("priceToBook", "P/B"),
         ("enterpriseToEbitda", "EV/EBITDA"),
     ]:
@@ -453,7 +455,7 @@ def fetch_valuation_data(info):
 
 def build_valuation_table(v):
     """Строит раздел оценки оценки в формате markdown из словаря v."""
-    headers = ["P/E (TTM)", "Forward P/E", "P/S (TTM)", "P/B", "EV/EBITDA"]
+    headers = ["P/E (за 12 мес.)", "Прогнозный P/E", "P/S (за 12 мес.)", "P/B", "EV/EBITDA"]
     values = [v.get(h, "Н/Д") for h in headers]
     widths = [max(len(h), len(val)) for h, val in zip(headers, values)]
     header_row = "| " + " | ".join(h.rjust(w) for h, w in zip(headers, widths)) + " |"
@@ -465,9 +467,9 @@ def build_valuation_table(v):
     if v.get("_price"):
         period_parts.append(f"Цена {v.get('_currency_symbol', '$')}{v['_price']} на {today}")
     if v.get("_ttm_end"):
-        period_parts.append(f"TTM на {v['_ttm_end']}")
+        period_parts.append(f"за 12 мес. на {v['_ttm_end']}")
     if v.get("_fwd_end"):
-        period_parts.append(f"Forward до {v['_fwd_end']}")
+        period_parts.append(f"Прогноз до {v['_fwd_end']}")
     period_note = " | ".join(period_parts) if period_parts else ""
 
     title = (
