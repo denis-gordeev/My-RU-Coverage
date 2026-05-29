@@ -9,7 +9,7 @@ REPORTS_DIR = ROOT / "Pilot_Reports"
 LEGACY_THEME_MARKERS = {
     "HBM", "Tesla", "Apple", "NVIDIA", "CoWoS", "CPO", "EUV", "VCSEL",
     "ABF_載板", "低軌衛星", "光阻液", "氮化鎵", "矽光子", "矽晶圓",
-    "碳化矽", "磷化銦", "資料中心", "電動車", "AI_伺服器", "5G",
+    "碳化矽", "磷化銦", "資料中心", "電動車", "AI_伺服器",
 }
 HAN_RE = re.compile(r"[\u4e00-\u9fff]")
 

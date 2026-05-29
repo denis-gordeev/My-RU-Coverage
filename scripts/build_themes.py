@@ -97,7 +97,7 @@ THEME_DEFINITIONS = {
     "продуктовый ритейл": {
         "name": "Продуктовый ритейл",
         "desc": "Сети магазинов повседневного спроса, логистика FMCG и омниканальные форматы продаж",
-        "related": ["доставка", "электронная коммерция", "e-grocery", "экосистемы"],
+        "related": ["доставка", "электронная коммерция", "продуктовый онлайн-ритейл", "экосистемы"],
     },
     "доставка": {
         "name": "Доставка и last-mile сервисы",
@@ -268,10 +268,10 @@ def scan_wikilinks():
                 elif re.match(r"^Ключевые клиенты и поставщики", part):
                     sections["customers"] = part
 
-            # Find all wikilinks in non-financial sections
+            # Ищем все викалинки в не-финансовых секциях
             text = sections["desc"] + sections["supply_chain"] + sections["customers"]
             for wl in set(extract_wikilinks(text)):
-                # Determine role from context
+                # Определяем роль из контекста
                 role = "related"
                 if wl in sections["supply_chain"]:
                     context = sections["supply_chain"].split(wl)[0][-100:].lower()
@@ -373,7 +373,7 @@ def build_theme_page(theme_tag, theme_def, wl_map):
 
 
 def build_index(themes_built):
-    """Build themes/README.md index."""
+    """Строит индекс themes/README.md."""
     lines = []
     ru_built = sum(1 for tag in RU_THEME_TAGS if tag in themes_built)
     ru_total_companies = sum(themes_built[tag] for tag in RU_THEME_TAGS if tag in themes_built)

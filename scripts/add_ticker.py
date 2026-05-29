@@ -31,23 +31,22 @@ from update_financials import fetch_financials, build_financial_section
 
 def generate_report(ticker, name, sector=None, industry=None):
     """Генерирует полный файл отчёта для нового тикера."""
-    # Fetch financial data (also gives us sector/industry if not specified)
     fin_data = fetch_financials(ticker)
 
     if fin_data:
         if not sector:
-            sector = fin_data.get("sector", "Unknown")
+            sector = fin_data.get("sector", "Не определено")
         if not industry:
-            industry = fin_data.get("industry", "Unknown")
+            industry = fin_data.get("industry", "Не определено")
         market_cap = fin_data.get("market_cap") or "Н/Д"
         enterprise_value = fin_data.get("enterprise_value") or "Н/Д"
         unit_label = fin_data.get("unit_label", "млн руб.")
         fin_section = build_financial_section(fin_data)
     else:
         if not sector:
-            sector = "Unknown"
+            sector = "Не определено"
         if not industry:
-            industry = "Unknown"
+            industry = "Не определено"
         market_cap = "Н/Д"
         enterprise_value = "Н/Д"
         unit_label = "млн руб."
@@ -80,7 +79,7 @@ def generate_report(ticker, name, sector=None, industry=None):
 
 def sanitize_folder_name(name):
     """Очищает название сектора для использования в имени папки."""
-    # Replace characters that are problematic in Windows paths
+    # Заменяем символы, проблемные для путей Windows
     return re.sub(r'[<>:"/\\|?*]', "", name).strip()
 
 
@@ -96,16 +95,16 @@ def main():
         print("  python scripts/add_ticker.py <ticker> <name> --sector <sector>")
         return
 
-    # Parse arguments
+    # Разбор аргументов
     ticker = args[0]
-    name = args[1] if len(args) > 1 else "Unknown"
+    name = args[1] if len(args) > 1 else "Без названия"
 
     sector = None
     if "--sector" in args:
         idx = args.index("--sector")
         sector = " ".join(args[idx + 1 :])
 
-    # Check if ticker already exists
+    # Проверяем, не существует ли уже тикер
     existing = find_ticker_files([ticker])
     if existing:
         print(f"Тикер {ticker} уже существует: {existing[ticker]}")
@@ -115,12 +114,12 @@ def main():
     print(f"Создаю карточку для {ticker} ({name})...")
     content, detected_sector = generate_report(ticker, name, sector)
 
-    # Determine output folder
+    # Определяем папку вывода
     folder_name = sanitize_folder_name(sector or detected_sector)
     output_dir = os.path.join(REPORTS_DIR, folder_name)
     os.makedirs(output_dir, exist_ok=True)
 
-    # Write file
+    # Записываем файл
     filename = f"{ticker}_{name}.md"
     filepath = os.path.join(output_dir, filename)
     with open(filepath, "w", encoding="utf-8") as f:

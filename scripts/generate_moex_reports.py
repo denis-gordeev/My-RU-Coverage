@@ -150,7 +150,7 @@ def create_reports(items, limit=None, dry_run=False):
         sector = override.get("sector")
         industry = override.get("industry")
         content, detected_sector = generate_report(ticker, company_name, sector, industry)
-        target_sector = sector or detected_sector or "Unknown"
+        target_sector = sector or detected_sector or "Не определено"
         output_path = build_output_path(ticker, company_name, target_sector)
 
         if dry_run:

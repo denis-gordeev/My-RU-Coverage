@@ -178,7 +178,7 @@ METADATA_LABEL_PATTERNS = {
 
 
 # =============================================================================
-# File Discovery
+# Поиск файлов
 # =============================================================================
 
 def find_ticker_files(tickers=None, sector=None):
@@ -214,7 +214,7 @@ def get_ticker_from_filename(filepath):
 
 
 # =============================================================================
-# Scope Parsing
+# Разбор области действия
 # =============================================================================
 
 def parse_scope_args(args):
@@ -243,11 +243,11 @@ def setup_stdout():
 
 
 # =============================================================================
-# Wikilink Normalization
+# Нормализация викалинков
 # =============================================================================
 
-# Canonical name mapping: alias -> canonical
-# Russian market: Cyrillic aliases -> canonical names.
+# Маппинг канонических имён: алиас -> каноническое
+# Российский рынок: кириллические алиасы -> канонические имена.
 WIKILINK_ALIASES = {
     # Российские компании: кириллические алиасы -> канонические имена
     "Сбер": "SBER", "Сбербанк": "SBER",
@@ -289,11 +289,11 @@ def normalize_wikilinks(content):
 
     text, financial_part = split_parts
 
-    # Step 1: Replace alias wikilinks with canonical names
+    # Шаг 1: Заменяем алиасы викалинков на канонические имена
     for alias, canonical in WIKILINK_ALIASES.items():
         text = text.replace("[[" + alias + "]]", "[[" + canonical + "]]")
 
-    # Step 2: Collapse [[X]] ([[X]]) duplicate parentheticals
+    # Шаг 2: Схлопываем дубликаты [[X]] ([[X]])
     text = re.sub(
         r"\[\[([^\]]+)\]\]\s*[\(（]\[\[([^\]]+)\]\][\)）]",
         lambda m: f"[[{m.group(1)}]]" if m.group(1) == m.group(2) else m.group(0),
@@ -312,7 +312,7 @@ def extract_wikilinks(content):
 
 
 # =============================================================================
-# Category Classification (shared by build_wikilink_index, build_themes, build_network)
+# Классификация категорий (общее для build_wikilink_index, build_themes, build_network)
 # =============================================================================
 
 TECH_TERMS = {
@@ -407,7 +407,7 @@ def split_before_financial_section(content):
 
 
 # =============================================================================
-# Valuation Table Rendering (shared by update_financials and update_valuation)
+# Рендер таблиц оценки (общее для update_financials и update_valuation)
 # =============================================================================
 
 def fetch_valuation_data(info):
@@ -423,9 +423,9 @@ def fetch_valuation_data(info):
         ("enterpriseToEbitda", "EV/EBITDA"),
     ]:
         val = info.get(key)
-        valuation[label] = f"{val:.2f}" if val else "N/A"
+        valuation[label] = f"{val:.2f}" if val else "Н/Д"
 
-    # Price
+    # Цена
     cur_price = info.get("currentPrice")
     valuation["_price"] = f"{cur_price:,.2f}" if cur_price else None
     currency = (info.get("currency") or "").upper()
@@ -438,7 +438,7 @@ def fetch_valuation_data(info):
         "HKD": "HK$",
     }.get(currency, "₽")
 
-    # Period info
+    # Информация о периодах
     mrq = info.get("mostRecentQuarter")
     nfy = info.get("nextFiscalYearEnd")
     valuation["_ttm_end"] = (
@@ -454,7 +454,7 @@ def fetch_valuation_data(info):
 def build_valuation_table(v):
     """Строит раздел оценки оценки в формате markdown из словаря v."""
     headers = ["P/E (TTM)", "Forward P/E", "P/S (TTM)", "P/B", "EV/EBITDA"]
-    values = [v.get(h, "N/A") for h in headers]
+    values = [v.get(h, "Н/Д") for h in headers]
     widths = [max(len(h), len(val)) for h, val in zip(headers, values)]
     header_row = "| " + " | ".join(h.rjust(w) for h, w in zip(headers, widths)) + " |"
     sep_row = "|" + "|".join("-" * (w + 2) for w in widths) + "|"
@@ -494,11 +494,11 @@ def update_company_classification(content, sector=None, industry=None):
     """Обновляет метаданные сектора и отрасли, когда доступны свежие значения.
     Автоматически переводит английские названия на русский.
     """
-    if sector and sector not in {"", "Н/Д", "Unknown"}:
+    if sector and sector not in {"", "Н/Д", "Не определено"}:
         sector = translate_sector(sector)
         for pattern in METADATA_LABEL_PATTERNS["sector"]:
             content = re.sub(rf"({pattern}) .+", rf"\1 {sector}", content)
-    if industry and industry not in {"", "Н/Д", "Unknown"}:
+    if industry and industry not in {"", "Н/Д", "Не определено"}:
         industry = translate_industry(industry)
         for pattern in METADATA_LABEL_PATTERNS["industry"]:
             content = re.sub(rf"({pattern}) .+", rf"\1 {industry}", content)
@@ -506,7 +506,7 @@ def update_company_classification(content, sector=None, industry=None):
 
 
 # =============================================================================
-# Section Replacement
+# Замена секций
 # =============================================================================
 
 def replace_section(content, section_header, new_body, next_section_header=None):

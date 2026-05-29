@@ -44,19 +44,19 @@ def apply_enrichment(filepath, ticker, data):
     with open(filepath, "r", encoding="utf-8") as f:
         content = f.read()
 
-    # Add metadata block if missing
+    # Добавляем блок метаданных, если отсутствует
     if not re.search(r"\*\*Сектор:\*\*", content) and not re.search(r"\*\*Рыночная капитализация:\*\*", content):
-        sector = data.get("sector", "N/A")
-        industry = data.get("industry", "N/A")
+        sector = data.get("sector", "Н/Д")
+        industry = data.get("industry", "Н/Д")
         meta = (
             f"**Сектор:** {sector}\n"
             f"**Отрасль:** {industry}\n"
-            f"**Рыночная капитализация:** N/A млн руб.\n"
-            f"**Стоимость предприятия (EV):** N/A млн руб.\n\n"
+            f"**Рыночная капитализация:** Н/Д млн руб.\n"
+            f"**Стоимость предприятия (EV):** Н/Д млн руб.\n\n"
         )
         content = re.sub(SECTION_HEADER_REGEX["business"] + r"\n", BUSINESS_SECTION_TITLE + "\n" + meta, content, count=1)
 
-    # Replace business description (preserve metadata block above it)
+    # Заменяем описание бизнеса (сохраняя блок метаданных выше)
     if "desc" in data:
         def repl_desc(m):
             return f"{m.group(1)}{data['desc']}\n"
@@ -67,7 +67,7 @@ def apply_enrichment(filepath, ticker, data):
             flags=re.DOTALL,
         )
 
-    # Replace supply chain section
+    # Заменяем секцию цепочки поставок
     if "supply_chain" in data:
         sc = data["supply_chain"] + "\n"
         content = re.sub(
@@ -77,7 +77,7 @@ def apply_enrichment(filepath, ticker, data):
             flags=re.DOTALL,
         )
 
-    # Replace customers/suppliers section
+    # Заменяем секцию клиентов/поставщиков
     if "cust" in data:
         ct = data["cust"] + "\n"
         content = re.sub(
@@ -91,7 +91,7 @@ def apply_enrichment(filepath, ticker, data):
     content = re.sub(SECTION_HEADER_REGEX["supply_chain"], SUPPLY_CHAIN_SECTION_TITLE, content)
     content = re.sub(SECTION_HEADER_REGEX["customers"], CUSTOMERS_SECTION_TITLE, content)
 
-    # Normalize wikilinks: standardize aliases, collapse duplicates
+    # Нормализуем викалинки: стандартизируем алиасы, схлопываем дубли
     content = normalize_wikilinks(content)
 
     with open(filepath, "w", encoding="utf-8") as f:
@@ -116,7 +116,7 @@ def main():
 
     args = [a for a in sys.argv[1:]]
 
-    # Extract --data flag
+    # Извлекаем флаг --data
     json_path = None
     if "--data" in args:
         idx = args.index("--data")
@@ -128,18 +128,18 @@ def main():
         print("  Область: SBER | SBER GAZP | --sector Энергетика | без аргументов = все")
         return
 
-    # Load enrichment data
+    # Загружаем данные обогащения
     if not os.path.isabs(json_path):
         json_path = os.path.join(PROJECT_ROOT, json_path)
     enrichment_data = load_enrichment_data(json_path)
     print(f"Загружено записей по тикерам: {len(enrichment_data)} из {os.path.basename(json_path)}")
 
-    # Parse scope
+    # Разбираем область действия
     tickers, sector, desc = parse_scope_args(args)
     print(f"Область применения: {desc}\n")
 
-    # Find matching files
-    # If specific tickers given, intersect with enrichment data
+    # Ищем подходящие файлы
+    # Если указаны конкретные тикеры, пересекаем с данными обогащения
     available_tickers = list(enrichment_data.keys())
     if tickers:
         target_tickers = [t for t in tickers if t in enrichment_data]

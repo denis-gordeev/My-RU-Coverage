@@ -32,7 +32,7 @@ from utils import (
     SECTION_HEADER_REGEX, TICKER_SOURCE_OVERRIDES,
 )
 
-# Financial metrics to extract
+# Финансовые метрики для извлечения
 METRICS_KEYS = {
     "revenue": ["Total Revenue"],
     "gross_profit": ["Gross Profit"],
@@ -63,7 +63,7 @@ METRIC_ROW_LABELS = {
         "Инвестиционный денежный поток": "Инвестиционный денежный поток",
         "Финансовый денежный поток": "Финансовый денежный поток",
         "Капитальные затраты": "Капитальные затраты",
-        # Legacy English keys for backward compatibility with DataFrames
+        # Устаревшие английские ключи для обратной совместимости с DataFrame
         "Revenue": "Выручка",
         "Gross Profit": "Валовая прибыль",
         "Gross Margin (%)": "Валовая маржа (%)",
@@ -98,16 +98,16 @@ def calc_margin(numerator, denominator):
 
 
 def calc_admin_exp(income_stmt):
-    """Получает административные расходы, при отсутствии — вычисляет как SGA - Selling."""
+    """Получает административные расходы, при отсутствии — вычисляет как SGA − коммерческие расходы."""
     admin = get_series(income_stmt, METRICS_KEYS["admin_exp"])
     selling = get_series(income_stmt, METRICS_KEYS["selling_exp"])
     sga = get_series(income_stmt, ["Selling General And Administration"])
 
     if admin.empty and not sga.empty and not selling.empty:
-        # Derive G&A = SGA - Selling
+        # Выводим управленческие расходы = SGA − коммерческие
         return sga - selling
     elif not admin.empty and not sga.empty:
-        # Fill NaN gaps in G&A from SGA - Selling
+        # Заполняем пропуски в управленческих расходах из SGA − коммерческие
         derived = sga - selling
         return admin.fillna(derived)
     return admin
@@ -143,7 +143,7 @@ def extract_metrics(income_stmt, cashflow):
         "CAPEX": get_series(cashflow, METRICS_KEYS["capex"]),
     }
 
-    # Derive CAPEX from FCF when CAPEX is missing: CAPEX = FCF - OCF (negative)
+    # Выводим CAPEX из FCF при отсутствии: CAPEX = FCF − операционный поток (отрицательный)
     capex = data["CAPEX"]
     ocf = data["Op Cash Flow"]
     fcf = get_series(cashflow, ["Free Cash Flow"])
@@ -154,7 +154,7 @@ def extract_metrics(income_stmt, cashflow):
         data["CAPEX"] = fcf - ocf
 
     df = pd.DataFrame(data).T
-    # Clean column headers: remove time component from datetime
+    # Очищаем заголовки столбцов: убираем временную часть из datetime
     df.columns = [
         col.strftime("%Y-%m-%d") if hasattr(col, "strftime") else str(col)
         for col in df.columns
@@ -223,7 +223,7 @@ def score_source(data):
     annual_cols = 0 if data["annual"] is None else len(data["annual"].columns)
     quarterly_cols = 0 if data["quarterly"] is None else len(data["quarterly"].columns)
     has_market_cap = 1 if data.get("market_cap") not in (None, "Н/Д") else 0
-    has_sector = 1 if data.get("sector") not in (None, "", "Н/Д", "Unknown") else 0
+    has_sector = 1 if data.get("sector") not in (None, "", "Н/Д", "Не определено") else 0
     return (annual_cols + quarterly_cols, has_market_cap, has_sector)
 
 
@@ -290,13 +290,13 @@ def fetch_financials(ticker):
 
 def df_to_clean_markdown(df):
     """Форматирует DataFrame в markdown с точностью .2f, затем заменяет NaN на -."""
-    # Format numbers first while dtype is still float
+    # Форматируем числа, пока тип данных ещё float
     md = df.to_markdown(floatfmt=".2f")
-    # Replace nan strings that to_markdown generates for NaN values
+    # Заменяем строки nan, которые to_markdown генерирует для значений NaN
     md = md.replace(" nan ", " - ")
     md = md.replace(" nan|", " -|")
     md = md.replace("|nan ", "|- ")
-    # Also handle edge cases with padding
+    # Также обрабатываем краевые случаи с отступами
     md = re.sub(r'\bnan\b', '-', md)
     return md
 
@@ -339,7 +339,7 @@ def update_file(filepath, ticker, dry_run=False):
     else:
         new_content = content.rstrip() + "\n\n" + new_fin
 
-    # Update metadata
+    # Обновляем метаданные
     new_content = update_metadata(
         new_content,
         data.get("market_cap"),

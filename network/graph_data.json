@@ -1,27 +1,31 @@
 {
   "nodes": [
     {
+      "id": "нефтегаз",
+      "count": 7,
+      "category": "local_company",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
       "id": "MOEX",
       "count": 12,
       "category": "international_company",
+      "category_label": "Иностранная компания",
       "color": "#3498db"
-    },
-    {
-      "id": "Московская биржа",
-      "count": 16,
-      "category": "local_company",
-      "color": "#e74c3c"
     },
     {
       "id": "Россия",
       "count": 13,
       "category": "local_company",
+      "category_label": "Локальная компания",
       "color": "#e74c3c"
     },
     {
-      "id": "нефтегаз",
-      "count": 7,
+      "id": "Московская биржа",
+      "count": 16,
       "category": "local_company",
+      "category_label": "Локальная компания",
       "color": "#e74c3c"
     }
   ],

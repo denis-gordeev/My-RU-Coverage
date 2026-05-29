@@ -85,6 +85,7 @@ def scan_graph(min_weight=5, top_n=None):
             "id": name,
             "count": node_counts[name],
             "category": cat,
+            "category_label": CATEGORY_LABELS[cat],
             "color": CATEGORY_COLORS[cat],
         })
 
@@ -191,7 +192,7 @@ function render(minWeight) {{
     .call(d3.drag().on("start", dragStart).on("drag", dragging).on("end", dragEnd))
     .on("mouseover", (e, d) => {{
       tooltip.style("display", "block").html(
-        `<b>${{d.id}}</b><br>Упоминаний: ${{d.count}}<br>Категория: ${{d.category}}`
+        `<b>${{d.id}}</b><br>Упоминаний: ${{d.count}}<br>Категория: ${{d.category_label}}`
       );
       highlightNeighbors(d);
     }})
