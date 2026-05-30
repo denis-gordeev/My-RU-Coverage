@@ -91,7 +91,7 @@ def apply_enrichment(filepath, ticker, data):
     content = re.sub(SECTION_HEADER_REGEX["supply_chain"], SUPPLY_CHAIN_SECTION_TITLE, content)
     content = re.sub(SECTION_HEADER_REGEX["customers"], CUSTOMERS_SECTION_TITLE, content)
 
-    # Нормализуем викалинки: стандартизируем алиасы, схлопываем дубли
+    # Нормализуем викилинки: стандартизируем алиасы, схлопываем дубли
     content = normalize_wikilinks(content)
 
     with open(filepath, "w", encoding="utf-8") as f:

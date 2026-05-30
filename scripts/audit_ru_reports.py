@@ -18,7 +18,7 @@ def check_file(filepath):
     issues = []
     content = filepath.read_text(encoding="utf-8")
 
-    # 1. Ищем слишком общие викалинк-сущности.
+    # 1. Ищем слишком общие викилинк-сущности.
     wikilinks = re.findall(r"\[\[([^\]]+)\]\]", content)
     industry_acronyms = {
         "СПГ", "АЗС", "МСБ", "ОРЭМ", "ДПМ", "ФСТ", "СУЭК", "АТС", "ЖКХ",
@@ -59,7 +59,7 @@ def check_file(filepath):
                 generic_wikilinks.append(wl)
                 break
     if generic_wikilinks:
-        issues.append(f"Слишком общие викалинк-сущности: {', '.join(generic_wikilinks)}")
+        issues.append(f"Слишком общие викилинк-сущности: {', '.join(generic_wikilinks)}")
 
     # 2. Проверяем размер секции про клиентов и поставщиков.
     client_match = re.search(r"## Ключевые клиенты? и поставщики?", content)
@@ -83,9 +83,9 @@ def check_file(filepath):
         if sec not in content:
             issues.append(f"Отсутствует обязательный раздел: {sec}")
 
-    # 4. Проверяем минимальное число викалинков.
+    # 4. Проверяем минимальное число викилинков.
     if len(wikilinks) < 10:
-        issues.append(f"Недостаточно викалинков: {len(wikilinks)} (нужно >= 10)")
+        issues.append(f"Недостаточно викилинков: {len(wikilinks)} (нужно >= 10)")
 
     # 5. Ловим остаточные legacy-темы и китайские сущности в российском корпусе.
     legacy_hits = []

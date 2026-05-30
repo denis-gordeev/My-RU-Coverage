@@ -38,7 +38,7 @@ def collect_wikilinks():
 
 
 def categorize(wikilinks):
-    """Разбивает викалинки по смысловым категориям."""
+    """Разбивает викилинки по смысловым категориям."""
     technologies = {}
     materials = {}
     applications = {}
@@ -88,9 +88,9 @@ def main():
     tech, mat, app, intl, local = categorize(wikilinks)
 
     lines = [
-        "# Индекс викалинков",
+        "# Индекс викилинков",
         "",
-        f"> **{len(wikilinks)} уникальных викалинков** по всем отчётам. Файл генерируется автоматически.",
+        f"> **{len(wikilinks)} уникальных викилинков** по всем отчётам. Файл генерируется автоматически.",
         f"> Пересобрать: `python scripts/build_wikilink_index.py`",
         "",
         "---",
@@ -106,7 +106,7 @@ def main():
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
 
-    print(f"Сгенерирован WIKILINKS.md: {len(wikilinks)} уникальных викалинков")
+    print(f"Сгенерирован WIKILINKS.md: {len(wikilinks)} уникальных викилинков")
     print(f"  Технологии: {len(tech)}")
     print(f"  Материалы: {len(mat)}")
     print(f"  Применения: {len(app)}")

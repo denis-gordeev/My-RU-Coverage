@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<title>Граф викалинков покрытия</title>
+<title>Граф викилинков покрытия</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #1a1a2e; color: #eee; overflow: hidden; }
@@ -19,7 +19,7 @@
 </head>
 <body>
 <div id="controls">
-  <h2>Граф викалинков</h2>
+  <h2>Граф викилинков</h2>
   <label>Мин. вес связи: <span id="weightVal">5</span></label>
   <input type="range" id="weightSlider" min="1" max="50" value="5">
   <label>Поиск:</label>
@@ -32,13 +32,13 @@
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
-const fullData = {"nodes": [{"id": "Россия", "count": 13, "category": "local_company", "category_label": "Локальная компания", "color": "#e74c3c"}, {"id": "Московская биржа", "count": 16, "category": "local_company", "category_label": "Локальная компания", "color": "#e74c3c"}, {"id": "нефтегаз", "count": 7, "category": "local_company", "category_label": "Локальная компания", "color": "#e74c3c"}, {"id": "MOEX", "count": 12, "category": "international_company", "category_label": "Иностранная компания", "color": "#3498db"}], "links": [{"source": "MOEX", "target": "Московская биржа", "weight": 6}, {"source": "MOEX", "target": "Россия", "weight": 12}, {"source": "Московская биржа", "target": "Россия", "weight": 7}, {"source": "Россия", "target": "нефтегаз", "weight": 5}]};
+const fullData = {"nodes": [{"id": "Россия", "count": 13, "category": "local_company", "category_label": "Локальная компания", "color": "#e74c3c"}, {"id": "нефтегаз", "count": 7, "category": "local_company", "category_label": "Локальная компания", "color": "#e74c3c"}, {"id": "Московская биржа", "count": 16, "category": "local_company", "category_label": "Локальная компания", "color": "#e74c3c"}, {"id": "MOEX", "count": 12, "category": "international_company", "category_label": "Иностранная компания", "color": "#3498db"}], "links": [{"source": "MOEX", "target": "Московская биржа", "weight": 6}, {"source": "MOEX", "target": "Россия", "weight": 12}, {"source": "Московская биржа", "target": "Россия", "weight": 7}, {"source": "Россия", "target": "нефтегаз", "weight": 5}]};
 const width = window.innerWidth, height = window.innerHeight;
 
 const svg = d3.select("svg");
 const g = svg.append("g");
 
-// Zoom
+  // Масштабирование
 svg.call(d3.zoom().scaleExtent([0.1, 8]).on("zoom", (e) => g.attr("transform", e.transform)));
 
 const tooltip = d3.select("#tooltip");
@@ -54,7 +54,7 @@ function render(minWeight) {
 
   g.selectAll("*").remove();
 
-  // Scale
+  // Масштаб
   const maxCount = d3.max(nodes, d => d.count) || 1;
   const rScale = d3.scaleSqrt().domain([1, maxCount]).range([4, 40]);
   const maxWeight = d3.max(links, l => l.weight) || 1;
@@ -118,7 +118,7 @@ function dragStart(e, d) { if (!e.active) simulation.alphaTarget(0.3).restart();
 function dragging(e, d) { d.fx = e.x; d.fy = e.y; }
 function dragEnd(e, d) { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }
 
-// Controls
+  // Управление
 d3.select("#weightSlider").on("input", function() {
   const v = +this.value;
   d3.select("#weightVal").text(v);
@@ -132,7 +132,7 @@ d3.select("#search").on("input", function() {
   if (match) highlightNeighbors(match);
 });
 
-// Initial render
+  // Первичная отрисовка
 render(5);
 </script>
 </body>

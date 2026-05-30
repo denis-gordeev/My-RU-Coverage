@@ -7,7 +7,7 @@ discover.py — Обратный поиск компаний по ключево
 1. Ищет упоминания по всем релевантным карточкам эмитентов
 2. При необходимости добавляет [[wikilinks]] для найденного термина
 3. Показывает, какие компании и в каком контексте связаны с темой
-4. По запросу пересобирает темы, граф и индекс викалинков
+4. По запросу пересобирает темы, граф и индекс викилинков
 
 Примеры:
   python scripts/discover.py "импортозамещение"                            # искать по всем секторам
@@ -91,6 +91,13 @@ SMART_PROFILES = {
     "energy": TECH_SECTORS | INDUSTRIAL_SECTORS | ENERGY_SECTORS | MATERIALS_SECTORS,
     "consumer": CONSUMER_SECTORS | TECH_SECTORS,
     "all": None,  # None = искать по всем секторам
+}
+
+PROFILE_LABELS = {
+    "tech": "технологический",
+    "energy": "энергетический",
+    "consumer": "потребительский",
+    "all": "все",
 }
 
 # Подсказки для автоопределения профиля
@@ -299,7 +306,7 @@ def main():
         sectors_filter = SMART_PROFILES[profile]
         if sectors_filter:
             print(
-                f"Умный режим: профиль '{profile}', поиск по {len(sectors_filter)} секторам"
+                f"Умный режим: профиль '{PROFILE_LABELS.get(profile, profile)}', поиск по {len(sectors_filter)} секторам"
             )
             print("  Внимание: возможны пропуски межсекторальных совпадений. Для полного охвата запускайте без --smart.")
 
@@ -331,7 +338,7 @@ def main():
             [sys.executable, os.path.join(PROJECT_ROOT, "scripts", "build_network.py")],
             cwd=PROJECT_ROOT,
         )
-        print("Пересобираю индекс викалинков...")
+        print("Пересобираю индекс викилинков...")
         subprocess.run(
             [sys.executable, os.path.join(PROJECT_ROOT, "scripts", "build_wikilink_index.py")],
             cwd=PROJECT_ROOT,

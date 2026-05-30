@@ -1,5 +1,5 @@
 """
-build_network.py — Строит данные и HTML-визуализацию графа викалинков.
+build_network.py — Строит данные и HTML-визуализацию графа викилинков.
 
 Сканирует карточки эмитентов, считает совместную встречаемость `[[wikilinks]]`
 и создаёт:
@@ -30,8 +30,8 @@ NETWORK_DIR = os.path.join(PROJECT_ROOT, "network")
 
 
 def scan_graph(min_weight=5, top_n=None):
-    """Собирает граф совместной встречаемости викалинков."""
-    # Шаг 1: собираем викалинки по файлам
+    """Собирает граф совместной встречаемости викилинков."""
+    # Шаг 1: собираем викилинки по файлам
     node_counts = defaultdict(int)
     wl_per_file = {}
 
@@ -117,7 +117,7 @@ def build_html(nodes, edges):
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<title>Граф викалинков покрытия</title>
+<title>Граф викилинков покрытия</title>
 <style>
   * {{ margin: 0; padding: 0; box-sizing: border-box; }}
   body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #1a1a2e; color: #eee; overflow: hidden; }}
@@ -134,7 +134,7 @@ def build_html(nodes, edges):
 </head>
 <body>
 <div id="controls">
-  <h2>Граф викалинков</h2>
+  <h2>Граф викилинков</h2>
   <label>Мин. вес связи: <span id="weightVal">5</span></label>
   <input type="range" id="weightSlider" min="1" max="50" value="5">
   <label>Поиск:</label>
@@ -153,7 +153,7 @@ const width = window.innerWidth, height = window.innerHeight;
 const svg = d3.select("svg");
 const g = svg.append("g");
 
-// Zoom
+  // Масштабирование
 svg.call(d3.zoom().scaleExtent([0.1, 8]).on("zoom", (e) => g.attr("transform", e.transform)));
 
 const tooltip = d3.select("#tooltip");
@@ -169,7 +169,7 @@ function render(minWeight) {{
 
   g.selectAll("*").remove();
 
-  // Scale
+  // Масштаб
   const maxCount = d3.max(nodes, d => d.count) || 1;
   const rScale = d3.scaleSqrt().domain([1, maxCount]).range([4, 40]);
   const maxWeight = d3.max(links, l => l.weight) || 1;
@@ -233,7 +233,7 @@ function dragStart(e, d) {{ if (!e.active) simulation.alphaTarget(0.3).restart()
 function dragging(e, d) {{ d.fx = e.x; d.fy = e.y; }}
 function dragEnd(e, d) {{ if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }}
 
-// Controls
+  // Управление
 d3.select("#weightSlider").on("input", function() {{
   const v = +this.value;
   d3.select("#weightVal").text(v);
@@ -247,7 +247,7 @@ d3.select("#search").on("input", function() {{
   if (match) highlightNeighbors(match);
 }});
 
-// Initial render
+  // Первичная отрисовка
 render(5);
 </script>
 </body>
@@ -269,7 +269,7 @@ def main():
 
     os.makedirs(NETWORK_DIR, exist_ok=True)
 
-    print(f"Сканирую совместную встречаемость викалинков (мин. вес: {min_weight})...")
+    print(f"Сканирую совместную встречаемость викилинков (мин. вес: {min_weight})...")
     nodes, edges = scan_graph(min_weight=min_weight, top_n=top_n)
     print(f"Граф: узлов {len(nodes)}, связей {len(edges)}")
 

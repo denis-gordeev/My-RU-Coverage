@@ -8,15 +8,15 @@
       "color": "#e74c3c"
     },
     {
-      "id": "Московская биржа",
-      "count": 16,
+      "id": "нефтегаз",
+      "count": 7,
       "category": "local_company",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
     },
     {
-      "id": "нефтегаз",
-      "count": 7,
+      "id": "Московская биржа",
+      "count": 16,
       "category": "local_company",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
