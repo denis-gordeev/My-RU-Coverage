@@ -454,7 +454,7 @@ def fetch_valuation_data(info):
 
 
 def build_valuation_table(v):
-    """Строит раздел оценки оценки в формате markdown из словаря v."""
+    """Строит раздел оценочных мультипликаторов в формате markdown из словаря v."""
     headers = ["P/E (за 12 мес.)", "Прогнозный P/E", "P/S (за 12 мес.)", "P/B", "EV/EBITDA"]
     values = [v.get(h, "Н/Д") for h in headers]
     widths = [max(len(h), len(val)) for h, val in zip(headers, values)]
