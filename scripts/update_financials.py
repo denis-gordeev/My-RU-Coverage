@@ -47,38 +47,21 @@ METRICS_KEYS = {
     "capex": ["Capital Expenditure", "Capital Expenditures"],
 }
 
-METRIC_ROW_LABELS = {
-    ".ME": {
-        "Выручка": "Выручка",
-        "Валовая прибыль": "Валовая прибыль",
-        "Валовая маржа (%)": "Валовая маржа (%)",
-        "Коммерческие расходы": "Коммерческие расходы",
-        "Расходы на НИОКР": "Расходы на НИОКР",
-        "Общехозяйственные расходы": "Общехозяйственные расходы",
-        "Операционная прибыль": "Операционная прибыль",
-        "Операционная маржа (%)": "Операционная маржа (%)",
-        "Чистая прибыль": "Чистая прибыль",
-        "Чистая маржа (%)": "Чистая маржа (%)",
-        "Операционный денежный поток": "Операционный денежный поток",
-        "Инвестиционный денежный поток": "Инвестиционный денежный поток",
-        "Финансовый денежный поток": "Финансовый денежный поток",
-        "Капитальные затраты": "Капитальные затраты",
-        # Устаревшие английские ключи для обратной совместимости с DataFrame
-        "Revenue": "Выручка",
-        "Gross Profit": "Валовая прибыль",
-        "Gross Margin (%)": "Валовая маржа (%)",
-        "Selling & Marketing Exp": "Коммерческие расходы",
-        "R&D Exp": "Расходы на НИОКР",
-        "General & Admin Exp": "Общехозяйственные расходы",
-        "Operating Income": "Операционная прибыль",
-        "Operating Margin (%)": "Операционная маржа (%)",
-        "Net Income": "Чистая прибыль",
-        "Net Margin (%)": "Чистая маржа (%)",
-        "Op Cash Flow": "Операционный денежный поток",
-        "Investing Cash Flow": "Инвестиционный денежный поток",
-        "Financing Cash Flow": "Финансовый денежный поток",
-        "CAPEX": "Капитальные затраты",
-    },
+METRIC_LABELS = {
+    "revenue": "Выручка",
+    "gross_profit": "Валовая прибыль",
+    "gross_margin": "Валовая маржа (%)",
+    "selling_exp": "Коммерческие расходы",
+    "rd_exp": "Расходы на НИОКР",
+    "admin_exp": "Общехозяйственные расходы",
+    "operating_income": "Операционная прибыль",
+    "operating_margin": "Операционная маржа (%)",
+    "net_income": "Чистая прибыль",
+    "net_margin": "Чистая маржа (%)",
+    "ocf": "Операционный денежный поток",
+    "icf": "Инвестиционный денежный поток",
+    "fcf": "Финансовый денежный поток",
+    "capex": "Капитальные затраты",
 }
 
 
@@ -118,40 +101,40 @@ def extract_metrics(income_stmt, cashflow):
         return pd.DataFrame()
 
     data = {
-        "Revenue": get_series(income_stmt, METRICS_KEYS["revenue"]),
-        "Gross Profit": get_series(income_stmt, METRICS_KEYS["gross_profit"]),
-        "Gross Margin (%)": calc_margin(
+        METRIC_LABELS["revenue"]: get_series(income_stmt, METRICS_KEYS["revenue"]),
+        METRIC_LABELS["gross_profit"]: get_series(income_stmt, METRICS_KEYS["gross_profit"]),
+        METRIC_LABELS["gross_margin"]: calc_margin(
             get_series(income_stmt, METRICS_KEYS["gross_profit"]),
             get_series(income_stmt, METRICS_KEYS["revenue"]),
         ),
-        "Selling & Marketing Exp": get_series(income_stmt, METRICS_KEYS["selling_exp"]),
-        "R&D Exp": get_series(income_stmt, METRICS_KEYS["rd_exp"]),
-        "General & Admin Exp": calc_admin_exp(income_stmt),
-        "Operating Income": get_series(income_stmt, METRICS_KEYS["operating_income"]),
-        "Operating Margin (%)": calc_margin(
+        METRIC_LABELS["selling_exp"]: get_series(income_stmt, METRICS_KEYS["selling_exp"]),
+        METRIC_LABELS["rd_exp"]: get_series(income_stmt, METRICS_KEYS["rd_exp"]),
+        METRIC_LABELS["admin_exp"]: calc_admin_exp(income_stmt),
+        METRIC_LABELS["operating_income"]: get_series(income_stmt, METRICS_KEYS["operating_income"]),
+        METRIC_LABELS["operating_margin"]: calc_margin(
             get_series(income_stmt, METRICS_KEYS["operating_income"]),
             get_series(income_stmt, METRICS_KEYS["revenue"]),
         ),
-        "Net Income": get_series(income_stmt, METRICS_KEYS["net_income"]),
-        "Net Margin (%)": calc_margin(
+        METRIC_LABELS["net_income"]: get_series(income_stmt, METRICS_KEYS["net_income"]),
+        METRIC_LABELS["net_margin"]: calc_margin(
             get_series(income_stmt, METRICS_KEYS["net_income"]),
             get_series(income_stmt, METRICS_KEYS["revenue"]),
         ),
-        "Op Cash Flow": get_series(cashflow, METRICS_KEYS["ocf"]),
-        "Investing Cash Flow": get_series(cashflow, METRICS_KEYS["icf"]),
-        "Financing Cash Flow": get_series(cashflow, METRICS_KEYS["fcf"]),
-        "CAPEX": get_series(cashflow, METRICS_KEYS["capex"]),
+        METRIC_LABELS["ocf"]: get_series(cashflow, METRICS_KEYS["ocf"]),
+        METRIC_LABELS["icf"]: get_series(cashflow, METRICS_KEYS["icf"]),
+        METRIC_LABELS["fcf"]: get_series(cashflow, METRICS_KEYS["fcf"]),
+        METRIC_LABELS["capex"]: get_series(cashflow, METRICS_KEYS["capex"]),
     }
 
     # Выводим CAPEX из FCF при отсутствии: CAPEX = FCF − операционный поток (отрицательный)
-    capex = data["CAPEX"]
-    ocf = data["Op Cash Flow"]
+    capex = data[METRIC_LABELS["capex"]]
+    ocf = data[METRIC_LABELS["ocf"]]
     fcf = get_series(cashflow, ["Free Cash Flow"])
     if not capex.empty and not ocf.empty and not fcf.empty:
         derived_capex = fcf - ocf
-        data["CAPEX"] = capex.fillna(derived_capex)
+        data[METRIC_LABELS["capex"]] = capex.fillna(derived_capex)
     elif capex.empty and not ocf.empty and not fcf.empty:
-        data["CAPEX"] = fcf - ocf
+        data[METRIC_LABELS["capex"]] = fcf - ocf
 
     df = pd.DataFrame(data).T
     # Очищаем заголовки столбцов: убираем временную часть из datetime
@@ -163,9 +146,8 @@ def extract_metrics(income_stmt, cashflow):
 
 
 def localize_metric_labels(df, suffix):
-    """Переименовывает строки финансовых метрик в язык отчёта для конкретного рынка."""
-    labels = METRIC_ROW_LABELS.get(suffix, METRIC_ROW_LABELS[".ME"])
-    return df.rename(index=labels)
+    """Устаревшая функция — метрики уже создаются с русскими подписями."""
+    return df
 
 
 def get_source_candidates(ticker):
@@ -206,8 +188,8 @@ def prepare_statement_df(df, suffix, max_columns):
     if df.empty:
         return df
 
-    if "Revenue" in df.index:
-        valid_cols = df.columns[df.loc["Revenue"].notna()]
+    if METRIC_LABELS["revenue"] in df.index:
+        valid_cols = df.columns[df.loc[METRIC_LABELS["revenue"]].notna()]
         df = df[valid_cols]
     else:
         df = df.dropna(axis=1, how="all")
