@@ -1,6 +1,6 @@
 ---
 name: update-enrichment
-description: Update business descriptions, supply chain, and customer/supplier sections for ticker reports
+description: Обновить описания бизнеса, цепочки поставок и разделы клиентов/поставщиков для отчётов по тикерам
 user_invocable: true
 ---
 
@@ -13,7 +13,7 @@ user_invocable: true
 - `/update-enrichment SBER` — один тикер
 - `/update-enrichment SBER YDEX OZON` — несколько тикеров
 - `/update-enrichment --batch 101` — все тикеры партии
-- `/update-enrichment --sector Financial Services` — весь сектор
+- `/update-enrichment --sector Финансовые услуги` — весь сектор
 - `/update-enrichment` — все тикеры (запросит подтверждение)
 
 ## Инструкции
@@ -26,7 +26,7 @@ user_invocable: true
 
 Для каждого тикера:
 1. Прочитайте текущий файл, чтобы понять существующий контент
-2. Веб-поиск: `[Тикер] investor relations`, `[Тикер] годовая отчёт`, `[Компания] инвестпрезентация основные клиенты`
+2. Веб-поиск: `[Тикер] investor relations / инвест-отношения`, `[Тикер] годовая отчёт`, `[Компания] инвестпрезентация основные клиенты`
 3. **ПРОВЕРКА**: название компании в файле совпадает с исследованием (Золотое правило #2)
 4. Подготовьте обогащение:
    - `desc`: Описание бизнеса на русском языке с [[викилинками]] для компаний, технологий и материалов
@@ -41,7 +41,7 @@ user_invocable: true
 python scripts/update_enrichment.py --data enrichment.json [область]
 ```
 
-Опции области: `SBER`, `SBER YDEX`, `--batch 101`, `--sector Financial Services`, или пропустите для всех записей в JSON.
+Опции области: `SBER`, `SBER YDEX`, `--batch 101`, `--sector Финансовые услуги`, или пропустите для всех записей в JSON.
 
 ### Шаг 4: Аудит
 
@@ -49,7 +49,7 @@ python scripts/update_enrichment.py --data enrichment.json [область]
 python scripts/audit_batch.py <партия> -v
 ```
 
-Проверьте, что все цели проходят (8+ викилинков, нет обобщений, нет placeholder'ов, нет английского).
+Проверьте, что все цели проходят (8+ викилинков, нет обобщений, нет секций-заглушек, нет английского).
 
 ### Правила качества (из CLAUDE.md)
 

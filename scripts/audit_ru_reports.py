@@ -87,7 +87,7 @@ def check_file(filepath):
     if len(wikilinks) < 10:
         issues.append(f"Недостаточно викилинков: {len(wikilinks)} (нужно >= 10)")
 
-    # 5. Ловим остаточные legacy-темы и китайские сущности в российском корпусе.
+    # 5. Ловим остаточные устаревшие темы и китайские сущности в российском корпусе.
     legacy_hits = []
     for wl in wikilinks:
         base = wl.split("|")[0].strip()
@@ -95,7 +95,7 @@ def check_file(filepath):
             legacy_hits.append(base)
     if legacy_hits:
         issues.append(
-            "Обнаружены legacy-сущности вне российского контура: "
+            "Обнаружены устаревшие сущности вне российского контура: "
             + ", ".join(sorted(set(legacy_hits)))
         )
 

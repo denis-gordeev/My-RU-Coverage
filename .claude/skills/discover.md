@@ -1,6 +1,6 @@
 ---
 name: discover
-description: Reverse discovery — find MOEX-listed companies related to a buzzword, with web research fallback when no results exist in the database
+description: Обратный поиск — найти компании на MOEX, связанные с ключевым словом, с веб-исследованием при отсутствии результатов в базе
 user_invocable: true
 ---
 

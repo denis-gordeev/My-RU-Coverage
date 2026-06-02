@@ -2,7 +2,7 @@
 generate_moex_reports.py — Генерация базовых MOEX-отчётов из официальной очереди ISS.
 
 Формирует живую очередь из MOEX ISS и создаёт отсутствующие карточки через
-русскоязычный workflow add_ticker вместо устаревшего тайваньского генератора.
+русскоязычный процесс add_ticker.
 
 Применение:
   python scripts/generate_moex_reports.py
@@ -172,7 +172,7 @@ def main():
     parser = argparse.ArgumentParser(
         description=(
             "Создать базовые MOEX-карточки по живой очереди из MOEX ISS без "
-            "опоры на legacy-Excel."
+            "опоры на устаревший Excel."
         )
     )
     parser.add_argument(

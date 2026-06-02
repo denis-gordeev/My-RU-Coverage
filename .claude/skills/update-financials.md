@@ -1,6 +1,6 @@
 ---
 name: update-financials
-description: Update financial tables (annual 3yr + quarterly 4Q) for ticker reports using yfinance data
+description: Обновить финансовые таблицы (годовые 3 года + квартальные 4 кв.) для отчётов по тикерам с использованием данных yfinance
 user_invocable: true
 ---
 
@@ -18,8 +18,8 @@ user_invocable: true
 - **Один тикер**: `/update-financials SBER`
 - **Несколько тикеров**: `/update-financials SBER YDEX OZON`
 - **По партии**: `/update-financials --batch 101`
-- **По сектору**: `/update-financials --sector Financial Services`
-- **Dry run**: добавьте `--dry-run` для предпросмотра без записи
+- **По сектору**: `/update-financials --sector Финансовые услуги`
+- **Пробный запуск**: добавьте `--dry-run` для предпросмотра без записи
 
 ## Инструкции
 
@@ -38,8 +38,8 @@ python scripts/update_financials.py [АРГУМЕНТЫ]
 
 | Поле | Источник | Расположение |
 |---|---|---|
-| **Рыночная кап.** (Market Cap) | `stock.info['marketCap']` | Блок метаданных |
-| **Стоимость предприятия** (Enterprise Value) | `stock.info['enterpriseValue']` | Блок метаданных |
+| **Рыночная капитализация** | `stock.info['marketCap']` | Блок метаданных |
+| **Стоимость предприятия (EV)** | `stock.info['enterpriseValue']` | Блок метаданных |
 | **Годовые данные (3 года)** | `stock.income_stmt` + `stock.cashflow` | Таблица `### Годовые ключевые финансовые данные` |
 | **Квартальные данные (4 кв.)** | `stock.quarterly_income_stmt` + `stock.quarterly_cashflow` | Таблица `### Квартальные ключевые финансовые данные` |
 
