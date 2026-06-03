@@ -178,7 +178,7 @@ def main():
     parser.add_argument(
         "tickers",
         nargs="*",
-        help="Явно указанные тикеры. Если не заданы, используется очередь missing из MOEX ISS.",
+        help="Явно указанные тикеры. Если не заданы, используется очередь непокрытых тикеров из MOEX ISS.",
     )
     parser.add_argument("--date", help="Дата состава индекса в формате YYYY-MM-DD")
     parser.add_argument(
@@ -199,7 +199,7 @@ def main():
     parser.add_argument(
         "--all-missing",
         action="store_true",
-        help="Игнорировать лимит --top и обработать всю очередь missing.",
+        help="Игнорировать лимит --top и обработать всю очередь непокрытых тикеров.",
     )
     parser.add_argument(
         "--dry-run",

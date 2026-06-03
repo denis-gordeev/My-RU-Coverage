@@ -432,7 +432,6 @@ def fetch_valuation_data(info):
         "EUR": "€",
         "CNY": "¥",
         "JPY": "¥",
-        "HKD": "HK$",
     }.get(currency, "₽")
 
     # Информация о периодах

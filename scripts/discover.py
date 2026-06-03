@@ -199,7 +199,7 @@ def apply_wikilinks(results, buzzword):
         pattern = (
             r"(?<!\[\[)"
             + re.escape(buzzword)
-            + r"(?!\]\])(?![A-Za-z\u0400-\u04FF\u4e00-\u9fff])"
+            + r"(?!\]\])(?![A-Za-z\u0400-\u04FF])"
         )
         new_text, count = re.subn(pattern, f"[[{buzzword}]]", text)
 

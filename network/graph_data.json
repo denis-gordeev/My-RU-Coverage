@@ -1,15 +1,15 @@
 {
   "nodes": [
     {
-      "id": "Россия",
-      "count": 13,
+      "id": "Московская биржа",
+      "count": 16,
       "category": "local_company",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
     },
     {
-      "id": "Московская биржа",
-      "count": 16,
+      "id": "нефтегаз",
+      "count": 7,
       "category": "local_company",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
@@ -22,8 +22,8 @@
       "color": "#e74c3c"
     },
     {
-      "id": "нефтегаз",
-      "count": 7,
+      "id": "Россия",
+      "count": 13,
       "category": "local_company",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
