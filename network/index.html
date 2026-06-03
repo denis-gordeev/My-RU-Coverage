@@ -23,7 +23,7 @@
   <label>Мин. вес связи: <span id="weightVal">5</span></label>
   <input type="range" id="weightSlider" min="1" max="50" value="5">
   <label>Поиск:</label>
-  <input type="text" id="search" placeholder="например, Газпром, NVIDIA, CPO">
+  <input type="text" id="search" placeholder="например, Газпром, Сбер, Яндекс">
 </div>
 <div id="legend"><div style="display:flex;align-items:center;margin:4px 12px"><div style="width:14px;height:14px;border-radius:50%;background:#e74c3c;margin-right:6px"></div><span style="font-size:13px">Локальная компания</span></div><div style="display:flex;align-items:center;margin:4px 12px"><div style="width:14px;height:14px;border-radius:50%;background:#3498db;margin-right:6px"></div><span style="font-size:13px">Иностранная компания</span></div><div style="display:flex;align-items:center;margin:4px 12px"><div style="width:14px;height:14px;border-radius:50%;background:#2ecc71;margin-right:6px"></div><span style="font-size:13px">Технология / стандарт</span></div><div style="display:flex;align-items:center;margin:4px 12px"><div style="width:14px;height:14px;border-radius:50%;background:#f39c12;margin-right:6px"></div><span style="font-size:13px">Материал / подложка</span></div><div style="display:flex;align-items:center;margin:4px 12px"><div style="width:14px;height:14px;border-radius:50%;background:#9b59b6;margin-right:6px"></div><span style="font-size:13px">Конечный рынок</span></div></div>
 <div id="tooltip"></div>
@@ -32,7 +32,7 @@
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
-const fullData = {"nodes": [{"id": "MOEX", "count": 12, "category": "international_company", "category_label": "Иностранная компания", "color": "#3498db"}, {"id": "нефтегаз", "count": 7, "category": "local_company", "category_label": "Локальная компания", "color": "#e74c3c"}, {"id": "Россия", "count": 13, "category": "local_company", "category_label": "Локальная компания", "color": "#e74c3c"}, {"id": "Московская биржа", "count": 16, "category": "local_company", "category_label": "Локальная компания", "color": "#e74c3c"}], "links": [{"source": "MOEX", "target": "Московская биржа", "weight": 6}, {"source": "MOEX", "target": "Россия", "weight": 12}, {"source": "Московская биржа", "target": "Россия", "weight": 7}, {"source": "Россия", "target": "нефтегаз", "weight": 5}]};
+const fullData = {"nodes": [{"id": "Россия", "count": 13, "category": "local_company", "category_label": "Локальная компания", "color": "#e74c3c"}, {"id": "Московская биржа", "count": 16, "category": "local_company", "category_label": "Локальная компания", "color": "#e74c3c"}, {"id": "MOEX", "count": 12, "category": "local_company", "category_label": "Локальная компания", "color": "#e74c3c"}, {"id": "нефтегаз", "count": 7, "category": "local_company", "category_label": "Локальная компания", "color": "#e74c3c"}], "links": [{"source": "MOEX", "target": "Московская биржа", "weight": 6}, {"source": "MOEX", "target": "Россия", "weight": 12}, {"source": "Московская биржа", "target": "Россия", "weight": 7}, {"source": "Россия", "target": "нефтегаз", "weight": 5}]};
 const width = window.innerWidth, height = window.innerHeight;
 
 const svg = d3.select("svg");

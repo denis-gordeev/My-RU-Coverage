@@ -138,7 +138,7 @@ def build_html(nodes, edges):
   <label>Мин. вес связи: <span id="weightVal">5</span></label>
   <input type="range" id="weightSlider" min="1" max="50" value="5">
   <label>Поиск:</label>
-  <input type="text" id="search" placeholder="например, Газпром, NVIDIA, CPO">
+  <input type="text" id="search" placeholder="например, Газпром, Сбер, Яндекс">
 </div>
 <div id="legend">{legend_items}</div>
 <div id="tooltip"></div>

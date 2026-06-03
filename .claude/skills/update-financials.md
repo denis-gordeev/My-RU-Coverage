@@ -17,7 +17,6 @@ user_invocable: true
 - **Все тикеры**: `/update-financials` (без аргументов — обновляет все отчёты)
 - **Один тикер**: `/update-financials SBER`
 - **Несколько тикеров**: `/update-financials SBER YDEX OZON`
-- **По партии**: `/update-financials --batch 101`
 - **По сектору**: `/update-financials --sector Финансовые услуги`
 - **Пробный запуск**: добавьте `--dry-run` для предпросмотра без записи
 
@@ -40,8 +39,8 @@ python scripts/update_financials.py [АРГУМЕНТЫ]
 |---|---|---|
 | **Рыночная капитализация** | `stock.info['marketCap']` | Блок метаданных |
 | **Стоимость предприятия (EV)** | `stock.info['enterpriseValue']` | Блок метаданных |
-| **Годовые данные (3 года)** | `stock.income_stmt` + `stock.cashflow` | Таблица `### Годовые ключевые финансовые данные` |
-| **Квартальные данные (4 кв.)** | `stock.quarterly_income_stmt` + `stock.quarterly_cashflow` | Таблица `### Квартальные ключевые финансовые данные` |
+| **Годовые данные (3 года)** | `stock.income_stmt` + `stock.cashflow` | Таблица `### Ключевые финансовые показатели по годам (3 года)` |
+| **Квартальные данные (4 кв.)** | `stock.quarterly_income_stmt` + `stock.quarterly_cashflow` | Таблица `### Ключевые финансовые показатели по кварталам (4 квартала)` |
 
 Все денежные значения в **млн руб.** (для тикеров `.ME`). Маржинальность в **%**.
 

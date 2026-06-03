@@ -249,9 +249,8 @@ def setup_stdout():
 # Соответствие канонических имён: алиас -> каноническое
 # Российский рынок: кириллические алиасы -> канонические имена.
 WIKILINK_ALIASES = {
-    # Российские компании: кириллические алиасы -> канонические имена
     "Сбер": "SBER", "Сбербанк": "SBER",
-    "Газпром": "GAZP", "Газпром нефть": "GAZP",
+    "Газпром": "GAZP",
     "Яндекс": "YDEX", "МКПАО Яндекс": "YDEX",
     "Лукойл": "LKOH", "Роснефть": "ROSN", "НОВАТЭК": "NVTK",
     "Т-Технологии": "T", "Тинькофф": "T", "ТCS GROUP": "T",
@@ -269,10 +268,6 @@ WIKILINK_ALIASES = {
     "Аренадата": "DATA",
     "БАЗИС": "BAZA",
     "ЭЛ5-Энерго": "ELFV",
-    # Иностранные компании: русские алиасы -> английские канонические
-    "Эпл": "Apple", "Гугл": "Google", "Майкрософт": "Microsoft",
-    "Тесла": "Tesla", "Амазон": "Amazon",
-    # Технологические термины: стандартизация
     "SiC": "карбид кремния", "GaN": "нитрид галлия", "InP": "фосфид индия", "GaAs": "арсенид галлия",
     "IoT": "интернет вещей", "EV": "электромобиль",
     "FMCG": "ТНП",
@@ -317,13 +312,9 @@ def extract_wikilinks(content):
 # =============================================================================
 
 TECH_TERMS = {
-    "AI", "PCB", "5G", "HBM", "CoWoS", "EUV", "CPO", "FOPLP",
-    "VCSEL", "EML", "MLCC", "MOSFET", "IGBT", "DRAM", "NAND", "SSD",
-    "DDR5", "DDR4", "PCIe", "USB", "WiFi", "Bluetooth", "OLED", "AMOLED",
+    "AI", "5G", "IoT", "OLED", "AMOLED",
     "Mini LED", "Micro LED", "MCU", "SoC", "ASIC", "FPGA", "RF", "IC",
-    "LED", "LCD", "TFT", "CMP", "CVD", "PVD", "ALD", "AOI", "SMT",
-    "BGA", "QFN", "SOP", "SerDes", "PMIC",
-    "LDO", "NOR Flash", "NAND Flash",
+    "LED", "LCD", "NOR Flash", "NAND Flash",
     "карбид кремния", "нитрид галлия", "фосфид индия", "арсенид галлия",
     "кремниевая фотоника", "оптический трансивер",
     "Astra Linux", "152-ФЗ", "ФСТЭК", "импортозамещение",
@@ -331,11 +322,6 @@ TECH_TERMS = {
 
 MATERIAL_TERMS = {
     "карбид кремния", "нитрид галлия", "фосфид индия", "арсенид галлия",
-    "кремниевая подложка", "медная фольга", "стеклоткань",
-    "фоторезист", "полировальная жидкость", "сверхчистая вода",
-    "гелий", "неон", "титанат бария", "полиимид",
-    "выводная рамка", "зондовая карта", "BT смола",
-    "серебряная паста", "медная паста", "оксид алюминия",
     "золото", "алмазы", "железная руда", "коксующийся уголь", "сталь",
 }
 
@@ -382,6 +368,15 @@ def is_local_language_name(s):
     return cyrillic > len(s) * 0.3
 
 
+LOCAL_COMPANY_TICKERS = {
+    "MOEX", "SBER", "GAZP", "LKOH", "ROSN", "NVTK", "TATN", "SNGS",
+    "YDEX", "OZON", "X5", "MGNT", "VTBR", "MTSS", "AFKS", "T",
+    "PLZL", "GMKN", "ALRS", "MAGN", "CHMF", "NLMK", "PHOR", "AKRN",
+    "ENPG", "IRAO", "HYDR", "AFLT", "BANEP", "CBOM", "BSPB", "DOMRF",
+    "ETLN", "EUTR", "APTK", "ASTR", "CNRU", "DATA", "BAZA", "ELFV",
+    "AQUA", "BELU",
+}
+
 def classify_wikilink(name):
     """Классифицирует викилинк по категории."""
     if name in TECH_TERMS:
@@ -390,7 +385,7 @@ def classify_wikilink(name):
         return "material"
     if name in APPLICATION_TERMS:
         return "application"
-    if is_local_language_name(name):
+    if is_local_language_name(name) or name in LOCAL_COMPANY_TICKERS:
         return "local_company"
     return "international_company"
 
