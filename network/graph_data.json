@@ -8,6 +8,13 @@
       "color": "#e74c3c"
     },
     {
+      "id": "Россия",
+      "count": 13,
+      "category": "local_company",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
       "id": "нефтегаз",
       "count": 7,
       "category": "local_company",
@@ -17,13 +24,6 @@
     {
       "id": "MOEX",
       "count": 12,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Россия",
-      "count": 13,
       "category": "local_company",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
