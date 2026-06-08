@@ -472,7 +472,8 @@ def build_valuation_table(v):
         if period_note
         else f"{VALUATION_SECTION_TITLE}\n"
     )
-    return title + header_row + "\n" + sep_row + "\n" + val_row
+    footnote = "\n*P/E — цена/прибыль, P/S — цена/выручка, P/B — цена/балансовая стоимость, EV/EBITDA — стоимость предприятия/прибыль до вычета процентов, налогов и амортизации*"
+    return title + header_row + "\n" + sep_row + "\n" + val_row + footnote
 
 
 def update_metadata(content, market_cap, enterprise_value, unit_label=DEFAULT_UNIT_LABEL):

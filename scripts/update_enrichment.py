@@ -124,7 +124,7 @@ def main():
         args = args[:idx] + args[idx + 2:]
 
     if not json_path:
-        print("Использование: python scripts/update_enrichment.py --data <json_file> [scope]")
+        print("Использование: python scripts/update_enrichment.py --data <json-файл> [область]")
         print("  Область: SBER | SBER GAZP | --sector Энергетика | без аргументов = все")
         return
 

@@ -91,8 +91,8 @@ def main():
 
     if not args or args[0] in {"-h", "--help"}:
         print("Использование:")
-        print("  python scripts/add_ticker.py <ticker> <name>")
-        print("  python scripts/add_ticker.py <ticker> <name> --sector <sector>")
+        print("  python scripts/add_ticker.py <тикер> <название>")
+        print("  python scripts/add_ticker.py <тикер> <название> --sector <сектор>")
         return
 
     # Разбор аргументов
