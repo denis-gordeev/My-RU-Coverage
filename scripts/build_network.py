@@ -258,7 +258,7 @@ def main():
     setup_stdout()
 
     args = sys.argv[1:]
-    min_weight = 5
+    min_weight = 2
     top_n = None
 
     for i, arg in enumerate(args):
