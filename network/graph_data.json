@@ -1,7 +1,28 @@
 {
   "nodes": [
     {
-      "id": "44-ФЗ",
+      "id": "Мурманская область",
+      "count": 2,
+      "category": "local_company",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Природный газ",
+      "count": 3,
+      "category": "local_company",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Yandex Cloud",
+      "count": 3,
+      "category": "application",
+      "category_label": "Конечный рынок",
+      "color": "#9b59b6"
+    },
+    {
+      "id": "Автозаправочная станция",
       "count": 2,
       "category": "local_company",
       "category_label": "Локальная компания",
@@ -15,8 +36,22 @@
       "color": "#e74c3c"
     },
     {
-      "id": "РЖД",
-      "count": 4,
+      "id": "VK Cloud",
+      "count": 2,
+      "category": "international_company",
+      "category_label": "Иностранная компания",
+      "color": "#3498db"
+    },
+    {
+      "id": "Электронная коммерция",
+      "count": 2,
+      "category": "local_company",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Финтех",
+      "count": 5,
       "category": "local_company",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
@@ -29,18 +64,25 @@
       "color": "#e74c3c"
     },
     {
-      "id": "Антифрод",
-      "count": 2,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
       "id": "Selectel",
       "count": 3,
       "category": "application",
       "category_label": "Конечный рынок",
       "color": "#9b59b6"
+    },
+    {
+      "id": "Россия",
+      "count": 35,
+      "category": "local_company",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Нефтеперерабатывающий завод",
+      "count": 2,
+      "category": "local_company",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
     },
     {
       "id": "Интер РАО",
@@ -50,15 +92,57 @@
       "color": "#e74c3c"
     },
     {
-      "id": "Эквайринг",
+      "id": "Лукойл",
       "count": 2,
       "category": "local_company",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
     },
     {
-      "id": "Лукойл",
+      "id": "Нефтепереработка",
       "count": 2,
+      "category": "local_company",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "РусГидро",
+      "count": 2,
+      "category": "local_company",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Kaspersky",
+      "count": 2,
+      "category": "international_company",
+      "category_label": "Иностранная компания",
+      "color": "#3498db"
+    },
+    {
+      "id": "Металлолом",
+      "count": 3,
+      "category": "local_company",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "44-ФЗ",
+      "count": 2,
+      "category": "local_company",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Железная руда",
+      "count": 3,
+      "category": "local_company",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "РЖД",
+      "count": 4,
       "category": "local_company",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
@@ -78,49 +162,7 @@
       "color": "#e74c3c"
     },
     {
-      "id": "Финтех",
-      "count": 5,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Железная руда",
-      "count": 3,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Нефтеперерабатывающий завод",
-      "count": 2,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Коксующийся уголь",
-      "count": 2,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "VK Cloud",
-      "count": 2,
-      "category": "international_company",
-      "category_label": "Иностранная компания",
-      "color": "#3498db"
-    },
-    {
-      "id": "Металлолом",
-      "count": 3,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Природный газ",
+      "id": "МТС",
       "count": 3,
       "category": "local_company",
       "category_label": "Локальная компания",
@@ -134,35 +176,21 @@
       "color": "#e74c3c"
     },
     {
-      "id": "Kaspersky",
-      "count": 2,
-      "category": "international_company",
-      "category_label": "Иностранная компания",
-      "color": "#3498db"
-    },
-    {
-      "id": "Мурманская область",
+      "id": "Коксующийся уголь",
       "count": 2,
       "category": "local_company",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
     },
     {
-      "id": "МТС",
-      "count": 3,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "223-ФЗ",
+      "id": "Эквайринг",
       "count": 2,
       "category": "local_company",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
     },
     {
-      "id": "Электронная коммерция",
+      "id": "Антифрод",
       "count": 2,
       "category": "local_company",
       "category_label": "Локальная компания",
@@ -176,39 +204,11 @@
       "color": "#e74c3c"
     },
     {
-      "id": "Автозаправочная станция",
+      "id": "223-ФЗ",
       "count": 2,
       "category": "local_company",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
-    },
-    {
-      "id": "РусГидро",
-      "count": 2,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Нефтепереработка",
-      "count": 2,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Россия",
-      "count": 35,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Yandex Cloud",
-      "count": 3,
-      "category": "application",
-      "category_label": "Конечный рынок",
-      "color": "#9b59b6"
     },
     {
       "id": "Ферросплавы",
@@ -260,6 +260,36 @@
       "weight": 3
     },
     {
+      "source": "Selectel",
+      "target": "VK Cloud",
+      "weight": 2
+    },
+    {
+      "source": "Selectel",
+      "target": "Yandex Cloud",
+      "weight": 3
+    },
+    {
+      "source": "Selectel",
+      "target": "Московская биржа",
+      "weight": 2
+    },
+    {
+      "source": "VK Cloud",
+      "target": "Yandex Cloud",
+      "weight": 2
+    },
+    {
+      "source": "Yandex Cloud",
+      "target": "Московская биржа",
+      "weight": 2
+    },
+    {
+      "source": "Московская биржа",
+      "target": "Сбер",
+      "weight": 2
+    },
+    {
       "source": "Ипотека",
       "target": "Россия",
       "weight": 3
@@ -296,21 +326,6 @@
     },
     {
       "source": "Kaspersky",
-      "target": "Московская биржа",
-      "weight": 2
-    },
-    {
-      "source": "Selectel",
-      "target": "Yandex Cloud",
-      "weight": 3
-    },
-    {
-      "source": "Selectel",
-      "target": "Московская биржа",
-      "weight": 2
-    },
-    {
-      "source": "Yandex Cloud",
       "target": "Московская биржа",
       "weight": 2
     },
@@ -450,23 +465,8 @@
       "weight": 2
     },
     {
-      "source": "Московская биржа",
-      "target": "Сбер",
-      "weight": 2
-    },
-    {
       "source": "Роснефть",
       "target": "Россия",
-      "weight": 2
-    },
-    {
-      "source": "Selectel",
-      "target": "VK Cloud",
-      "weight": 2
-    },
-    {
-      "source": "VK Cloud",
-      "target": "Yandex Cloud",
       "weight": 2
     },
     {
