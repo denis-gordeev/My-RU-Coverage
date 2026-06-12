@@ -15,8 +15,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import (
-    extract_wikilinks, is_local_language_name,
-    TECH_TERMS, MATERIAL_TERMS, APPLICATION_TERMS,
+    extract_wikilinks, classify_wikilink,
 )
 
 REPORTS_DIR = os.path.join(os.path.dirname(__file__), "..", "Pilot_Reports")
@@ -46,15 +45,16 @@ def categorize(wikilinks):
     companies_intl = {}
 
     for name, count in wikilinks.items():
-        if name in TECH_TERMS:
+        cat = classify_wikilink(name)
+        if cat == "технология":
             technologies[name] = count
-        elif name in MATERIAL_TERMS:
+        elif cat == "материал":
             materials[name] = count
-        elif name in APPLICATION_TERMS:
+        elif cat == "конечный_рынок":
             applications[name] = count
-        elif is_local_language_name(name) and count >= 2:
+        elif cat == "локальная_компания" and count >= 2:
             companies_local[name] = count
-        elif not is_local_language_name(name) and count >= 2:
+        elif cat == "иностранная_компания" and count >= 2:
             companies_intl[name] = count
         # Единичные упоминания в индекс не включаем
 
@@ -98,7 +98,7 @@ def main():
     ]
 
     lines.extend(build_section("Технологии и стандарты", tech))
-    lines.extend(build_section("Материалы и подложки", mat))
+    lines.extend(build_section("Материалы и сырьё", mat))
     lines.extend(build_section("Конечные рынки и применения", app))
     lines.extend(build_section("Иностранные компании", intl, limit=200))
     lines.extend(build_section("Российские компании", local, limit=300))

@@ -1,221 +1,221 @@
 {
   "nodes": [
     {
-      "id": "Металлолом",
+      "id": "Сбер",
       "count": 3,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Финтех",
-      "count": 5,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Россия",
-      "count": 35,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Железная руда",
-      "count": 3,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Selectel",
-      "count": 3,
-      "category": "application",
-      "category_label": "Конечный рынок",
-      "color": "#9b59b6"
-    },
-    {
-      "id": "РЖД",
-      "count": 4,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Роснефть",
-      "count": 2,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Газпром",
-      "count": 4,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Автозаправочная станция",
-      "count": 2,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Московская биржа",
-      "count": 18,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "МТС",
-      "count": 3,
-      "category": "local_company",
+      "category": "локальная_компания",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
     },
     {
       "id": "Электронная коммерция",
       "count": 2,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Эквайринг",
-      "count": 2,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Лукойл",
-      "count": 2,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Коксующийся уголь",
-      "count": 2,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Антифрод",
-      "count": 2,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Природный газ",
-      "count": 3,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Нефтепереработка",
-      "count": 2,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Yandex Cloud",
-      "count": 3,
-      "category": "application",
-      "category_label": "Конечный рынок",
-      "color": "#9b59b6"
-    },
-    {
-      "id": "MOEX",
-      "count": 12,
-      "category": "local_company",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Ферросплавы",
-      "count": 3,
-      "category": "local_company",
+      "category": "локальная_компания",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
     },
     {
       "id": "Нефтеперерабатывающий завод",
       "count": 2,
-      "category": "local_company",
+      "category": "локальная_компания",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
     },
     {
       "id": "VK Cloud",
       "count": 2,
-      "category": "international_company",
-      "category_label": "Иностранная компания",
-      "color": "#3498db"
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
     },
     {
-      "id": "Мурманская область",
-      "count": 2,
-      "category": "local_company",
+      "id": "Yandex Cloud",
+      "count": 3,
+      "category": "конечный_рынок",
+      "category_label": "Конечный рынок",
+      "color": "#9b59b6"
+    },
+    {
+      "id": "МТС",
+      "count": 3,
+      "category": "локальная_компания",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
     },
     {
       "id": "Ипотека",
       "count": 3,
-      "category": "local_company",
+      "category": "локальная_компания",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
     },
     {
-      "id": "44-ФЗ",
-      "count": 2,
-      "category": "local_company",
+      "id": "РЖД",
+      "count": 4,
+      "category": "локальная_компания",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
     },
     {
       "id": "223-ФЗ",
       "count": 2,
-      "category": "local_company",
+      "category": "локальная_компания",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
     },
     {
-      "id": "РусГидро",
+      "id": "Коксующийся уголь",
       "count": 2,
-      "category": "local_company",
+      "category": "локальная_компания",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
     },
     {
-      "id": "Сбер",
-      "count": 3,
-      "category": "local_company",
+      "id": "MOEX",
+      "count": 12,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "44-ФЗ",
+      "count": 2,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Антифрод",
+      "count": 2,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Роснефть",
+      "count": 2,
+      "category": "локальная_компания",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
     },
     {
       "id": "Интер РАО",
       "count": 2,
-      "category": "local_company",
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Металлолом",
+      "count": 3,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Мурманская область",
+      "count": 2,
+      "category": "локальная_компания",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
     },
     {
       "id": "Kaspersky",
       "count": 2,
-      "category": "international_company",
-      "category_label": "Иностранная компания",
-      "color": "#3498db"
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Нефтепереработка",
+      "count": 2,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Финтех",
+      "count": 5,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Железная руда",
+      "count": 3,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Эквайринг",
+      "count": 2,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Газпром",
+      "count": 4,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Московская биржа",
+      "count": 18,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Ферросплавы",
+      "count": 3,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Россия",
+      "count": 35,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Лукойл",
+      "count": 2,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Selectel",
+      "count": 3,
+      "category": "конечный_рынок",
+      "category_label": "Конечный рынок",
+      "color": "#9b59b6"
+    },
+    {
+      "id": "РусГидро",
+      "count": 2,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Автозаправочная станция",
+      "count": 2,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Природный газ",
+      "count": 3,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
     }
   ],
   "links": [

@@ -344,19 +344,19 @@ APPLICATION_TERMS = {
 }
 
 CATEGORY_COLORS = {
-    "local_company": "#e74c3c",
-    "international_company": "#3498db",
-    "technology": "#2ecc71",
-    "material": "#f39c12",
-    "application": "#9b59b6",
+    "локальная_компания": "#e74c3c",
+    "иностранная_компания": "#3498db",
+    "технология": "#2ecc71",
+    "материал": "#f39c12",
+    "конечный_рынок": "#9b59b6",
 }
 
 CATEGORY_LABELS = {
-    "local_company": "Локальная компания",
-    "international_company": "Иностранная компания",
-    "technology": "Технология / стандарт",
-    "material": "Материал / подложка",
-    "application": "Конечный рынок",
+    "локальная_компания": "Локальная компания",
+    "иностранная_компания": "Иностранная компания",
+    "технология": "Технология / стандарт",
+    "материал": "Материал / сырьё",
+    "конечный_рынок": "Конечный рынок",
 }
 
 
@@ -376,19 +376,22 @@ LOCAL_COMPANY_TICKERS = {
     "ENPG", "IRAO", "HYDR", "AFLT", "BANEP", "CBOM", "BSPB", "DOMRF",
     "ETLN", "EUTR", "APTK", "ASTR", "CNRU", "DATA", "BAZA", "ELFV",
     "AQUA", "BELU",
+    "VK Cloud", "Kaspersky", "YADRO", "DataPro", "Wildberries",
+    "VK", "LSR", "IMOEX", "Astra Linux SE", "Selectel",
+    "МТС Cloud", "Ростелеком Центр обработки данных",
 }
 
 def classify_wikilink(name):
     """Классифицирует викилинк по категории."""
     if name in TECH_TERMS:
-        return "technology"
+        return "технология"
     if name in MATERIAL_TERMS:
-        return "material"
+        return "материал"
     if name in APPLICATION_TERMS:
-        return "application"
+        return "конечный_рынок"
     if is_local_language_name(name) or name in LOCAL_COMPANY_TICKERS:
-        return "local_company"
-    return "international_company"
+        return "локальная_компания"
+    return "иностранная_компания"
 
 
 def get_market_profile(suffix=None):

@@ -63,20 +63,18 @@ FINANCE_SECTORS = {
 }
 
 SMART_PROFILES = {
-    "tech": TECH_SECTORS | MATERIALS_SECTORS | {"Промышленность"},
-    "energy": TECH_SECTORS | ENERGY_SECTORS | MATERIALS_SECTORS | {"Промышленность"},
-    "consumer": CONSUMER_SECTORS | TECH_SECTORS | {"Недвижимость"},
-    "all": None,
+    "технологический": TECH_SECTORS | MATERIALS_SECTORS | {"Промышленность"},
+    "энергетический": TECH_SECTORS | ENERGY_SECTORS | MATERIALS_SECTORS | {"Промышленность"},
+    "потребительский": CONSUMER_SECTORS | TECH_SECTORS | {"Недвижимость"},
+    "все": None,
 }
 
 PROFILE_LABELS = {
-    "tech": "технологический",
-    "energy": "энергетический",
-    "consumer": "потребительский",
-    "all": "все",
+    "технологический": "технологический",
+    "энергетический": "энергетический",
+    "потребительский": "потребительский",
+    "все": "все",
 }
-
-# Подсказки для автоопределения профиля
 TECH_KEYWORDS = [
     "полупровод", "чип", "микросхем", "сервер", "дата-центр", "ЦОД",
     "связь", "телеком", "спутник", "батаре", "заряд", "охлажден",
@@ -97,11 +95,11 @@ def detect_profile(buzzword):
     """Автоопределение профиля секторов по содержанию запроса."""
     for kw in TECH_KEYWORDS:
         if kw in buzzword:
-            return "tech"
+            return "технологический"
     for kw in ENERGY_KEYWORDS:
         if kw in buzzword:
-            return "energy"
-    return "all"
+            return "энергетический"
+    return "все"
 
 
 def search_reports(buzzword, sectors_filter=None):
@@ -151,11 +149,11 @@ def search_reports(buzzword, sectors_filter=None):
                     contexts.append(f"...{snippet}...")
 
                 # Примерно определяем роль по разделу
-                role = "mentioned"
+                role = "упоминание"
                 for section_name, role_name in [
-                    (SECTION_HEADER_REGEX["business"], "core_business"),
-                    (SECTION_HEADER_REGEX["supply_chain"], "supply_chain"),
-                    (SECTION_HEADER_REGEX["customers"], "customer_supplier"),
+                    (SECTION_HEADER_REGEX["business"], "основной_бизнес"),
+                    (SECTION_HEADER_REGEX["supply_chain"], "цепочка_поставок"),
+                    (SECTION_HEADER_REGEX["customers"], "клиент_поставщик"),
                 ]:
                     section_match = re.search(
                         rf"{section_name}\n(.*?)(?=\n## |\Z)", text, re.DOTALL
@@ -228,10 +226,10 @@ def print_report(results, buzzword):
     print(f"{'=' * 60}")
 
     role_labels = {
-        "core_business": "Связь через основной бизнес",
-        "supply_chain": "Связь через цепочку поставок",
-        "customer_supplier": "Связь через клиентов/поставщиков",
-        "mentioned": "Прочие упоминания",
+        "основной_бизнес": "Связь через основной бизнес",
+        "цепочка_поставок": "Связь через цепочку поставок",
+        "клиент_поставщик": "Связь через клиентов/поставщиков",
+        "упоминание": "Прочие упоминания",
     }
 
     for role, label in role_labels.items():

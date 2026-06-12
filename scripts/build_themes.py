@@ -298,15 +298,15 @@ def scan_wikilinks():
 
             text = sections["desc"] + sections["supply_chain"] + sections["customers"]
             for wl in set(extract_wikilinks(text)):
-                role = "related"
+                role = "связанные"
                 if wl in sections["supply_chain"]:
                     context = sections["supply_chain"].split(wl)[0][-100:].lower()
                     if "верх" in context:
-                        role = "upstream"
+                        role = "верхний_контур"
                     elif "ниж" in context:
-                        role = "downstream"
+                        role = "конечный_спрос"
                     elif "средн" in context or "ключев" in context:
-                        role = "midstream"
+                        role = "ключевое_звено"
 
                 wl_map[wl].append(
                     {
@@ -328,7 +328,7 @@ def scan_wikilinks():
                             "ticker": ticker,
                             "company": company,
                             "sector": sector_dir,
-                            "role": "midstream",
+                            "role": "ключевое_звено",
                         }
                     )
 
@@ -367,10 +367,10 @@ def build_theme_page(theme_tag, theme_def, wl_map):
     lines.append("")
 
     # Группировка по роли
-    upstream = [e for e in entries if e["role"] == "upstream"]
-    midstream = [e for e in entries if e["role"] == "midstream"]
-    downstream = [e for e in entries if e["role"] == "downstream"]
-    other = [e for e in entries if e["role"] == "related"]
+    upstream = [e for e in entries if e["role"] == "верхний_контур"]
+    midstream = [e for e in entries if e["role"] == "ключевое_звено"]
+    downstream = [e for e in entries if e["role"] == "конечный_спрос"]
+    other = [e for e in entries if e["role"] == "связанные"]
 
     def format_entries(entries):
         # Группировка по сектору
