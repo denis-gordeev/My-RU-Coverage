@@ -1,99 +1,22 @@
 {
   "nodes": [
     {
+      "id": "Китай",
+      "count": 2,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
       "id": "Сбер",
+      "count": 5,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "ТМК",
       "count": 3,
-      "category": "локальная_компания",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Электронная коммерция",
-      "count": 2,
-      "category": "локальная_компания",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Нефтеперерабатывающий завод",
-      "count": 2,
-      "category": "локальная_компания",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "VK Cloud",
-      "count": 2,
-      "category": "локальная_компания",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Yandex Cloud",
-      "count": 3,
-      "category": "конечный_рынок",
-      "category_label": "Конечный рынок",
-      "color": "#9b59b6"
-    },
-    {
-      "id": "МТС",
-      "count": 3,
-      "category": "локальная_компания",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Ипотека",
-      "count": 3,
-      "category": "локальная_компания",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "РЖД",
-      "count": 4,
-      "category": "локальная_компания",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "223-ФЗ",
-      "count": 2,
-      "category": "локальная_компания",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Коксующийся уголь",
-      "count": 2,
-      "category": "локальная_компания",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "MOEX",
-      "count": 12,
-      "category": "локальная_компания",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "44-ФЗ",
-      "count": 2,
-      "category": "локальная_компания",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Антифрод",
-      "count": 2,
-      "category": "локальная_компания",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Роснефть",
-      "count": 2,
       "category": "локальная_компания",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
@@ -106,71 +29,78 @@
       "color": "#e74c3c"
     },
     {
-      "id": "Металлолом",
+      "id": "Евросибэнерго",
+      "count": 2,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "ОМК",
       "count": 3,
-      "category": "локальная_компания",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Мурманская область",
-      "count": 2,
-      "category": "локальная_компания",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Kaspersky",
-      "count": 2,
-      "category": "локальная_компания",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Нефтепереработка",
-      "count": 2,
-      "category": "локальная_компания",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Финтех",
-      "count": 5,
-      "category": "локальная_компания",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Железная руда",
-      "count": 3,
-      "category": "локальная_компания",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Эквайринг",
-      "count": 2,
       "category": "локальная_компания",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
     },
     {
       "id": "Газпром",
-      "count": 4,
+      "count": 5,
       "category": "локальная_компания",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
     },
     {
-      "id": "Московская биржа",
-      "count": 18,
-      "category": "локальная_компания",
-      "category_label": "Локальная компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Ферросплавы",
+      "id": "Строительство",
       "count": 3,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Перекрёсток",
+      "count": 2,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Ростелеком",
+      "count": 2,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "РусГидро",
+      "count": 2,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "НЛМК",
+      "count": 3,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "44-ФЗ",
+      "count": 2,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "СИБУР",
+      "count": 3,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "VK Cloud",
+      "count": 2,
       "category": "локальная_компания",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
@@ -183,7 +113,49 @@
       "color": "#e74c3c"
     },
     {
-      "id": "Лукойл",
+      "id": "Сбер Страхование",
+      "count": 2,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "223-ФЗ",
+      "count": 2,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Альфа-Банк",
+      "count": 2,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Мурманская область",
+      "count": 2,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "ЛСР",
+      "count": 2,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Московская биржа",
+      "count": 20,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Kaspersky",
       "count": 2,
       "category": "локальная_компания",
       "category_label": "Локальная компания",
@@ -197,22 +169,106 @@
       "color": "#9b59b6"
     },
     {
-      "id": "РусГидро",
+      "id": "Пятёрочка",
       "count": 2,
       "category": "локальная_компания",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
     },
     {
-      "id": "Автозаправочная станция",
+      "id": "Яндекс",
       "count": 2,
       "category": "локальная_компания",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
     },
     {
-      "id": "Природный газ",
+      "id": "Huawei",
+      "count": 2,
+      "category": "иностранная_компания",
+      "category_label": "Иностранная компания",
+      "color": "#3498db"
+    },
+    {
+      "id": "Норникель",
+      "count": 2,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "ФосАгро",
+      "count": 2,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "ВТБ",
+      "count": 4,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Силовые машины",
+      "count": 4,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Роснефть",
       "count": 3,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "ПИК",
+      "count": 3,
+      "category": "конечный_рынок",
+      "category_label": "Конечный рынок",
+      "color": "#9b59b6"
+    },
+    {
+      "id": "МТС",
+      "count": 4,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Ericsson",
+      "count": 2,
+      "category": "иностранная_компания",
+      "category_label": "Иностранная компания",
+      "color": "#3498db"
+    },
+    {
+      "id": "MOEX",
+      "count": 12,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "РЖД",
+      "count": 5,
+      "category": "локальная_компания",
+      "category_label": "Локальная компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Yandex Cloud",
+      "count": 4,
+      "category": "конечный_рынок",
+      "category_label": "Конечный рынок",
+      "color": "#9b59b6"
+    },
+    {
+      "id": "Лукойл",
+      "count": 2,
       "category": "локальная_компания",
       "category_label": "Локальная компания",
       "color": "#e74c3c"
@@ -222,7 +278,7 @@
     {
       "source": "MOEX",
       "target": "Московская биржа",
-      "weight": 6
+      "weight": 7
     },
     {
       "source": "MOEX",
@@ -232,7 +288,7 @@
     {
       "source": "Московская биржа",
       "target": "Россия",
-      "weight": 12
+      "weight": 14
     },
     {
       "source": "Московская биржа",
@@ -250,14 +306,24 @@
       "weight": 3
     },
     {
+      "source": "Газпром",
+      "target": "Силовые машины",
+      "weight": 2
+    },
+    {
       "source": "Интер РАО",
       "target": "Московская биржа",
       "weight": 2
     },
     {
+      "source": "НЛМК",
+      "target": "Силовые машины",
+      "weight": 2
+    },
+    {
       "source": "Газпром",
       "target": "Россия",
-      "weight": 3
+      "weight": 4
     },
     {
       "source": "Selectel",
@@ -285,29 +351,74 @@
       "weight": 2
     },
     {
-      "source": "Московская биржа",
+      "source": "Альфа-Банк",
+      "target": "ВТБ",
+      "weight": 2
+    },
+    {
+      "source": "Альфа-Банк",
+      "target": "ПИК",
+      "weight": 2
+    },
+    {
+      "source": "Альфа-Банк",
       "target": "Сбер",
       "weight": 2
     },
     {
-      "source": "Ипотека",
-      "target": "Россия",
+      "source": "ВТБ",
+      "target": "Московская биржа",
+      "weight": 2
+    },
+    {
+      "source": "ВТБ",
+      "target": "ПИК",
+      "weight": 2
+    },
+    {
+      "source": "ВТБ",
+      "target": "Сбер",
       "weight": 3
     },
     {
-      "source": "Антифрод",
+      "source": "Московская биржа",
+      "target": "ПИК",
+      "weight": 2
+    },
+    {
+      "source": "Московская биржа",
+      "target": "Сбер",
+      "weight": 4
+    },
+    {
+      "source": "ПИК",
+      "target": "Сбер",
+      "weight": 2
+    },
+    {
+      "source": "Московская биржа",
+      "target": "Перекрёсток",
+      "weight": 2
+    },
+    {
+      "source": "Московская биржа",
+      "target": "Пятёрочка",
+      "weight": 2
+    },
+    {
+      "source": "Перекрёсток",
+      "target": "Пятёрочка",
+      "weight": 2
+    },
+    {
+      "source": "Перекрёсток",
       "target": "Россия",
       "weight": 2
     },
     {
-      "source": "Антифрод",
-      "target": "Финтех",
+      "source": "Пятёрочка",
+      "target": "Россия",
       "weight": 2
-    },
-    {
-      "source": "Россия",
-      "target": "Финтех",
-      "weight": 5
     },
     {
       "source": "223-ФЗ",
@@ -330,89 +441,124 @@
       "weight": 2
     },
     {
+      "source": "Yandex Cloud",
+      "target": "Яндекс",
+      "weight": 2
+    },
+    {
+      "source": "Ericsson",
+      "target": "Huawei",
+      "weight": 2
+    },
+    {
+      "source": "Ericsson",
+      "target": "МТС",
+      "weight": 2
+    },
+    {
+      "source": "Ericsson",
+      "target": "Россия",
+      "weight": 2
+    },
+    {
+      "source": "Huawei",
+      "target": "МТС",
+      "weight": 2
+    },
+    {
+      "source": "Huawei",
+      "target": "Россия",
+      "weight": 2
+    },
+    {
       "source": "МТС",
       "target": "Россия",
+      "weight": 3
+    },
+    {
+      "source": "Газпром",
+      "target": "СИБУР",
       "weight": 2
     },
     {
       "source": "Россия",
-      "target": "Электронная коммерция",
-      "weight": 2
-    },
-    {
-      "source": "Природный газ",
-      "target": "Россия",
+      "target": "СИБУР",
       "weight": 3
     },
     {
-      "source": "Железная руда",
-      "target": "Коксующийся уголь",
-      "weight": 2
-    },
-    {
-      "source": "Железная руда",
-      "target": "Металлолом",
+      "source": "Россия",
+      "target": "Силовые машины",
       "weight": 3
     },
     {
-      "source": "Железная руда",
+      "source": "Россия",
+      "target": "ФосАгро",
+      "weight": 2
+    },
+    {
+      "source": "НЛМК",
+      "target": "ОМК",
+      "weight": 2
+    },
+    {
+      "source": "НЛМК",
       "target": "РЖД",
       "weight": 2
     },
     {
-      "source": "Железная руда",
-      "target": "Россия",
-      "weight": 3
-    },
-    {
-      "source": "Железная руда",
-      "target": "Ферросплавы",
-      "weight": 3
-    },
-    {
-      "source": "Коксующийся уголь",
-      "target": "Металлолом",
-      "weight": 2
-    },
-    {
-      "source": "Коксующийся уголь",
+      "source": "НЛМК",
       "target": "Россия",
       "weight": 2
     },
     {
-      "source": "Коксующийся уголь",
-      "target": "Ферросплавы",
-      "weight": 2
-    },
-    {
-      "source": "Металлолом",
+      "source": "ОМК",
       "target": "РЖД",
+      "weight": 3
+    },
+    {
+      "source": "ОМК",
+      "target": "Россия",
+      "weight": 3
+    },
+    {
+      "source": "ОМК",
+      "target": "Строительство",
       "weight": 2
     },
     {
-      "source": "Металлолом",
-      "target": "Россия",
-      "weight": 3
-    },
-    {
-      "source": "Металлолом",
-      "target": "Ферросплавы",
-      "weight": 3
+      "source": "ОМК",
+      "target": "ТМК",
+      "weight": 2
     },
     {
       "source": "РЖД",
       "target": "Россия",
-      "weight": 4
+      "weight": 5
     },
     {
       "source": "РЖД",
-      "target": "Ферросплавы",
+      "target": "Строительство",
+      "weight": 2
+    },
+    {
+      "source": "РЖД",
+      "target": "ТМК",
       "weight": 2
     },
     {
       "source": "Россия",
-      "target": "Ферросплавы",
+      "target": "Строительство",
       "weight": 3
+    },
+    {
+      "source": "Россия",
+      "target": "ТМК",
+      "weight": 3
+    },
+    {
+      "source": "Строительство",
+      "target": "ТМК",
+      "weight": 2
     },
     {
       "source": "Мурманская область",
@@ -420,13 +566,18 @@
       "weight": 2
     },
     {
-      "source": "Россия",
-      "target": "Эквайринг",
+      "source": "MOEX",
+      "target": "МТС",
       "weight": 2
     },
     {
-      "source": "MOEX",
-      "target": "Финтех",
+      "source": "ВТБ",
+      "target": "Россия",
+      "weight": 3
+    },
+    {
+      "source": "МТС",
+      "target": "Ростелеком",
       "weight": 2
     },
     {
@@ -435,8 +586,33 @@
       "weight": 2
     },
     {
+      "source": "Московская биржа",
+      "target": "Сбер Страхование",
+      "weight": 2
+    },
+    {
       "source": "Россия",
       "target": "Сбер",
+      "weight": 4
+    },
+    {
+      "source": "Россия",
+      "target": "Сбер Страхование",
+      "weight": 2
+    },
+    {
+      "source": "ЛСР",
+      "target": "ПИК",
+      "weight": 2
+    },
+    {
+      "source": "ЛСР",
+      "target": "Россия",
+      "weight": 2
+    },
+    {
+      "source": "ПИК",
+      "target": "Россия",
       "weight": 2
     },
     {
@@ -467,30 +643,25 @@
     {
       "source": "Роснефть",
       "target": "Россия",
-      "weight": 2
+      "weight": 3
     },
     {
-      "source": "MOEX",
-      "target": "Нефтеперерабатывающий завод",
-      "weight": 2
-    },
-    {
-      "source": "Нефтеперерабатывающий завод",
+      "source": "Китай",
       "target": "Россия",
       "weight": 2
     },
     {
-      "source": "Автозаправочная станция",
-      "target": "Нефтепереработка",
+      "source": "Китай",
+      "target": "СИБУР",
       "weight": 2
     },
     {
-      "source": "Автозаправочная станция",
+      "source": "Евросибэнерго",
       "target": "Россия",
       "weight": 2
     },
     {
-      "source": "Нефтепереработка",
+      "source": "Норникель",
       "target": "Россия",
       "weight": 2
     }
