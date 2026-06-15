@@ -7,7 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 REPORTS_DIR = ROOT / "Pilot_Reports"
 LEGACY_THEME_MARKERS = {
-    "HBM", "Tesla", "Apple", "NVIDIA", "CoWoS", "CPO", "EUV", "VCSEL",
+    "HBM", "CoWoS", "CPO", "EUV", "VCSEL",
 }
 HAN_RE = re.compile(r"[\u4e00-\u9fff]")
 

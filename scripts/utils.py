@@ -314,10 +314,9 @@ def extract_wikilinks(content):
 
 TECH_TERMS = {
     "AI", "5G", "IoT", "OLED", "AMOLED",
-    "Mini LED", "Micro LED", "MCU", "SoC", "ASIC", "FPGA", "RF", "IC",
-    "LED", "LCD", "NOR Flash", "NAND Flash",
+    "MCU", "SoC", "ASIC", "FPGA", "RF", "IC",
+    "LED",
     "карбид кремния", "нитрид галлия", "фосфид индия", "арсенид галлия",
-    "кремниевая фотоника", "оптический трансивер",
     "Astra Linux", "152-ФЗ", "ФСТЭК", "импортозамещение",
 }
 
@@ -343,12 +342,25 @@ APPLICATION_TERMS = {
     "ТНП",
 }
 
+GEO_TERMS = {
+    "Россия", "Китай", "Мурманская область", "Карелия", "Башкортостан",
+    "Москва", "Санкт-Петербург", "Сибирь", "Дальний Восток", "Урал",
+    "Татарстан", "Ямало-Ненецкий АО", "ХМАО", "Кузбасс", "Воронежская область",
+}
+
+REGULATORY_TERMS = {
+    "44-ФЗ", "223-ФЗ", "152-ФЗ", "ОРЭМ", "ДПМ", "АТС", "ЖКХ",
+    "ФСТЭК", "ФАС", "ЦБ", "Минцифры", "СО ЕЭС",
+}
+
 CATEGORY_COLORS = {
     "локальная_компания": "#e74c3c",
     "иностранная_компания": "#3498db",
     "технология": "#2ecc71",
     "материал": "#f39c12",
     "конечный_рынок": "#9b59b6",
+    "географический_объект": "#1abc9c",
+    "регулирование": "#e67e22",
 }
 
 CATEGORY_LABELS = {
@@ -357,6 +369,8 @@ CATEGORY_LABELS = {
     "технология": "Технология / стандарт",
     "материал": "Материал / сырьё",
     "конечный_рынок": "Конечный рынок",
+    "географический_объект": "Географический объект",
+    "регулирование": "Регулирование / стандарт",
 }
 
 
@@ -383,13 +397,20 @@ LOCAL_COMPANY_TICKERS = {
 
 def classify_wikilink(name):
     """Классифицирует викилинк по категории."""
-    if name in TECH_TERMS:
+    lower = name.lower()
+    if lower in {t.lower() for t in TECH_TERMS} or name in TECH_TERMS:
         return "технология"
-    if name in MATERIAL_TERMS:
+    if lower in {t.lower() for t in MATERIAL_TERMS} or name in MATERIAL_TERMS:
         return "материал"
-    if name in APPLICATION_TERMS:
+    if lower in {t.lower() for t in APPLICATION_TERMS} or name in APPLICATION_TERMS:
         return "конечный_рынок"
-    if is_local_language_name(name) or name in LOCAL_COMPANY_TICKERS:
+    if name in LOCAL_COMPANY_TICKERS:
+        return "локальная_компания"
+    if name in REGULATORY_TERMS:
+        return "регулирование"
+    if name in GEO_TERMS:
+        return "географический_объект"
+    if is_local_language_name(name):
         return "локальная_компания"
     return "иностранная_компания"
 
@@ -435,7 +456,6 @@ def fetch_valuation_data(info):
         "USD": "$",
         "EUR": "€",
         "CNY": "¥",
-        "JPY": "¥",
     }.get(currency, "₽")
 
     # Информация о периодах
