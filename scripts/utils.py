@@ -43,7 +43,7 @@ TICKER_SOURCE_OVERRIDES = {
     "T": {
         "candidates": ["TCSG.ME"],
         "sector": "Финансовые услуги",
-        "industry": "Финансовые конгломераты",
+        "industry": "Финансовые холдинги",
         "identity_keywords": ["T-Technologies", "TCS GROUP", "Т-Технологии"],
     },
     "OZON": {
@@ -99,7 +99,7 @@ INDUSTRY_TRANSLATION = {
     "Oil & Gas E&P": "Нефтегазовая разведка и добыча",
     # Финансовые услуги
     "Banks - Regional": "Банки — региональные",
-    "Financial Conglomerates": "Финансовые конгломераты",
+    "Financial Conglomerates": "Финансовые холдинги",
     "Credit Services": "Кредитные услуги",
     "Financial Data & Stock Exchanges": "Финансовые данные и фондовые биржи",
     # Связь
@@ -128,7 +128,7 @@ INDUSTRY_TRANSLATION = {
     "Other Industrial Metals & Mining": "Прочие промышленные металлы и добыча",
     "Other Precious Metals & Mining": "Прочие драгоценные металлы и добыча",
     # Недвижимость
-    "Real Estate - Development": "Недвижимость — девелопмент",
+    "Real Estate - Development": "Недвижимость — застройка",
     "Real Estate Services": "Услуги в сфере недвижимости",
     # Здравоохранение
     "Pharmaceutical Retailers": "Аптечные сети",
