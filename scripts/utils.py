@@ -274,8 +274,11 @@ WIKILINK_ALIASES = {
     "BaaS": "резервное копирование как услуга", "DRaaS": "аварийное восстановление как услуга",
     "SaaS": "программное обеспечение как услуга", "IaaS": "инфраструктура как услуга",
     "SLA": "соглашение об уровне обслуживания",
-    "Yandex Облако": "Yandex Cloud", "VK Облако": "VK Cloud", "МТС Облако": "МТС Cloud",
-    "МТС Премиум": "МТС Premium", "Группа SCM": "SCM Group",
+    "Yandex Cloud": "Yandex Облако", "Яндекс Облако": "Yandex Облако",
+    "VK Cloud": "VK Облако",
+    "МТС Cloud": "МТС Облако",
+    "МТС Premium": "МТС Премиум",
+    "SCM Group": "Группа SCM",
 }
 
 
@@ -341,7 +344,7 @@ APPLICATION_TERMS = {
     "САПР", "ЧПУ", "ИТ-компании", "ОРЭМ", "ДПМ", "АТС", "СО ЕЭС", "ЖКХ",
     "Честный ЗНАК", "льготное лекарственное обеспечение", "дженерики", "биоаналоги",
     "технологический суверенитет", "Байкал Электроник", "Эльбрус (процессор)",
-    "Р7-Офис", "МойОфис", "Selectel", "Yandex Cloud",
+    "Р7-Офис", "МойОфис", "Селектел", "Yandex Облако",
     "резервное копирование как услуга", "аварийное восстановление как услуга",
     "программное обеспечение как услуга", "инфраструктура как услуга",
     "соглашение об уровне обслуживания",
@@ -371,7 +374,7 @@ CATEGORY_COLORS = {
 }
 
 CATEGORY_LABELS = {
-    "локальная_компания": "Локальная компания",
+    "локальная_компания": "Российская компания",
     "иностранная_компания": "Иностранная компания",
     "технология": "Технология / стандарт",
     "материал": "Материал / сырьё",
@@ -397,9 +400,9 @@ LOCAL_COMPANY_TICKERS = {
     "ENPG", "IRAO", "HYDR", "AFLT", "BANEP", "CBOM", "BSPB", "DOMRF",
     "ETLN", "EUTR", "APTK", "ASTR", "CNRU", "DATA", "BAZA", "ELFV",
     "AQUA", "BELU",
-    "VK Cloud", "Kaspersky", "YADRO", "DataPro", "Wildberries",
-    "VK", "LSR", "IMOEX", "Astra Linux SE", "Selectel",
-    "МТС Cloud", "Ростелеком Центр обработки данных",
+    "VK Облако", "Kaspersky", "YADRO", "DataPro", "Wildberries",
+    "VK", "LSR", "IMOEX", "Astra Linux SE", "Селектел",
+    "МТС Облако", "Ростелеком Центр обработки данных",
 }
 
 def classify_wikilink(name):
@@ -490,7 +493,7 @@ def build_valuation_table(v):
     today = date.today().strftime("%Y-%m-%d")
     period_parts = []
     if v.get("_price"):
-        period_parts.append(f"Цена {v.get('_currency_symbol', '$')}{v['_price']} на {today}")
+        period_parts.append(f"Цена {v.get('_currency_symbol', '₽')}{v['_price']} на {today}")
     if v.get("_ttm_end"):
         period_parts.append(f"за 12 мес. на {v['_ttm_end']}")
     if v.get("_fwd_end"):
