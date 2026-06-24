@@ -36,7 +36,7 @@ from utils import REPORTS_DIR, PROJECT_ROOT, setup_stdout, TICKER_PATTERN, SECTI
 TECH_SECTORS = {
     "Программное обеспечение — приложения",
     "Технологии", "Связь", "Телекоммуникации",
-    "Интернет-контент и информация", "Интернет-розница",
+    "Интернет-информационные сервисы", "Интернет-розница",
 }
 
 MATERIALS_SECTORS = {
@@ -150,7 +150,7 @@ def search_reports(buzzword, sectors_filter=None):
                 # Примерно определяем роль по разделу
                 role = "упоминание"
                 for section_name, role_name in [
-                    (SECTION_HEADER_REGEX["business"], "основной_бизнес"),
+                    (SECTION_HEADER_REGEX["business"], "основное_направление"),
                     (SECTION_HEADER_REGEX["supply_chain"], "цепочка_поставок"),
                     (SECTION_HEADER_REGEX["customers"], "клиент_поставщик"),
                 ]:
@@ -225,7 +225,7 @@ def print_report(results, buzzword):
     print(f"{'=' * 60}")
 
     role_labels = {
-        "основной_бизнес": "Связь через основной бизнес",
+        "основное_направление": "Связь через основное направление",
         "цепочка_поставок": "Связь через цепочку поставок",
         "клиент_поставщик": "Связь через клиентов/поставщиков",
         "упоминание": "Прочие упоминания",

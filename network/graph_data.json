@@ -1,34 +1,6 @@
 {
   "nodes": [
     {
-      "id": "Пятёрочка",
-      "count": 2,
-      "category": "локальная_компания",
-      "category_label": "Российская компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "ПИК",
-      "count": 3,
-      "category": "конечный_рынок",
-      "category_label": "Конечный рынок",
-      "color": "#9b59b6"
-    },
-    {
-      "id": "Перекрёсток",
-      "count": 2,
-      "category": "локальная_компания",
-      "category_label": "Российская компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Силовые машины",
-      "count": 4,
-      "category": "локальная_компания",
-      "category_label": "Российская компания",
-      "color": "#e74c3c"
-    },
-    {
       "id": "Яндекс",
       "count": 2,
       "category": "локальная_компания",
@@ -36,35 +8,42 @@
       "color": "#e74c3c"
     },
     {
-      "id": "MOEX",
-      "count": 12,
-      "category": "локальная_компания",
-      "category_label": "Российская компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Kaspersky",
+      "id": "Ростелеком",
       "count": 2,
       "category": "локальная_компания",
       "category_label": "Российская компания",
       "color": "#e74c3c"
     },
     {
-      "id": "VK Облако",
-      "count": 2,
+      "id": "Yandex Облако",
+      "count": 4,
+      "category": "конечный_рынок",
+      "category_label": "Конечный рынок",
+      "color": "#9b59b6"
+    },
+    {
+      "id": "НЛМК",
+      "count": 3,
       "category": "локальная_компания",
       "category_label": "Российская компания",
       "color": "#e74c3c"
-    },
-    {
-      "id": "Ericsson",
-      "count": 2,
-      "category": "иностранная_компания",
-      "category_label": "Иностранная компания",
-      "color": "#3498db"
     },
     {
       "id": "Альфа-Банк",
+      "count": 2,
+      "category": "локальная_компания",
+      "category_label": "Российская компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Селектел",
+      "count": 3,
+      "category": "конечный_рынок",
+      "category_label": "Конечный рынок",
+      "color": "#9b59b6"
+    },
+    {
+      "id": "Лукойл",
       "count": 2,
       "category": "локальная_компания",
       "category_label": "Российская компания",
@@ -78,8 +57,50 @@
       "color": "#e74c3c"
     },
     {
+      "id": "Мурманская область",
+      "count": 2,
+      "category": "географический_объект",
+      "category_label": "Географический объект",
+      "color": "#1abc9c"
+    },
+    {
+      "id": "Перекрёсток",
+      "count": 2,
+      "category": "локальная_компания",
+      "category_label": "Российская компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "РусГидро",
+      "count": 2,
+      "category": "локальная_компания",
+      "category_label": "Российская компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "ТМК",
+      "count": 3,
+      "category": "локальная_компания",
+      "category_label": "Российская компания",
+      "color": "#e74c3c"
+    },
+    {
       "id": "ВТБ",
       "count": 4,
+      "category": "локальная_компания",
+      "category_label": "Российская компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "СИБУР",
+      "count": 3,
+      "category": "локальная_компания",
+      "category_label": "Российская компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Пятёрочка",
+      "count": 2,
       "category": "локальная_компания",
       "category_label": "Российская компания",
       "color": "#e74c3c"
@@ -92,25 +113,88 @@
       "color": "#3498db"
     },
     {
-      "id": "Норникель",
+      "id": "Московская биржа",
+      "count": 20,
+      "category": "локальная_компания",
+      "category_label": "Российская компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "MOEX",
+      "count": 12,
+      "category": "локальная_компания",
+      "category_label": "Российская компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "223-ФЗ",
+      "count": 2,
+      "category": "регулирование",
+      "category_label": "Регулирование / стандарт",
+      "color": "#e67e22"
+    },
+    {
+      "id": "Газпром",
+      "count": 5,
+      "category": "локальная_компания",
+      "category_label": "Российская компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "ЛСР",
       "count": 2,
       "category": "локальная_компания",
       "category_label": "Российская компания",
       "color": "#e74c3c"
     },
     {
-      "id": "Сбер Страхование",
+      "id": "Kaspersky",
       "count": 2,
       "category": "локальная_компания",
       "category_label": "Российская компания",
       "color": "#e74c3c"
     },
     {
-      "id": "Ростелеком",
+      "id": "РЖД",
+      "count": 5,
+      "category": "локальная_компания",
+      "category_label": "Российская компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Силовые машины",
+      "count": 4,
+      "category": "локальная_компания",
+      "category_label": "Российская компания",
+      "color": "#e74c3c"
+    },
+    {
+      "id": "Евросибэнерго",
       "count": 2,
       "category": "локальная_компания",
       "category_label": "Российская компания",
       "color": "#e74c3c"
+    },
+    {
+      "id": "Россия",
+      "count": 35,
+      "category": "географический_объект",
+      "category_label": "Географический объект",
+      "color": "#1abc9c"
+    },
+    {
+      "id": "Ericsson",
+      "count": 2,
+      "category": "иностранная_компания",
+      "category_label": "Иностранная компания",
+      "color": "#3498db"
+    },
+    {
+      "id": "44-ФЗ",
+      "count": 2,
+      "category": "регулирование",
+      "category_label": "Регулирование / стандарт",
+      "color": "#e67e22"
     },
     {
       "id": "ОМК",
@@ -127,6 +211,13 @@
       "color": "#1abc9c"
     },
     {
+      "id": "ПИК",
+      "count": 3,
+      "category": "конечный_рынок",
+      "category_label": "Конечный рынок",
+      "color": "#9b59b6"
+    },
+    {
       "id": "ФосАгро",
       "count": 2,
       "category": "локальная_компания",
@@ -134,113 +225,22 @@
       "color": "#e74c3c"
     },
     {
-      "id": "Газпром",
-      "count": 5,
-      "category": "локальная_компания",
-      "category_label": "Российская компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Лукойл",
+      "id": "VK Облако",
       "count": 2,
       "category": "локальная_компания",
       "category_label": "Российская компания",
       "color": "#e74c3c"
     },
     {
-      "id": "Мурманская область",
-      "count": 2,
-      "category": "географический_объект",
-      "category_label": "Географический объект",
-      "color": "#1abc9c"
-    },
-    {
-      "id": "Евросибэнерго",
+      "id": "Норникель",
       "count": 2,
       "category": "локальная_компания",
       "category_label": "Российская компания",
       "color": "#e74c3c"
-    },
-    {
-      "id": "НЛМК",
-      "count": 3,
-      "category": "локальная_компания",
-      "category_label": "Российская компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "223-ФЗ",
-      "count": 2,
-      "category": "регулирование",
-      "category_label": "Регулирование / стандарт",
-      "color": "#e67e22"
-    },
-    {
-      "id": "Россия",
-      "count": 35,
-      "category": "географический_объект",
-      "category_label": "Географический объект",
-      "color": "#1abc9c"
-    },
-    {
-      "id": "Yandex Облако",
-      "count": 4,
-      "category": "конечный_рынок",
-      "category_label": "Конечный рынок",
-      "color": "#9b59b6"
-    },
-    {
-      "id": "ЛСР",
-      "count": 2,
-      "category": "локальная_компания",
-      "category_label": "Российская компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Московская биржа",
-      "count": 20,
-      "category": "локальная_компания",
-      "category_label": "Российская компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "СИБУР",
-      "count": 3,
-      "category": "локальная_компания",
-      "category_label": "Российская компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "ТМК",
-      "count": 3,
-      "category": "локальная_компания",
-      "category_label": "Российская компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "РусГидро",
-      "count": 2,
-      "category": "локальная_компания",
-      "category_label": "Российская компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "44-ФЗ",
-      "count": 2,
-      "category": "регулирование",
-      "category_label": "Регулирование / стандарт",
-      "color": "#e67e22"
     },
     {
       "id": "МТС",
       "count": 4,
-      "category": "локальная_компания",
-      "category_label": "Российская компания",
-      "color": "#e74c3c"
-    },
-    {
-      "id": "Сбер",
-      "count": 5,
       "category": "локальная_компания",
       "category_label": "Российская компания",
       "color": "#e74c3c"
@@ -253,14 +253,14 @@
       "color": "#e74c3c"
     },
     {
-      "id": "Селектел",
-      "count": 3,
-      "category": "конечный_рынок",
-      "category_label": "Конечный рынок",
-      "color": "#9b59b6"
+      "id": "Сбер Страхование",
+      "count": 2,
+      "category": "локальная_компания",
+      "category_label": "Российская компания",
+      "color": "#e74c3c"
     },
     {
-      "id": "РЖД",
+      "id": "Сбер",
       "count": 5,
       "category": "локальная_компания",
       "category_label": "Российская компания",
@@ -414,6 +414,11 @@
       "weight": 2
     },
     {
+      "source": "Yandex Облако",
+      "target": "Яндекс",
+      "weight": 2
+    },
+    {
       "source": "223-ФЗ",
       "target": "44-ФЗ",
       "weight": 2
@@ -431,11 +436,6 @@
     {
       "source": "Kaspersky",
       "target": "Московская биржа",
-      "weight": 2
-    },
-    {
-      "source": "Yandex Облако",
-      "target": "Яндекс",
       "weight": 2
     },
     {
