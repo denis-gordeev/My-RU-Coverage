@@ -238,7 +238,7 @@ def print_report(results, buzzword):
         print(f"\n### {label} ({len(entries)})")
         for r in sorted(entries, key=lambda x: x["ticker"]):
             link_status = "✓" if r["linked"] > 0 else "○"
-            bare_note = f" (+{r['bare']} без [[wikilink]])" if r["bare"] > 0 else ""
+            bare_note = f" (+{r['bare']} без [[викилинк]])" if r["bare"] > 0 else ""
             print(f"  {link_status} {r['ticker']} {r['company']} ({r['sector']}){bare_note}")
             for ctx in r["contexts"][:1]:
                 print(f"    -> {ctx}")
