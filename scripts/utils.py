@@ -10,6 +10,7 @@ import os
 import re
 import sys
 import glob
+import argparse
 from datetime import date, datetime
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -323,6 +324,12 @@ WIKILINK_ALIASES = {
     "экосистема": "совокупность сервисов",
     "экосистемные": "сопутствующие сервисы платформы",
     "экосистемный": "сопутствующий сервис платформы",
+    "кейтеринговые": "выездного обслуживания",
+    "бенефициар": "выгодоприобретатель",
+    "спотовой": "немедленной",
+    "слоты": "интервалы",
+    "дрогери": "магазины косметики и бытовой химии",
+    "дисконты": "скидки",
 }
 
 
@@ -594,3 +601,14 @@ def replace_section(content, section_header, new_body, next_section_header=None)
     else:
         pattern = rf"{re.escape(section_header)}.*"
         return re.sub(pattern, f"{section_header}\n{new_body}\n", content, flags=re.DOTALL)
+
+
+def make_ru_parser(**kwargs):
+    """Создаёт ArgumentParser с русскоязычными заголовками секций помощи."""
+    parser = argparse.ArgumentParser(**kwargs)
+    for g in parser._action_groups:
+        if g.title == "positional arguments":
+            g.title = "Позиционные аргументы"
+        elif g.title in ("optional arguments", "options"):
+            g.title = "Параметры"
+    return parser

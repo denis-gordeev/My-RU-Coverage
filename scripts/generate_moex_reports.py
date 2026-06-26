@@ -11,7 +11,6 @@ generate_moex_reports.py — Генерация базовых MOEX-отчёто
   python scripts/generate_moex_reports.py --dry-run --all-missing
 """
 
-import argparse
 import os
 import sys
 from urllib.error import HTTPError, URLError
@@ -19,7 +18,7 @@ from urllib.error import HTTPError, URLError
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from add_ticker import generate_report, sanitize_folder_name
 from moex_blue_chip_queue import DEFAULT_INDEX_CODES, build_report
-from utils import REPORTS_DIR, find_ticker_files, setup_stdout
+from utils import REPORTS_DIR, find_ticker_files, setup_stdout, make_ru_parser
 
 REPORT_OVERRIDES = {
     "DOMRF": {
@@ -104,7 +103,7 @@ def normalize_company_name(ticker, shortname):
 
 
 def select_queue_items(report, requested_tickers=None):
-    queue = report["next_queue"]
+    queue = report["следующая_очередь"]
     if not requested_tickers:
         return queue
 
@@ -169,7 +168,7 @@ def create_reports(items, limit=None, dry_run=False):
 
 def main():
     setup_stdout()
-    parser = argparse.ArgumentParser(
+    parser = make_ru_parser(
         description=(
             "Создать базовые MOEX-карточки по живой очереди из MOEX ISS без "
             "опоры на устаревший Excel."
@@ -226,7 +225,7 @@ def main():
     limit = None if args.all_missing or args.tickers else max(args.top, 0)
     print(
         f"Генерирую базовые MOEX-карточки из очереди {', '.join(index_codes)} "
-        f"на дату {report['tradedate']}..."
+        f"на дату {report['дата_торгов']}..."
     )
     created, skipped = create_reports(items, limit=limit, dry_run=args.dry_run)
     print(f"\nГотово. Создано: {created} | Пропущено: {skipped}")

@@ -10,7 +10,6 @@ moex_status.py — Статус-сводка по покрытию MOEX.
     python scripts/moex_status.py --json
 """
 
-import argparse
 import json
 import os
 import re
@@ -18,7 +17,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from utils import find_ticker_files, setup_stdout, TICKER_PATTERN
+from utils import find_ticker_files, setup_stdout, TICKER_PATTERN, make_ru_parser
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORTS_DIR = ROOT / "Pilot_Reports"
@@ -80,19 +79,19 @@ def get_queue_summary():
     try:
         from moex_blue_chip_queue import build_report, DEFAULT_INDEX_CODES
         report = build_report(DEFAULT_INDEX_CODES)
-        queue = report.get("next_queue", [])
+        queue = report.get("следующая_очередь", [])
         top5 = [
-            {"ticker": item["ticker"], "name": item["shortnames"]}
+            {"тикер": item["ticker"], "название": item["shortnames"]}
             for item in queue[:5]
         ]
-        return len(queue), top5, report.get("tradedate")
+        return len(queue), top5, report.get("дата_торгов")
     except Exception as e:
         return None, None, None, str(e)
 
 
 def main():
     setup_stdout()
-    parser = argparse.ArgumentParser(description="Статус-сводка по покрытию MOEX")
+    parser = make_ru_parser(description="Статус-сводка по покрытию MOEX")
     parser.add_argument("--json", action="store_true", help="Вывести в JSON")
     args = parser.parse_args()
 
@@ -111,25 +110,25 @@ def main():
     audit_pct = (audit_clean / audit_total * 100) if audit_total > 0 else 0
 
     result = {
-        "reports": report_count,
-        "sectors": len(by_sector),
-        "by_sector": {k: len(v) for k, v in sorted(by_sector.items())},
-        "themes": theme_count,
-        "audit": {
-            "total": audit_total,
-            "clean": audit_clean,
-            "issues": audit_issues,
-            "pct": round(audit_pct, 1),
+        "отчёты": report_count,
+        "секторы": len(by_sector),
+        "по_сектору": {k: len(v) for k, v in sorted(by_sector.items())},
+        "темы": theme_count,
+        "проверка": {
+            "всего": audit_total,
+            "чистых": audit_clean,
+            "замечаний": audit_issues,
+            "доля_%": round(audit_pct, 1),
         },
-        "queue": {
-            "missing": queue_len,
-            "date": queue_date,
-            "top5": queue_top5,
+        "очередь": {
+            "непокрытых": queue_len,
+            "дата": queue_date,
+            "топ5": queue_top5,
         },
     }
 
     if queue_error:
-        result["queue"]["error"] = queue_error
+        result["очередь"]["ошибка"] = queue_error
 
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2))
@@ -153,7 +152,7 @@ def main():
         if queue_top5:
             print("  Следующие:")
             for item in queue_top5:
-                print(f"    - {item['ticker']} ({item['name']})")
+                print(f"    - {item['тикер']} ({item['название']})")
     else:
         print(f"  Очередь MOEX:   недоступна ({queue_error})")
 

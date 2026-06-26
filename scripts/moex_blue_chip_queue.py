@@ -14,7 +14,6 @@ moex_blue_chip_queue.py — Проверка официальных корзин
   python scripts/moex_blue_chip_queue.py --json
 """
 
-import argparse
 import json
 import os
 import sys
@@ -23,7 +22,7 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from utils import find_ticker_files, setup_stdout
+from utils import find_ticker_files, setup_stdout, make_ru_parser
 
 ISS_URL = "https://iss.moex.com/iss/statistics/engines/stock/markets/index/analytics/MOEXBC/constituents.json"
 DEFAULT_INDEX_CODES = ["MOEXBC", "MOEXBMI"]
@@ -63,14 +62,14 @@ def build_index_report(index_code, items):
     covered = set(find_ticker_files().keys())
     missing = [item for item in items if item["ticker"] not in covered]
     report = {
-        "index_code": index_code,
-        "index_label": INDEX_LABELS.get(index_code, index_code),
-        "tradedate": items[0]["tradedate"] if items else None,
-        "count": len(items),
-        "covered": len(items) - len(missing),
-        "missing": len(missing),
-        "constituents": items,
-        "missing_constituents": missing,
+        "код_индекса": index_code,
+        "название_индекса": INDEX_LABELS.get(index_code, index_code),
+        "дата_торгов": items[0]["tradedate"] if items else None,
+        "количество": len(items),
+        "покрыто": len(items) - len(missing),
+        "отсутствует": len(missing),
+        "состав": items,
+        "отсутствующие": missing,
     }
     return report
 
@@ -84,10 +83,10 @@ def build_report(index_codes, tradedate=None):
         items = fetch_constituents(index_code, tradedate)
         index_report = build_index_report(index_code, items)
         index_reports.append(index_report)
-        if index_report["tradedate"]:
-            tradedates.append(index_report["tradedate"])
+        if index_report["дата_торгов"]:
+            tradedates.append(index_report["дата_торгов"])
 
-        for item in index_report["missing_constituents"]:
+        for item in index_report["отсутствующие"]:
             ticker = item["ticker"]
             existing = aggregated_missing.get(ticker)
             if existing is None:
@@ -110,32 +109,32 @@ def build_report(index_codes, tradedate=None):
     )
 
     return {
-        "requested_indices": index_codes,
-        "tradedate": max(tradedates) if tradedates else None,
-        "reports": index_reports,
-        "next_queue": next_queue,
+        "запрошенные_индексы": index_codes,
+        "дата_торгов": max(tradedates) if tradedates else None,
+        "отчёты": index_reports,
+        "следующая_очередь": next_queue,
     }
 
 
 def print_report(report):
-    for index_report in report["reports"]:
+    for index_report in report["отчёты"]:
         print(
-            f"{index_report['index_code']} ({index_report['index_label']}) на "
-            f"{index_report['tradedate']}: {index_report['count']} бумаг | "
-            f"покрыто: {index_report['covered']} | отсутствует: {index_report['missing']}"
+            f"{index_report['код_индекса']} ({index_report['название_индекса']}) на "
+            f"{index_report['дата_торгов']}: {index_report['количество']} бумаг | "
+            f"покрыто: {index_report['покрыто']} | отсутствует: {index_report['отсутствует']}"
         )
         print("")
         print("Текущий состав:")
-        for item in index_report["constituents"]:
+        for item in index_report["состав"]:
             print(
                 f"  #{item['rank']:<2} {item['ticker']:<6} {item['shortnames']:<20} "
                 f"{item['weight']:>5.2f}%"
             )
 
         print("")
-        if index_report["missing_constituents"]:
+        if index_report["отсутствующие"]:
             print("Без локальной карточки:")
-            for item in index_report["missing_constituents"]:
+            for item in index_report["отсутствующие"]:
                 print(
                     f"  - #{item['rank']:<2} {item['ticker']} ({item['shortnames']}), "
                     f"вес {item['weight']:.2f}%"
@@ -144,9 +143,9 @@ def print_report(report):
             print("Все текущие бумаги этого индекса уже покрыты локальными карточками.")
         print("")
 
-    if report["next_queue"]:
+    if report["следующая_очередь"]:
         print("Следующая агрегированная очередь покрытия:")
-        for item in report["next_queue"]:
+        for item in report["следующая_очередь"]:
             indices = ", ".join(item["indices"])
             print(
                 f"  - #{item['best_rank']:<2} {item['ticker']} ({item['shortnames']}), "
@@ -158,7 +157,7 @@ def print_report(report):
 
 def main():
     setup_stdout()
-    parser = argparse.ArgumentParser(
+    parser = make_ru_parser(
         description=(
             "Проверить актуальный состав официальных корзин MOEX через MOEX ISS "
             "и собрать следующую очередь покрытия."
