@@ -2,7 +2,7 @@
 """
 moex_status.py — Статус-сводка по покрытию MOEX.
 
-Выводит краткий summary: число российских карточек, статус аудита,
+Выводит краткую сводку: число российских карточек, статус проверки,
 число тем и следующая очередь тикеров из MOEX ISS.
 
 Использование:
@@ -143,7 +143,7 @@ def main():
     print(f"  Секторы:        {len(by_sector)}")
     print(f"  Темы:           {theme_count}")
     print()
-    print(f"  Аудит:          {audit_clean}/{audit_total} ({audit_pct:.0f}%) проходят")
+    print(f"  Проверка:      {audit_clean}/{audit_total} ({audit_pct:.0f}%) проходят")
     if audit_issues:
         print(f"                  {audit_issues} с замечаниями")
     print()

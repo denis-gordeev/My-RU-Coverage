@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Аудит всех российских (MOEX) отчётов в Pilot_Reports/ на качество."""
+"""Проверка качества всех российских (MOEX) отчётов в Pilot_Reports/."""
 import re
 import sys
 from pathlib import Path
