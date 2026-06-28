@@ -82,19 +82,19 @@ def scan_graph(min_weight=5, top_n=None):
     for name in active_nodes:
         cat = classify_wikilink(name)
         nodes.append({
-            "id": name,
-            "count": node_counts[name],
-            "category": cat,
-            "category_label": CATEGORY_LABELS[cat],
-            "color": CATEGORY_COLORS[cat],
+            "имя": name,
+            "упоминания": node_counts[name],
+            "категория": cat,
+            "метка_категории": CATEGORY_LABELS[cat],
+            "цвет": CATEGORY_COLORS[cat],
         })
 
     edge_list = []
     for (source, target), weight in filtered_edges.items():
         edge_list.append({
-            "source": source,
-            "target": target,
-            "weight": weight,
+            "источник": source,
+            "цель": target,
+            "вес": weight,
         })
 
     return nodes, edge_list
@@ -102,7 +102,7 @@ def scan_graph(min_weight=5, top_n=None):
 
 def build_html(nodes, edges):
     """Генерирует автономную HTML-визуализацию на D3.js."""
-    graph_json = json.dumps({"nodes": nodes, "links": edges}, ensure_ascii=False)
+    graph_json = json.dumps({"узлы": nodes, "связи": edges}, ensure_ascii=False)
 
     legend_items = "".join(
         f'<div style="display:flex;align-items:center;margin:4px 12px">'
@@ -148,6 +148,17 @@ def build_html(nodes, edges):
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
 const fullData = {graph_json};
+
+// Маппинг русских ключей JSON во внутренние английские для D3.js
+fullData.узлы.forEach(n => {{
+  n.id = n.имя; n.count = n.упоминания;
+  n.category_label = n.метка_категории; n.color = n.цвет;
+}});
+fullData.связи.forEach(l => {{
+  l.source = l.источник; l.target = l.цель; l.weight = l.вес;
+}});
+fullData.nodes = fullData.узлы;
+fullData.links = fullData.связи;
 const width = window.innerWidth, height = window.innerHeight;
 
 const svg = d3.select("svg");
@@ -274,7 +285,7 @@ def main():
     print(f"Граф: узлов {len(nodes)}, связей {len(edges)}")
 
     # Сохраняем JSON
-    graph_data = {"nodes": nodes, "links": edges}
+    graph_data = {"узлы": nodes, "связи": edges}
     json_path = os.path.join(NETWORK_DIR, "graph_data.json")
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(graph_data, f, ensure_ascii=False, indent=2)

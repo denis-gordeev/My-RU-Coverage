@@ -36,7 +36,7 @@ from utils import REPORTS_DIR, PROJECT_ROOT, setup_stdout, TICKER_PATTERN, SECTI
 TECH_SECTORS = {
     "Программное обеспечение — приложения",
     "Технологии", "Связь", "Телекоммуникации",
-    "Интернет-информационные сервисы", "Интернет-розница",
+    "Интернет-информационные услуги", "Интернет-розница",
 }
 
 MATERIALS_SECTORS = {
