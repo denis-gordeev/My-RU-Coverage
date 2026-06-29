@@ -58,6 +58,16 @@ def fetch_constituents(index_code, tradedate=None):
     return items
 
 
+def _translate_item(item):
+    return {
+        "тикер": item.get("ticker"),
+        "название": item.get("shortnames"),
+        "вес": item.get("weight"),
+        "ранг": item.get("rank"),
+        "дата_торгов": item.get("tradedate"),
+    }
+
+
 def build_index_report(index_code, items):
     covered = set(find_ticker_files().keys())
     missing = [item for item in items if item["ticker"] not in covered]
@@ -68,8 +78,8 @@ def build_index_report(index_code, items):
         "количество": len(items),
         "покрыто": len(items) - len(missing),
         "отсутствует": len(missing),
-        "состав": items,
-        "отсутствующие": missing,
+        "состав": [_translate_item(i) for i in items],
+        "отсутствующие": [_translate_item(i) for i in missing],
     }
     return report
 
@@ -87,25 +97,25 @@ def build_report(index_codes, tradedate=None):
             tradedates.append(index_report["дата_торгов"])
 
         for item in index_report["отсутствующие"]:
-            ticker = item["ticker"]
+            ticker = item["тикер"]
             existing = aggregated_missing.get(ticker)
             if existing is None:
                 aggregated_missing[ticker] = {
-                    "ticker": ticker,
-                    "shortnames": item["shortnames"],
-                    "indices": [index_code],
-                    "best_rank": item["rank"],
-                    "max_weight": item["weight"],
+                    "тикер": ticker,
+                    "название": item["название"],
+                    "индексы": [index_code],
+                    "лучший_ранг": item["ранг"],
+                    "максимальный_вес": item["вес"],
                 }
                 continue
 
-            existing["indices"].append(index_code)
-            existing["best_rank"] = min(existing["best_rank"], item["rank"])
-            existing["max_weight"] = max(existing["max_weight"], item["weight"])
+            existing["индексы"].append(index_code)
+            existing["лучший_ранг"] = min(existing["лучший_ранг"], item["ранг"])
+            existing["максимальный_вес"] = max(existing["максимальный_вес"], item["вес"])
 
     next_queue = sorted(
         aggregated_missing.values(),
-        key=lambda item: (item["best_rank"], -item["max_weight"], item["ticker"]),
+        key=lambda item: (item["лучший_ранг"], -item["максимальный_вес"], item["тикер"]),
     )
 
     return {
@@ -127,8 +137,8 @@ def print_report(report):
         print("Текущий состав:")
         for item in index_report["состав"]:
             print(
-                f"  #{item['rank']:<2} {item['ticker']:<6} {item['shortnames']:<20} "
-                f"{item['weight']:>5.2f}%"
+                f"  #{item['ранг']:<2} {item['тикер']:<6} {item['название']:<20} "
+                f"{item['вес']:>5.2f}%"
             )
 
         print("")
@@ -136,8 +146,8 @@ def print_report(report):
             print("Без локальной карточки:")
             for item in index_report["отсутствующие"]:
                 print(
-                    f"  - #{item['rank']:<2} {item['ticker']} ({item['shortnames']}), "
-                    f"вес {item['weight']:.2f}%"
+                    f"  - #{item['ранг']:<2} {item['тикер']} ({item['название']}), "
+                    f"вес {item['вес']:.2f}%"
                 )
         else:
             print("Все текущие бумаги этого индекса уже покрыты локальными карточками.")
@@ -146,10 +156,10 @@ def print_report(report):
     if report["следующая_очередь"]:
         print("Следующая агрегированная очередь покрытия:")
         for item in report["следующая_очередь"]:
-            indices = ", ".join(item["indices"])
+            indices = ", ".join(item["индексы"])
             print(
-                f"  - #{item['best_rank']:<2} {item['ticker']} ({item['shortnames']}), "
-                f"индексы: {indices}, макс. вес {item['max_weight']:.2f}%"
+                f"  - #{item['лучший_ранг']:<2} {item['тикер']} ({item['название']}), "
+                f"индексы: {indices}, макс. вес {item['максимальный_вес']:.2f}%"
             )
     else:
         print("Объединённая очередь индексов уже полностью покрыта локальными карточками.")
