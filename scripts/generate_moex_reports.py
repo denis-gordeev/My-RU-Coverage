@@ -107,15 +107,15 @@ def select_queue_items(report, requested_tickers=None):
     if not requested_tickers:
         return queue
 
-    lookup = {item["ticker"]: item for item in queue}
+    lookup = {item["тикер"]: item for item in queue}
     items = []
     for ticker in requested_tickers:
         item = lookup.get(ticker)
         if item is None:
             items.append(
                 {
-                    "ticker": ticker,
-                    "shortnames": REPORT_OVERRIDES.get(ticker, {}).get("name", ticker),
+                    "тикер": ticker,
+                    "название": REPORT_OVERRIDES.get(ticker, {}).get("name", ticker),
                 }
             )
         else:
@@ -138,14 +138,14 @@ def create_reports(items, limit=None, dry_run=False):
         if limit is not None and created >= limit:
             break
 
-        ticker = item["ticker"]
+        ticker = item["тикер"]
         if ticker in existing:
             print(f"  {ticker}: пропуск (карточка уже существует)")
             skipped += 1
             continue
 
         override = REPORT_OVERRIDES.get(ticker, {})
-        company_name = normalize_company_name(ticker, item.get("shortnames", ticker))
+        company_name = normalize_company_name(ticker, item.get("название", ticker))
         sector = override.get("sector")
         industry = override.get("industry")
         content, detected_sector = generate_report(ticker, company_name, sector, industry)

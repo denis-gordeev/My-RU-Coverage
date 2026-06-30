@@ -81,7 +81,7 @@ def get_queue_summary():
         report = build_report(DEFAULT_INDEX_CODES)
         queue = report.get("следующая_очередь", [])
         top5 = [
-            {"тикер": item["ticker"], "название": item["shortnames"]}
+            {"тикер": item["тикер"], "название": item["название"]}
             for item in queue[:5]
         ]
         return len(queue), top5, report.get("дата_торгов")
