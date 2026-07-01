@@ -19,51 +19,51 @@ TICKER_PATTERN = r"[A-Z0-9][A-Z0-9._-]{0,11}"
 
 MARKET_PROFILES = {
     ".ME": {
-        "unit_label": "млн руб.",
-        "price_symbol": "₽",
-        "scope_label": "российский рынок",
+        "единица": "млн руб.",
+        "символ_цены": "₽",
+        "область": "российский рынок",
     },
 }
 
 DEFAULT_MARKET_SUFFIXES = [".ME"]
-DEFAULT_UNIT_LABEL = MARKET_PROFILES[".ME"]["unit_label"]
+DEFAULT_UNIT_LABEL = MARKET_PROFILES[".ME"]["единица"]
 
 TICKER_SOURCE_OVERRIDES = {
     "SNGS": {
-        "candidates": ["SNGS.ME"],
-        "sector": "Энергетика",
-        "industry": "Нефтегазовая интегрированная",
-        "identity_keywords": ["Surgutneftegas", "Сургутнефтегаз"],
+        "кандидаты": ["SNGS.ME"],
+        "сектор": "Энергетика",
+        "отрасль": "Нефтегазовая интегрированная",
+        "ключевые_слова_идентификации": ["Surgutneftegas", "Сургутнефтегаз"],
     },
     "YDEX": {
-        "candidates": ["YDEX.ME", "YDEX"],
-        "sector": "Связь",
-        "industry": "Интернет-информационные услуги",
-        "identity_keywords": ["Yandex", "Яндекс", "МКПАО Яндекс"],
+        "кандидаты": ["YDEX.ME", "YDEX"],
+        "сектор": "Связь",
+        "отрасль": "Интернет-информационные услуги",
+        "ключевые_слова_идентификации": ["Yandex", "Яндекс", "МКПАО Яндекс"],
     },
     "T": {
-        "candidates": ["TCSG.ME"],
-        "sector": "Финансовые услуги",
-        "industry": "Финансовые холдинги",
-        "identity_keywords": ["T-Technologies", "TCS GROUP", "Т-Технологии"],
+        "кандидаты": ["TCSG.ME"],
+        "сектор": "Финансовые услуги",
+        "отрасль": "Финансовые холдинги",
+        "ключевые_слова_идентификации": ["T-Technologies", "TCS GROUP", "Т-Технологии"],
     },
     "OZON": {
-        "candidates": ["OZON.ME", "OZON"],
-        "sector": "Потребительские товары и услуги",
-        "industry": "Интернет-розница",
-        "identity_keywords": ["Ozon", "Озон"],
+        "кандидаты": ["OZON.ME", "OZON"],
+        "сектор": "Потребительские товары и услуги",
+        "отрасль": "Интернет-розница",
+        "ключевые_слова_идентификации": ["Ozon", "Озон"],
     },
     "X5": {
-        "candidates": ["X5.ME", "X5"],
-        "sector": "Потребительские товары повседневного спроса",
-        "industry": "Продуктовые магазины",
-        "identity_keywords": ["X5", "ИКС 5", "Корпоративный центр ИКС 5"],
+        "кандидаты": ["X5.ME", "X5"],
+        "сектор": "Потребительские товары повседневного спроса",
+        "отрасль": "Продуктовые магазины",
+        "ключевые_слова_идентификации": ["X5", "ИКС 5", "Корпоративный центр ИКС 5"],
     },
     "TATN": {
-        "candidates": ["TATN.ME", "TATNP.ME"],
-        "sector": "Энергетика",
-        "industry": "Нефтегазовая интегрированная",
-        "identity_keywords": ["Tatneft", "Татнефть"],
+        "кандидаты": ["TATN.ME", "TATNP.ME"],
+        "сектор": "Энергетика",
+        "отрасль": "Нефтегазовая интегрированная",
+        "ключевые_слова_идентификации": ["Tatneft", "Татнефть"],
     },
 }
 
@@ -161,20 +161,20 @@ ANNUAL_SECTION_TITLE = "### Ключевые финансовые показат
 QUARTERLY_SECTION_TITLE = "### Ключевые финансовые показатели по кварталам (4 квартала)"
 
 SECTION_HEADER_REGEX = {
-    "business": r"## Описание деятельности",
-    "supply_chain": r"## Положение в цепочке поставок",
-    "customers": r"## Ключевые клиенты и поставщики",
-    "financial": r"## Финансовый обзор",
-    "valuation": r"### Оценочные мультипликаторы",
-    "annual": r"### Ключевые финансовые показатели по годам \(3 года\)",
-    "quarterly": r"### Ключевые финансовые показатели по кварталам \(4 квартала\)",
+    "описание_деятельности": r"## Описание деятельности",
+    "цепочка_поставок": r"## Положение в цепочке поставок",
+    "клиенты_и_поставщики": r"## Ключевые клиенты и поставщики",
+    "финансовый_обзор": r"## Финансовый обзор",
+    "оценочные_мультипликаторы": r"### Оценочные мультипликаторы",
+    "годовые_показатели": r"### Ключевые финансовые показатели по годам \(3 года\)",
+    "квартальные_показатели": r"### Ключевые финансовые показатели по кварталам \(4 квартала\)",
 }
 
 METADATA_LABEL_PATTERNS = {
-    "sector": [r"\*\*Сектор:\*\*"],
-    "industry": [r"\*\*Отрасль:\*\*"],
-    "market_cap": [r"\*\*Рыночная капитализация:\*\*"],
-    "enterprise_value": [r"\*\*Стоимость предприятия \(EV\):\*\*"],
+    "сектор": [r"\*\*Сектор:\*\*"],
+    "отрасль": [r"\*\*Отрасль:\*\*"],
+    "рыночная_капитализация": [r"\*\*Рыночная капитализация:\*\*"],
+    "стоимость_предприятия": [r"\*\*Стоимость предприятия \(EV\):\*\*"],
 }
 
 
@@ -501,7 +501,7 @@ def get_market_profile(suffix=None):
 
 def split_before_financial_section(content):
     """Разделяет содержимое на текст до финансовой секции и саму финансовую секцию."""
-    match = re.search(SECTION_HEADER_REGEX["financial"], content)
+    match = re.search(SECTION_HEADER_REGEX["финансовый_обзор"], content)
     if not match:
         return None
     return content[: match.start()], content[match.start() :]
@@ -528,9 +528,9 @@ def fetch_valuation_data(info):
 
     # Цена
     cur_price = info.get("currentPrice")
-    valuation["_price"] = f"{cur_price:,.2f}" if cur_price else None
+    valuation["_цена"] = f"{cur_price:,.2f}" if cur_price else None
     currency = (info.get("currency") or "").upper()
-    valuation["_currency_symbol"] = {
+    valuation["_символ_валюты"] = {
         "RUB": "₽",
         "USD": "$",
         "EUR": "€",
@@ -540,10 +540,10 @@ def fetch_valuation_data(info):
     # Информация о периодах
     mrq = info.get("mostRecentQuarter")
     nfy = info.get("nextFiscalYearEnd")
-    valuation["_ttm_end"] = (
+    valuation["_конец_ttm"] = (
         datetime.fromtimestamp(mrq).strftime("%Y-%m-%d") if mrq else None
     )
-    valuation["_fwd_end"] = (
+    valuation["_конец_прогноза"] = (
         datetime.fromtimestamp(nfy).strftime("%Y-%m-%d") if nfy else None
     )
 
@@ -561,12 +561,12 @@ def build_valuation_table(v):
 
     today = date.today().strftime("%Y-%m-%d")
     period_parts = []
-    if v.get("_price"):
-        period_parts.append(f"Цена {v.get('_currency_symbol', '₽')}{v['_price']} на {today}")
-    if v.get("_ttm_end"):
-        period_parts.append(f"за 12 мес. на {v['_ttm_end']}")
-    if v.get("_fwd_end"):
-        period_parts.append(f"Прогноз до {v['_fwd_end']}")
+    if v.get("_цена"):
+        period_parts.append(f"Цена {v.get('_символ_валюты', '₽')}{v['_цена']} на {today}")
+    if v.get("_конец_ttm"):
+        period_parts.append(f"за 12 мес. на {v['_конец_ttm']}")
+    if v.get("_конец_прогноза"):
+        period_parts.append(f"Прогноз до {v['_конец_прогноза']}")
     period_note = " | ".join(period_parts) if period_parts else ""
 
     title = (
@@ -583,9 +583,9 @@ def update_metadata(content, market_cap, enterprise_value, unit_label=DEFAULT_UN
     market_cap_value = market_cap if market_cap not in (None, "", "None") else "Н/Д"
     enterprise_value_value = enterprise_value if enterprise_value not in (None, "", "None") else "Н/Д"
 
-    for pattern in METADATA_LABEL_PATTERNS["market_cap"]:
+    for pattern in METADATA_LABEL_PATTERNS["рыночная_капитализация"]:
         content = re.sub(rf"({pattern}) .+", rf"\1 {market_cap_value} {unit_label}", content)
-    for pattern in METADATA_LABEL_PATTERNS["enterprise_value"]:
+    for pattern in METADATA_LABEL_PATTERNS["стоимость_предприятия"]:
         content = re.sub(rf"({pattern}) .+", rf"\1 {enterprise_value_value} {unit_label}", content)
     return content
 
@@ -596,11 +596,11 @@ def update_company_classification(content, sector=None, industry=None):
     """
     if sector and sector not in {"", "Н/Д", "Не определено"}:
         sector = translate_sector(sector)
-        for pattern in METADATA_LABEL_PATTERNS["sector"]:
+        for pattern in METADATA_LABEL_PATTERNS["сектор"]:
             content = re.sub(rf"({pattern}) .+", rf"\1 {sector}", content)
     if industry and industry not in {"", "Н/Д", "Не определено"}:
         industry = translate_industry(industry)
-        for pattern in METADATA_LABEL_PATTERNS["industry"]:
+        for pattern in METADATA_LABEL_PATTERNS["отрасль"]:
             content = re.sub(rf"({pattern}) .+", rf"\1 {industry}", content)
     return content
 

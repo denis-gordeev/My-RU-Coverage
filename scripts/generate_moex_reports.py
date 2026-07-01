@@ -22,64 +22,64 @@ from utils import REPORTS_DIR, find_ticker_files, setup_stdout, make_ru_parser
 
 REPORT_OVERRIDES = {
     "DOMRF": {
-        "name": "ДОМ.РФ",
-        "sector": "Финансовые услуги",
-        "industry": "Кредитные услуги",
+        "название": "ДОМ.РФ",
+        "сектор": "Финансовые услуги",
+        "отрасль": "Кредитные услуги",
     },
     "AKRN": {
-        "name": "Акрон",
+        "название": "Акрон",
     },
     "AFLT": {
-        "name": "Аэрофлот",
+        "название": "Аэрофлот",
     },
     "CBOM": {
-        "name": "Московский кредитный банк",
-        "sector": "Финансовые услуги",
-        "industry": "Банки — региональные",
+        "название": "Московский кредитный банк",
+        "сектор": "Финансовые услуги",
+        "отрасль": "Банки — региональные",
     },
     "BSPB": {
-        "name": "Банк Санкт-Петербург",
-        "sector": "Финансовые услуги",
-        "industry": "Банки — региональные",
+        "название": "Банк Санкт-Петербург",
+        "сектор": "Финансовые услуги",
+        "отрасль": "Банки — региональные",
     },
     "AFKS": {
-        "name": "АФК Система",
+        "название": "АФК Система",
     },
     "ENPG": {
-        "name": "ЭН+ ГРУП",
+        "название": "ЭН+ ГРУП",
     },
     "CNRU": {
-        "name": "Циан",
+        "название": "Циан",
     },
     "BANEP": {
-        "name": "Башнефть ап",
+        "название": "Башнефть ап",
     },
     "ASTR": {
-        "name": "Астра",
+        "название": "Астра",
     },
     "AQUA": {
-        "name": "Инарктика",
+        "название": "Инарктика",
     },
     "BELU": {
-        "name": "НоваБев Групп",
+        "название": "НоваБев Групп",
     },
     "ETLN": {
-        "name": "Эталон",
+        "название": "Эталон",
     },
     "EUTR": {
-        "name": "ЕвроТранс",
+        "название": "ЕвроТранс",
     },
     "DATA": {
-        "name": "Аренадата",
+        "название": "Аренадата",
     },
     "APTK": {
-        "name": "Аптеки 36 и 6",
+        "название": "Аптеки 36 и 6",
     },
     "BAZA": {
-        "name": "БАЗИС",
+        "название": "БАЗИС",
     },
     "ELFV": {
-        "name": "ЭЛ5-Энерго",
+        "название": "ЭЛ5-Энерго",
     },
 }
 
@@ -88,8 +88,8 @@ SHORTNAME_SUFFIXES = (" ао", " ап", "-ао", "-ап")
 
 def normalize_company_name(ticker, shortname):
     override = REPORT_OVERRIDES.get(ticker, {})
-    if override.get("name"):
-        return override["name"]
+    if override.get("название"):
+        return override["название"]
 
     cleaned = (shortname or ticker).strip()
     if cleaned[:1].lower() == "i" and len(cleaned) > 1 and cleaned[1].isalpha():
@@ -115,7 +115,7 @@ def select_queue_items(report, requested_tickers=None):
             items.append(
                 {
                     "тикер": ticker,
-                    "название": REPORT_OVERRIDES.get(ticker, {}).get("name", ticker),
+                    "название": REPORT_OVERRIDES.get(ticker, {}).get("название", ticker),
                 }
             )
         else:
@@ -146,8 +146,8 @@ def create_reports(items, limit=None, dry_run=False):
 
         override = REPORT_OVERRIDES.get(ticker, {})
         company_name = normalize_company_name(ticker, item.get("название", ticker))
-        sector = override.get("sector")
-        industry = override.get("industry")
+        sector = override.get("сектор")
+        industry = override.get("отрасль")
         content, detected_sector = generate_report(ticker, company_name, sector, industry)
         target_sector = sector or detected_sector or "Не определено"
         output_path = build_output_path(ticker, company_name, target_sector)

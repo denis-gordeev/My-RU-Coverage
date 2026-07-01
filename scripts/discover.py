@@ -127,7 +127,7 @@ def search_reports(buzzword, sectors_filter=None):
             with open(filepath, "r", encoding="utf-8") as fh:
                 content = fh.read()
 
-            financial_split = re.split(SECTION_HEADER_REGEX["financial"], content, maxsplit=1)
+            financial_split = re.split(SECTION_HEADER_REGEX["финансовый_обзор"], content, maxsplit=1)
             text = financial_split[0]
 
             # Уже проставленные [[wikilinks]]
@@ -150,9 +150,9 @@ def search_reports(buzzword, sectors_filter=None):
                 # Примерно определяем роль по разделу
                 role = "упоминание"
                 for section_name, role_name in [
-                    (SECTION_HEADER_REGEX["business"], "основное_направление"),
-                    (SECTION_HEADER_REGEX["supply_chain"], "цепочка_поставок"),
-                    (SECTION_HEADER_REGEX["customers"], "клиент_поставщик"),
+                    (SECTION_HEADER_REGEX["описание_деятельности"], "основное_направление"),
+                    (SECTION_HEADER_REGEX["цепочка_поставок"], "цепочка_поставок"),
+                    (SECTION_HEADER_REGEX["клиенты_и_поставщики"], "клиент_поставщик"),
                 ]:
                     section_match = re.search(
                         rf"{section_name}\n(.*?)(?=\n## |\Z)", text, re.DOTALL
@@ -162,14 +162,14 @@ def search_reports(buzzword, sectors_filter=None):
                         break
 
                 results.append({
-                    "ticker": ticker,
-                    "company": company,
-                    "sector": sector_dir,
-                    "filepath": filepath,
-                    "linked": linked_count,
-                    "bare": bare_count,
-                    "role": role,
-                    "contexts": contexts,
+                    "тикер": ticker,
+                    "компания": company,
+                    "сектор": sector_dir,
+                    "путь": filepath,
+                    "с_викилинком": linked_count,
+                    "без_викилинка": bare_count,
+                    "роль": role,
+                    "контексты": contexts,
                 })
 
     return results
@@ -179,14 +179,14 @@ def apply_wikilinks(results, buzzword):
     """Добавляет [[wikilinks]] там, где термин найден без разметки."""
     applied = 0
     for r in results:
-        if r["bare"] == 0:
+        if r["без_викилинка"] == 0:
             continue
 
-        with open(r["filepath"], "r", encoding="utf-8") as f:
+        with open(r["путь"], "r", encoding="utf-8") as f:
             content = f.read()
 
         # Финансовый раздел не трогаем
-        financial_match = re.search(SECTION_HEADER_REGEX["financial"], content)
+        financial_match = re.search(SECTION_HEADER_REGEX["финансовый_обзор"], content)
         if not financial_match:
             continue
 
@@ -218,7 +218,7 @@ def print_report(results, buzzword):
     # Группировка по типу связи
     by_role = defaultdict(list)
     for r in results:
-        by_role[r["role"]].append(r)
+        by_role[r["роль"]].append(r)
 
     print(f"\n{'=' * 60}")
     print(f"Компании, связанные с темой «{buzzword}»: {len(results)}")
@@ -236,11 +236,11 @@ def print_report(results, buzzword):
         if not entries:
             continue
         print(f"\n### {label} ({len(entries)})")
-        for r in sorted(entries, key=lambda x: x["ticker"]):
-            link_status = "✓" if r["linked"] > 0 else "○"
-            bare_note = f" (+{r['bare']} без [[викилинк]])" if r["bare"] > 0 else ""
-            print(f"  {link_status} {r['ticker']} {r['company']} ({r['sector']}){bare_note}")
-            for ctx in r["contexts"][:1]:
+        for r in sorted(entries, key=lambda x: x["тикер"]):
+            link_status = "✓" if r["с_викилинком"] > 0 else "○"
+            bare_note = f" (+{r['без_викилинка']} без [[викилинк]])" if r["без_викилинка"] > 0 else ""
+            print(f"  {link_status} {r['тикер']} {r['компания']} ({r['сектор']}){bare_note}")
+            for ctx in r["контексты"][:1]:
                 print(f"    -> {ctx}")
 
 
@@ -292,7 +292,7 @@ def main():
 
     # Применение [[wikilinks]]
     if do_apply and results:
-        bare_count = sum(r["bare"] for r in results)
+        bare_count = sum(r["без_викилинка"] for r in results)
         if bare_count > 0:
             applied = apply_wikilinks(results, buzzword)
             print(f"\nДобавлено {applied} вхождений [[{buzzword}]].")
@@ -318,8 +318,8 @@ def main():
         )
 
     # Итог
-    linked = sum(1 for r in results if r["linked"] > 0)
-    unlinked = sum(1 for r in results if r["bare"] > 0 and r["linked"] == 0)
+    linked = sum(1 for r in results if r["с_викилинком"] > 0)
+    unlinked = sum(1 for r in results if r["без_викилинка"] > 0 and r["с_викилинком"] == 0)
     print(f"\nИтог: {len(results)} компаний упоминают «{buzzword}»")
     print(f"  Уже размечено: {linked} | Только голые упоминания: {unlinked}")
 

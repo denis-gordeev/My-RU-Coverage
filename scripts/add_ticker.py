@@ -35,12 +35,12 @@ def generate_report(ticker, name, sector=None, industry=None):
 
     if fin_data:
         if not sector:
-            sector = fin_data.get("sector", "Не определено")
+            sector = fin_data.get("сектор", "Не определено")
         if not industry:
-            industry = fin_data.get("industry", "Не определено")
-        market_cap = fin_data.get("market_cap") or "Н/Д"
-        enterprise_value = fin_data.get("enterprise_value") or "Н/Д"
-        unit_label = fin_data.get("unit_label", "млн руб.")
+            industry = fin_data.get("отрасль", "Не определено")
+        market_cap = fin_data.get("рыночная_капитализация") or "Н/Д"
+        enterprise_value = fin_data.get("стоимость_предприятия") or "Н/Д"
+        unit_label = fin_data.get("единица_измерения", "млн руб.")
         fin_section = build_financial_section(fin_data)
     else:
         if not sector:

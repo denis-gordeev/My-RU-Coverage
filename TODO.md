@@ -2,6 +2,21 @@
 
 Живой список задач по репозиторию. Обновляется после каждого automation round.
 
+## Выполнено в этом раунде (2026-07-01, automation round #53)
+
+- [x] **Русификация внутренних ключей словарей скриптов (~80+ ключей, 7 скриптов)**: все английские ключи внутренних словарей заменены на русские:
+  - **utils.py**: `SECTION_HEADER_REGEX` (7 ключей: business→описание_деятельности, supply_chain→цепочка_поставок, customers→клиенты_и_поставщики, financial→финансовый_обзор, valuation→оценочные_мультипликаторы, annual→годовые_показатели, quarterly→квартальные_показатели); `METADATA_LABEL_PATTERNS` (4 ключа: sector→сектор, industry→отрасль, market_cap→рыночная_капитализация, enterprise_value→стоимость_предприятия); `TICKER_SOURCE_OVERRIDES` (4 ключа×6 записей: candidates→кандидаты, sector→сектор, industry→отрасль, identity_keywords→ключевые_слова_идентификации); `MARKET_PROFILES` (3 ключа: unit_label→единица, price_symbol→символ_цены, scope_label→область); `fetch_valuation_data` (4 ключа: _price→_цена, _currency_symbol→_символ_валюты, _ttm_end→_конец_ttm, _fwd_end→_конец_прогноза)
+  - **update_financials.py**: `METRICS_KEYS` (11 ключей: revenue→выручка, gross_profit→валовая_прибыль, selling_exp→коммерческие_расходы, rd_exp→расходы_ниокр, admin_exp→общехозяйственные_расходы, operating_income→операционная_прибыль, net_income→чистая_прибыль, ocf→операционный_поток, icf→инвестиционный_поток, fcf→финансовый_поток, capex→капитальные_затраты); `METRIC_LABELS` (14 ключей — аналогично + маржи); `fetch_financials` return dict (10 ключей: annual→годовые, quarterly→квартальные, valuation→оценка, market_cap→рыночная_капитализация, enterprise_value→стоимость_предприятия, sector→сектор, industry→отрасль, suffix→суффикс, unit_label→единица_измерения, source_symbol→символ_источника)
+  - **update_valuation.py**: `fetch_valuation` return dict (5 ключей → аналогично); `SECTION_HEADER_REGEX` ссылки обновлены
+  - **add_ticker.py**: ссылки на ключи fetch_financials dict обновлены
+  - **update_enrichment.py**: `SECTION_HEADER_REGEX` ссылки обновлены
+  - **build_themes.py**: `THEME_DEFINITIONS` (3 ключа×30 тем: name→название, desc→описание, related→связанные); `sections` dict (3 ключа: desc→описание, supply_chain→цепочка_поставок, customers→клиенты); `wl_map` entries (4 ключа: ticker→тикер, company→компания, sector→сектор, role→роль)
+  - **discover.py**: `results` dict (8 ключей: ticker→тикер, company→компания, sector→сектор, filepath→путь, linked→с_викилинком, bare→без_викилинка, role→роль, contexts→контексты); `SECTION_HEADER_REGEX` ссылки обновлены
+  - **generate_moex_reports.py**: `REPORT_OVERRIDES` (3 ключа×18 записей: name→название, sector→сектор, industry→отрасль)
+- [x] **Аудит**: 42/42 (100%) отчётов проходят проверку качества
+- [x] **Пересборка артефактов**: WIKILINKS.md (314 уникальных викилинков), network/ (38 узлов, 74 связи), themes/ (29 тем) — без ошибок
+- [x] **Проверка компиляции**: все 13 скриптов компилируются без ошибок
+
 ## Выполнено в этом раунде (2026-06-30, automation round #52)
 
 - [x] **Исправление P0-багов: рассинхронизация ключей словарей после русификации moex_blue_chip_queue.py** (2 скрипта): moex_status.py (строка 84) и generate_moex_reports.py (строки 110, 117–118, 141, 148) обращались к ключам `item["ticker"]` и `item["shortnames"]`, но moex_blue_chip_queue.py выдаёт `item["тикер"]` и `item["название"]` — заменено на русские ключи; generate_moex_reports.py также создавал новые элементы с английскими ключами — исправлено
@@ -452,7 +467,6 @@
 - [ ] **Открытые issues**: `gh issue list` недоступен без авторизации (HTTP 401). Требуется `gh auth login`.
 - [ ] **Открытые PR**: `gh pr list` недоступен без авторизации (HTTP 401). Требуется `gh auth login`.
 - [ ] **Дальнейшая русификация**: оставшиеся ассимилированные заимствования, не подлежащие замене: «эмитент» (юридически закреплённый термин, замена дискуссионна), «Интер РАО инжиниринг» (собственное имя дочерней компании — правомерно оставить), «МКБ Онлайн» (официальное название продукта), «депозитарий» (юридически закреплённый термин), «нефтесервис» (отраслевой термин), «диверсификация» (общепринятый финансовый термин); «дивидендный» (общепринятый финансовый термин); «как услуга» (калька с «as a Service» — устоялась в ИТ-отрасли); «корпоративный» в финансовом контексте («корпоративное кредитование», «корпоративные клиенты» — общепринятый финансовый термин); устранены в round #52: «кибербезопасность», «телеком», «монетизация», «тенденция» (в контексте «рыночных тенденций»), «ландшафт», «верификация», «рекомендательные системы», «конфигурация», «идентификация» (в контексте цифровой), «деловые процессы»
-- [ ] **Русификация внутренних ключей словарей скриптов**: ~80+ английских ключей в utils.py (SECTION_HEADER_REGEX, METADATA_LABEL_PATTERNS, TICKER_SOURCE_OVERRIDES), update_financials.py (METRICS_KEYS, fetch_financials), update_valuation.py (fetch_valuation), build_themes.py (THEME_DEFINITIONS, wl_map), discover.py (results), generate_moex_reports.py (REPORT_OVERRIDES) — последовательная русификация потребует синхронного обновления всех потребителей
 
 ## Выполнено в этом раунде (2026-06-14, automation round #35)
 

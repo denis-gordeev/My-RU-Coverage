@@ -52,11 +52,11 @@ def fetch_valuation(ticker):
             )
             market_profile = get_market_profile(suffix)
             return {
-                "valuation": valuation,
-                "market_cap": market_cap,
-                "enterprise_value": enterprise_value,
-                "suffix": suffix,
-                "unit_label": market_profile["unit_label"],
+                "оценка": valuation,
+                "рыночная_капитализация": market_cap,
+                "стоимость_предприятия": enterprise_value,
+                "суффикс": suffix,
+                "единица_измерения": market_profile["единица"],
             }
         except Exception:
             continue
@@ -73,34 +73,34 @@ def update_file(filepath, ticker, dry_run=False):
         print(f"  {ticker}: пропуск (нет данных)")
         return False
 
-    new_table = build_valuation_table(data["valuation"])
+    new_table = build_valuation_table(data["оценка"])
 
-    if re.search(SECTION_HEADER_REGEX["valuation"], content):
+    if re.search(SECTION_HEADER_REGEX["оценочные_мультипликаторы"], content):
         content = re.sub(
-            rf"{SECTION_HEADER_REGEX['valuation']}.*?(?=\n{SECTION_HEADER_REGEX['annual']})",
+            rf"{SECTION_HEADER_REGEX['оценочные_мультипликаторы']}.*?(?=\n{SECTION_HEADER_REGEX['годовые_показатели']})",
             new_table + "\n",
             content,
             flags=re.DOTALL,
         )
-    elif re.search(SECTION_HEADER_REGEX["financial"], content):
-        annual_match = re.search(SECTION_HEADER_REGEX["annual"], content)
+    elif re.search(SECTION_HEADER_REGEX["финансовый_обзор"], content):
+        annual_match = re.search(SECTION_HEADER_REGEX["годовые_показатели"], content)
         if annual_match:
             content = content[: annual_match.start()] + new_table + "\n\n" + content[annual_match.start() :]
 
     content = update_metadata(
         content,
-        data.get("market_cap"),
-        data.get("enterprise_value"),
-        data.get("unit_label", "млн руб."),
+        data.get("рыночная_капитализация"),
+        data.get("стоимость_предприятия"),
+        data.get("единица_измерения", "млн руб."),
     )
 
     if dry_run:
-        print(f"  {ticker}: черновое обновление ({data['suffix']})")
+        print(f"  {ticker}: черновое обновление ({data['суффикс']})")
         return True
 
     with open(filepath, "w", encoding="utf-8") as f:
         f.write(content)
-    print(f"  {ticker}: обновлено ({data['suffix']})")
+    print(f"  {ticker}: обновлено ({data['суффикс']})")
     return True
 
 

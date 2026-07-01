@@ -34,34 +34,34 @@ from utils import (
 
 # Финансовые метрики для извлечения
 METRICS_KEYS = {
-    "revenue": ["Total Revenue"],
-    "gross_profit": ["Gross Profit"],
-    "selling_exp": ["Selling And Marketing Expense"],
-    "rd_exp": ["Research And Development"],
-    "admin_exp": ["General And Administrative Expense"],
-    "operating_income": ["Operating Income"],
-    "net_income": ["Net Income", "Net Income Common Stockholders"],
-    "ocf": ["Operating Cash Flow", "Total Cash From Operating Activities"],
-    "icf": ["Investing Cash Flow", "Total Cashflows From Investing Activities"],
-    "fcf": ["Financing Cash Flow", "Total Cash From Financing Activities"],
-    "capex": ["Capital Expenditure", "Capital Expenditures"],
+    "выручка": ["Total Revenue"],
+    "валовая_прибыль": ["Gross Profit"],
+    "коммерческие_расходы": ["Selling And Marketing Expense"],
+    "расходы_ниокр": ["Research And Development"],
+    "общехозяйственные_расходы": ["General And Administrative Expense"],
+    "операционная_прибыль": ["Operating Income"],
+    "чистая_прибыль": ["Net Income", "Net Income Common Stockholders"],
+    "операционный_поток": ["Operating Cash Flow", "Total Cash From Operating Activities"],
+    "инвестиционный_поток": ["Investing Cash Flow", "Total Cashflows From Investing Activities"],
+    "финансовый_поток": ["Financing Cash Flow", "Total Cash From Financing Activities"],
+    "капитальные_затраты": ["Capital Expenditure", "Capital Expenditures"],
 }
 
 METRIC_LABELS = {
-    "revenue": "Выручка",
-    "gross_profit": "Валовая прибыль",
-    "gross_margin": "Валовая маржа (%)",
-    "selling_exp": "Коммерческие расходы",
-    "rd_exp": "Расходы на НИОКР",
-    "admin_exp": "Общехозяйственные расходы",
-    "operating_income": "Операционная прибыль",
-    "operating_margin": "Операционная маржа (%)",
-    "net_income": "Чистая прибыль",
-    "net_margin": "Чистая маржа (%)",
-    "ocf": "Операционный денежный поток",
-    "icf": "Инвестиционный денежный поток",
-    "fcf": "Финансовый денежный поток",
-    "capex": "Капитальные затраты",
+    "выручка": "Выручка",
+    "валовая_прибыль": "Валовая прибыль",
+    "валовая_маржа": "Валовая маржа (%)",
+    "коммерческие_расходы": "Коммерческие расходы",
+    "расходы_ниокр": "Расходы на НИОКР",
+    "общехозяйственные_расходы": "Общехозяйственные расходы",
+    "операционная_прибыль": "Операционная прибыль",
+    "операционная_маржа": "Операционная маржа (%)",
+    "чистая_прибыль": "Чистая прибыль",
+    "чистая_маржа": "Чистая маржа (%)",
+    "операционный_поток": "Операционный денежный поток",
+    "инвестиционный_поток": "Инвестиционный денежный поток",
+    "финансовый_поток": "Финансовый денежный поток",
+    "капитальные_затраты": "Капитальные затраты",
 }
 
 
@@ -82,8 +82,8 @@ def calc_margin(numerator, denominator):
 
 def calc_admin_exp(income_stmt):
     """Получает административные расходы, при отсутствии — вычисляет как SGA − коммерческие расходы."""
-    admin = get_series(income_stmt, METRICS_KEYS["admin_exp"])
-    selling = get_series(income_stmt, METRICS_KEYS["selling_exp"])
+    admin = get_series(income_stmt, METRICS_KEYS["общехозяйственные_расходы"])
+    selling = get_series(income_stmt, METRICS_KEYS["коммерческие_расходы"])
     sga = get_series(income_stmt, ["Selling General And Administration"])
 
     if admin.empty and not sga.empty and not selling.empty:
@@ -101,40 +101,40 @@ def extract_metrics(income_stmt, cashflow):
         return pd.DataFrame()
 
     data = {
-        METRIC_LABELS["revenue"]: get_series(income_stmt, METRICS_KEYS["revenue"]),
-        METRIC_LABELS["gross_profit"]: get_series(income_stmt, METRICS_KEYS["gross_profit"]),
-        METRIC_LABELS["gross_margin"]: calc_margin(
-            get_series(income_stmt, METRICS_KEYS["gross_profit"]),
-            get_series(income_stmt, METRICS_KEYS["revenue"]),
+        METRIC_LABELS["выручка"]: get_series(income_stmt, METRICS_KEYS["выручка"]),
+        METRIC_LABELS["валовая_прибыль"]: get_series(income_stmt, METRICS_KEYS["валовая_прибыль"]),
+        METRIC_LABELS["валовая_маржа"]: calc_margin(
+            get_series(income_stmt, METRICS_KEYS["валовая_прибыль"]),
+            get_series(income_stmt, METRICS_KEYS["выручка"]),
         ),
-        METRIC_LABELS["selling_exp"]: get_series(income_stmt, METRICS_KEYS["selling_exp"]),
-        METRIC_LABELS["rd_exp"]: get_series(income_stmt, METRICS_KEYS["rd_exp"]),
-        METRIC_LABELS["admin_exp"]: calc_admin_exp(income_stmt),
-        METRIC_LABELS["operating_income"]: get_series(income_stmt, METRICS_KEYS["operating_income"]),
-        METRIC_LABELS["operating_margin"]: calc_margin(
-            get_series(income_stmt, METRICS_KEYS["operating_income"]),
-            get_series(income_stmt, METRICS_KEYS["revenue"]),
+        METRIC_LABELS["коммерческие_расходы"]: get_series(income_stmt, METRICS_KEYS["коммерческие_расходы"]),
+        METRIC_LABELS["расходы_ниокр"]: get_series(income_stmt, METRICS_KEYS["расходы_ниокр"]),
+        METRIC_LABELS["общехозяйственные_расходы"]: calc_admin_exp(income_stmt),
+        METRIC_LABELS["операционная_прибыль"]: get_series(income_stmt, METRICS_KEYS["операционная_прибыль"]),
+        METRIC_LABELS["операционная_маржа"]: calc_margin(
+            get_series(income_stmt, METRICS_KEYS["операционная_прибыль"]),
+            get_series(income_stmt, METRICS_KEYS["выручка"]),
         ),
-        METRIC_LABELS["net_income"]: get_series(income_stmt, METRICS_KEYS["net_income"]),
-        METRIC_LABELS["net_margin"]: calc_margin(
-            get_series(income_stmt, METRICS_KEYS["net_income"]),
-            get_series(income_stmt, METRICS_KEYS["revenue"]),
+        METRIC_LABELS["чистая_прибыль"]: get_series(income_stmt, METRICS_KEYS["чистая_прибыль"]),
+        METRIC_LABELS["чистая_маржа"]: calc_margin(
+            get_series(income_stmt, METRICS_KEYS["чистая_прибыль"]),
+            get_series(income_stmt, METRICS_KEYS["выручка"]),
         ),
-        METRIC_LABELS["ocf"]: get_series(cashflow, METRICS_KEYS["ocf"]),
-        METRIC_LABELS["icf"]: get_series(cashflow, METRICS_KEYS["icf"]),
-        METRIC_LABELS["fcf"]: get_series(cashflow, METRICS_KEYS["fcf"]),
-        METRIC_LABELS["capex"]: get_series(cashflow, METRICS_KEYS["capex"]),
+        METRIC_LABELS["операционный_поток"]: get_series(cashflow, METRICS_KEYS["операционный_поток"]),
+        METRIC_LABELS["инвестиционный_поток"]: get_series(cashflow, METRICS_KEYS["инвестиционный_поток"]),
+        METRIC_LABELS["финансовый_поток"]: get_series(cashflow, METRICS_KEYS["финансовый_поток"]),
+        METRIC_LABELS["капитальные_затраты"]: get_series(cashflow, METRICS_KEYS["капитальные_затраты"]),
     }
 
     # Выводим CAPEX из FCF при отсутствии: CAPEX = FCF − операционный поток (отрицательный)
-    capex = data[METRIC_LABELS["capex"]]
-    ocf = data[METRIC_LABELS["ocf"]]
+    capex = data[METRIC_LABELS["капитальные_затраты"]]
+    ocf = data[METRIC_LABELS["операционный_поток"]]
     fcf = get_series(cashflow, ["Free Cash Flow"])
     if not capex.empty and not ocf.empty and not fcf.empty:
         derived_capex = fcf - ocf
-        data[METRIC_LABELS["capex"]] = capex.fillna(derived_capex)
+        data[METRIC_LABELS["капитальные_затраты"]] = capex.fillna(derived_capex)
     elif capex.empty and not ocf.empty and not fcf.empty:
-        data[METRIC_LABELS["capex"]] = fcf - ocf
+        data[METRIC_LABELS["капитальные_затраты"]] = fcf - ocf
 
     df = pd.DataFrame(data).T
     # Очищаем заголовки столбцов: убираем временную часть из datetime
@@ -153,7 +153,7 @@ def localize_metric_labels(df, suffix):
 def get_source_candidates(ticker):
     """Возвращает приоритизированный список кандидатов источников финансов для тикера."""
     override = TICKER_SOURCE_OVERRIDES.get(ticker, {})
-    candidates = override.get("candidates")
+    candidates = override.get("кандидаты")
     if candidates:
         return candidates
     return [f"{ticker}{suffix}" for suffix in DEFAULT_MARKET_SUFFIXES]
@@ -169,7 +169,7 @@ def infer_market_suffix(symbol):
 def is_identity_match(ticker, symbol, info):
     """Отклоняет очевидные совпадения символов, например `T` -> AT&T."""
     override = TICKER_SOURCE_OVERRIDES.get(ticker, {})
-    keywords = override.get("identity_keywords", [])
+    keywords = override.get("ключевые_слова_идентификации", [])
     if not keywords:
         return True
 
@@ -188,8 +188,8 @@ def prepare_statement_df(df, suffix, max_columns):
     if df.empty:
         return df
 
-    if METRIC_LABELS["revenue"] in df.index:
-        valid_cols = df.columns[df.loc[METRIC_LABELS["revenue"]].notna()]
+    if METRIC_LABELS["выручка"] in df.index:
+        valid_cols = df.columns[df.loc[METRIC_LABELS["выручка"]].notna()]
         df = df[valid_cols]
     else:
         df = df.dropna(axis=1, how="all")
@@ -202,10 +202,10 @@ def prepare_statement_df(df, suffix, max_columns):
 
 
 def score_source(data):
-    annual_cols = 0 if data["annual"] is None else len(data["annual"].columns)
-    quarterly_cols = 0 if data["quarterly"] is None else len(data["quarterly"].columns)
-    has_market_cap = 1 if data.get("market_cap") not in (None, "Н/Д") else 0
-    has_sector = 1 if data.get("sector") not in (None, "", "Н/Д", "Не определено") else 0
+    annual_cols = 0 if data["годовые"] is None else len(data["годовые"].columns)
+    quarterly_cols = 0 if data["квартальные"] is None else len(data["квартальные"].columns)
+    has_market_cap = 1 if data.get("рыночная_капитализация") not in (None, "Н/Д") else 0
+    has_sector = 1 if data.get("сектор") not in (None, "", "Н/Д", "Не определено") else 0
     return (annual_cols + quarterly_cols, has_market_cap, has_sector)
 
 
@@ -246,19 +246,19 @@ def fetch_financials(ticker):
             valuation = fetch_valuation_data(info)
             market_profile = get_market_profile(suffix)
             data = {
-                "annual": df_annual,
-                "quarterly": df_quarterly,
-                "valuation": valuation,
-                "market_cap": market_cap,
-                "enterprise_value": enterprise_value,
-                "sector": info.get("sector") or override.get("sector", "Н/Д"),
-                "industry": info.get("industry") or override.get("industry", "Н/Д"),
-                "suffix": suffix,
-                "unit_label": market_profile["unit_label"],
-                "source_symbol": symbol,
+                "годовые": df_annual,
+                "квартальные": df_quarterly,
+                "оценка": valuation,
+                "рыночная_капитализация": market_cap,
+                "стоимость_предприятия": enterprise_value,
+                "сектор": info.get("sector") or override.get("сектор", "Н/Д"),
+                "отрасль": info.get("industry") or override.get("отрасль", "Н/Д"),
+                "суффикс": suffix,
+                "единица_измерения": market_profile["единица"],
+                "символ_источника": symbol,
             }
 
-            if data["annual"].empty and data["quarterly"].empty and market_cap == "Н/Д" and enterprise_value == "Н/Д":
+            if data["годовые"].empty and data["квартальные"].empty and market_cap == "Н/Д" and enterprise_value == "Н/Д":
                 continue
 
             data_score = score_source(data)
@@ -284,22 +284,21 @@ def df_to_clean_markdown(df):
 
 
 def build_financial_section(data):
-    unit_label = data.get("unit_label", "млн руб.")
+    unit_label = data.get("единица_измерения", "млн руб.")
     section = f"{FINANCIAL_SECTION_TITLE} (единицы: {unit_label}, маржа указана в %)\n"
 
-    # Снимок оценочных мультипликаторов
-    v = data.get("valuation", {})
+    v = data.get("оценка", {})
     if v:
         section += build_valuation_table(v) + "\n\n"
 
     section += f"{ANNUAL_SECTION_TITLE}\n"
-    if data["annual"] is not None and not data["annual"].empty:
-        section += df_to_clean_markdown(data["annual"]) + "\n\n"
+    if data["годовые"] is not None and not data["годовые"].empty:
+        section += df_to_clean_markdown(data["годовые"]) + "\n\n"
     else:
         section += "Нет доступных данных.\n\n"
     section += f"{QUARTERLY_SECTION_TITLE}\n"
-    if data["quarterly"] is not None and not data["quarterly"].empty:
-        section += df_to_clean_markdown(data["quarterly"]) + "\n"
+    if data["квартальные"] is not None and not data["квартальные"].empty:
+        section += df_to_clean_markdown(data["квартальные"]) + "\n"
     else:
         section += "Нет доступных данных.\n"
     return section
@@ -316,31 +315,31 @@ def update_file(filepath, ticker, dry_run=False):
 
     new_fin = build_financial_section(data)
 
-    if re.search(SECTION_HEADER_REGEX["financial"], content):
-        new_content = re.sub(rf"{SECTION_HEADER_REGEX['financial']}.*", new_fin, content, flags=re.DOTALL)
+    if re.search(SECTION_HEADER_REGEX["финансовый_обзор"], content):
+        new_content = re.sub(rf"{SECTION_HEADER_REGEX['финансовый_обзор']}.*", new_fin, content, flags=re.DOTALL)
     else:
         new_content = content.rstrip() + "\n\n" + new_fin
 
     # Обновляем метаданные
     new_content = update_metadata(
         new_content,
-        data.get("market_cap"),
-        data.get("enterprise_value"),
-        data.get("unit_label", "млн руб."),
+        data.get("рыночная_капитализация"),
+        data.get("стоимость_предприятия"),
+        data.get("единица_измерения", "млн руб."),
     )
     new_content = update_company_classification(
         new_content,
-        data.get("sector"),
-        data.get("industry"),
+        data.get("сектор"),
+        data.get("отрасль"),
     )
 
     if dry_run:
-        print(f"  {ticker}: черновое обновление ({data['source_symbol']})")
+        print(f"  {ticker}: черновое обновление ({data['символ_источника']})")
         return True
 
     with open(filepath, "w", encoding="utf-8") as f:
         f.write(new_content)
-    print(f"  {ticker}: обновлено ({data['source_symbol']})")
+    print(f"  {ticker}: обновлено ({data['символ_источника']})")
     return True
 
 

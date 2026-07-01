@@ -54,7 +54,7 @@ def apply_enrichment(filepath, ticker, data):
             f"**Рыночная капитализация:** Н/Д млн руб.\n"
             f"**Стоимость предприятия (EV):** Н/Д млн руб.\n\n"
         )
-        content = re.sub(SECTION_HEADER_REGEX["business"] + r"\n", BUSINESS_SECTION_TITLE + "\n" + meta, content, count=1)
+        content = re.sub(SECTION_HEADER_REGEX["описание_деятельности"] + r"\n", BUSINESS_SECTION_TITLE + "\n" + meta, content, count=1)
 
     # Заменяем описание деятельности (сохраняя блок метаданных выше)
     if "описание" in data:
@@ -87,9 +87,9 @@ def apply_enrichment(filepath, ticker, data):
             flags=re.DOTALL,
         )
 
-    content = re.sub(SECTION_HEADER_REGEX["business"], BUSINESS_SECTION_TITLE, content)
-    content = re.sub(SECTION_HEADER_REGEX["supply_chain"], SUPPLY_CHAIN_SECTION_TITLE, content)
-    content = re.sub(SECTION_HEADER_REGEX["customers"], CUSTOMERS_SECTION_TITLE, content)
+    content = re.sub(SECTION_HEADER_REGEX["описание_деятельности"], BUSINESS_SECTION_TITLE, content)
+    content = re.sub(SECTION_HEADER_REGEX["цепочка_поставок"], SUPPLY_CHAIN_SECTION_TITLE, content)
+    content = re.sub(SECTION_HEADER_REGEX["клиенты_и_поставщики"], CUSTOMERS_SECTION_TITLE, content)
 
     # Нормализуем викилинки: стандартизируем алиасы, схлопываем дубли
     content = normalize_wikilinks(content)
