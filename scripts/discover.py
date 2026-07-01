@@ -202,7 +202,7 @@ def apply_wikilinks(results, buzzword):
 
         if count > 0:
             content = new_text + financial_part
-            with open(r["filepath"], "w", encoding="utf-8") as f:
+            with open(r["путь"], "w", encoding="utf-8") as f:
                 f.write(content)
             applied += count
 
