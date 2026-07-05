@@ -5,14 +5,14 @@
 ## Содержимое
 
 - `Pilot_Reports_LEGACY/` — карточки тайваньских эмитентов (тикеры формата `NNNN_名稱.md`).
-- `task.md` — архив batch-задач для тайваньского корпуса (историческая справка).
+- `task.md` — архив пакетных задач для тайваньского корпуса (историческая справка).
 
 ## Удалённые скрипты
 
 Следующие скрипты были удалены как неиспользуемые в российском рабочем процессе:
 
 - `scripts/generators/01_prototype.py`, `02_generate_base_reports.py`, `03_organize_reports.py` — генераторы тайваньского корпуса
-- `scripts/audit_batch.py` — аудит качества по batch-задачам из `task.md`
+- `scripts/audit_batch.py` — аудит качества по пакетным задачам из `task.md`
 - `scripts/migrate_financial_labels.py`, `scripts/migrate_sectors_industries.py` — одноразовые миграции
 
 ## Правила для исторических файлов
