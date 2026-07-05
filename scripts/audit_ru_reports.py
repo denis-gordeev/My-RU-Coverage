@@ -6,7 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORTS_DIR = ROOT / "Pilot_Reports"
-LEGACY_THEME_MARKERS = {
+УСТАРЕВШИЕ_ТЕМАТИЧЕСКИЕ_МЕТКИ = {
     "HBM", "CoWoS", "CPO", "EUV", "VCSEL",
 }
 HAN_RE = re.compile(r"[\u4e00-\u9fff]")
@@ -18,7 +18,7 @@ def check_file(filepath):
 
     # 1. Ищем слишком общие викилинк-сущности.
     wikilinks = re.findall(r"\[\[([^\]]+)\]\]", content)
-    industry_acronyms = {
+    отраслевые_аббревиатуры = {
         "СПГ", "АЗС", "МСБ", "ОРЭМ", "ДПМ", "ФСТ", "СУЭК", "АТС", "ЖКХ",
         "КОМ", "РСВ", "НЛМК", "ММК", "МТС", "ВТБ", "Сбер", "Тева", "ФСБ",
         "Циан", "Юла", "ЕГРН", "ПИК", "Озон", "РЖД", "САПР", "ЧПУ",
@@ -27,7 +27,7 @@ def check_file(filepath):
         "Магнит", "Пятерочка", "Перекресток", "Дикси", "Лента",
         "MOEX", "ЦБ", "ФАС", "Минцифры", "44-ФЗ", "223-ФЗ",
     }
-    generic_patterns = [
+    шаблоны_общих_сущностей = [
         r"^компания$",
         r"^предприятие$",
         r"^организация$",
@@ -44,20 +44,20 @@ def check_file(filepath):
         r"^поставщик[и|ов]?$",
         r"^клиент[ы|ов]?$",
     ]
-    generic_wikilinks = []
+    общие_викилинки = []
     for wl in wikilinks:
         wl_stripped = wl.strip()
-        if wl_stripped in industry_acronyms:
+        if wl_stripped in отраслевые_аббревиатуры:
             continue
         if re.match(r"^[A-ZА-ЯЁ]{2,6}$", wl_stripped):
             continue
         base = wl_stripped.split("|")[0].strip()
-        for pat in generic_patterns:
+        for pat in шаблоны_общих_сущностей:
             if re.match(pat, base, re.IGNORECASE):
-                generic_wikilinks.append(wl)
+                общие_викилинки.append(wl)
                 break
-    if generic_wikilinks:
-        issues.append(f"Слишком общие викилинк-сущности: {', '.join(generic_wikilinks)}")
+    if общие_викилинки:
+        issues.append(f"Слишком общие викилинк-сущности: {', '.join(общие_викилинки)}")
 
     # 2. Проверяем размер секции про клиентов и поставщиков.
     client_match = re.search(r"## Ключевые клиенты? и поставщики?", content)
@@ -89,7 +89,7 @@ def check_file(filepath):
     legacy_hits = []
     for wl in wikilinks:
         base = wl.split("|")[0].strip()
-        if base in LEGACY_THEME_MARKERS or HAN_RE.search(base):
+        if base in УСТАРЕВШИЕ_ТЕМАТИЧЕСКИЕ_МЕТКИ or HAN_RE.search(base):
             legacy_hits.append(base)
     if legacy_hits:
         issues.append(

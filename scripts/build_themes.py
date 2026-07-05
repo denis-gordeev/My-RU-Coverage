@@ -24,7 +24,7 @@ from utils import TICKER_PATTERN, extract_wikilinks
 REPORTS_DIR = os.path.join(os.path.dirname(__file__), "..", "Pilot_Reports")
 THEMES_DIR = os.path.join(os.path.dirname(__file__), "..", "themes")
 
-RU_THEME_TAGS = [
+ТЕМЫ_RU = [
     "банки",
     "финансовые технологии",
     "нефтегаз",
@@ -58,7 +58,7 @@ RU_THEME_TAGS = [
     "программное обеспечение",
 ]
 
-RU_PRIORITY_QUEUE = ["DOMRF", "AKRN", "AFLT", "CBOM", "BSPB"]
+ОЧЕРЕДЬ_ПРИОРИТЕТА_RU = ["DOMRF", "AKRN", "AFLT", "CBOM", "BSPB"]
 
 # Кураторские определения тем и связанных тегов.
 # Формат: тема_викилинка -> { название, описание, связанные }
@@ -367,10 +367,10 @@ def build_theme_page(theme_tag, theme_def, wl_map):
     lines.append("")
 
     # Группировка по роли
-    upstream = [e for e in entries if e["роль"] == "верхний_контур"]
-    midstream = [e for e in entries if e["роль"] == "ключевое_звено"]
-    downstream = [e for e in entries if e["роль"] == "конечный_спрос"]
-    other = [e for e in entries if e["роль"] == "связанные"]
+    верхний_контур = [e for e in entries if e["роль"] == "верхний_контур"]
+    ключевое_звено = [e for e in entries if e["роль"] == "ключевое_звено"]
+    конечный_спрос = [e for e in entries if e["роль"] == "конечный_спрос"]
+    связанные = [e for e in entries if e["роль"] == "связанные"]
 
     def format_entries(entries):
         # Группировка по сектору
@@ -386,28 +386,28 @@ def build_theme_page(theme_tag, theme_def, wl_map):
                 )
         return result
 
-    if upstream:
-        lines.append(f"## Верхний контур ({len(upstream)} {ru_plural(len(upstream), 'компания', 'компании', 'компаний')})")
+    if верхний_контур:
+        lines.append(f"## Верхний контур ({len(верхний_контур)} {ru_plural(len(верхний_контур), 'компания', 'компании', 'компаний')})")
         lines.append("")
-        lines.extend(format_entries(upstream))
-        lines.append("")
-
-    if midstream:
-        lines.append(f"## Ключевое звено ({len(midstream)} {ru_plural(len(midstream), 'компания', 'компании', 'компаний')})")
-        lines.append("")
-        lines.extend(format_entries(midstream))
+        lines.extend(format_entries(верхний_контур))
         lines.append("")
 
-    if downstream:
-        lines.append(f"## Конечный спрос ({len(downstream)} {ru_plural(len(downstream), 'компания', 'компании', 'компаний')})")
+    if ключевое_звено:
+        lines.append(f"## Ключевое звено ({len(ключевое_звено)} {ru_plural(len(ключевое_звено), 'компания', 'компании', 'компаний')})")
         lines.append("")
-        lines.extend(format_entries(downstream))
+        lines.extend(format_entries(ключевое_звено))
         lines.append("")
 
-    if other:
-        lines.append(f"## Связанные компании ({len(other)} {ru_plural(len(other), 'компания', 'компании', 'компаний')})")
+    if конечный_спрос:
+        lines.append(f"## Конечный спрос ({len(конечный_спрос)} {ru_plural(len(конечный_спрос), 'компания', 'компании', 'компаний')})")
         lines.append("")
-        lines.extend(format_entries(other))
+        lines.extend(format_entries(конечный_спрос))
+        lines.append("")
+
+    if связанные:
+        lines.append(f"## Связанные компании ({len(связанные)} {ru_plural(len(связанные), 'компания', 'компании', 'компаний')})")
+        lines.append("")
+        lines.extend(format_entries(связанные))
         lines.append("")
 
     return "\n".join(lines)
@@ -416,8 +416,8 @@ def build_theme_page(theme_tag, theme_def, wl_map):
 def build_index(themes_built):
     """Строит индекс themes/README.md."""
     lines = []
-    ru_built = sum(1 for tag in RU_THEME_TAGS if tag in themes_built)
-    ru_total_companies = sum(themes_built[tag] for tag in RU_THEME_TAGS if tag in themes_built)
+    ru_built = sum(1 for tag in ТЕМЫ_RU if tag in themes_built)
+    ru_total_companies = sum(themes_built[tag] for tag in ТЕМЫ_RU if tag in themes_built)
 
     lines.append("# Тематические подборки")
     lines.append("")
@@ -435,12 +435,12 @@ def build_index(themes_built):
         f"- Российский контур сейчас охватывает {ru_built} {ru_plural(ru_built, 'тему', 'темы', 'тем')} "
         f"и {ru_total_companies} тематических вхождений компаний."
     )
-    lines.append(f"- Следующая автоматическая очередь `MOEXBMI`: {', '.join(f'`{ticker}`' for ticker in RU_PRIORITY_QUEUE)}.")
+    lines.append(f"- Следующая автоматическая очередь `MOEXBMI`: {', '.join(f'`{ticker}`' for ticker in ОЧЕРЕДЬ_ПРИОРИТЕТА_RU)}.")
     lines.append("")
 
     lines.append("## Российский рынок")
     lines.append("")
-    for tag in RU_THEME_TAGS:
+    for tag in ТЕМЫ_RU:
         if tag in themes_built:
             count = themes_built[tag]
             safe_name = tag.replace(" ", "_").replace("/", "_")

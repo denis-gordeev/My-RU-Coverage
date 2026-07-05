@@ -38,27 +38,27 @@ def collect_wikilinks():
 
 def categorize(wikilinks):
     """Разбивает викилинки по смысловым категориям."""
-    technologies = {}
-    materials = {}
-    applications = {}
-    companies_local = {}
-    companies_intl = {}
+    технологии = {}
+    материалы = {}
+    применения = {}
+    компании_российские = {}
+    компании_иностранные = {}
 
     for name, count in wikilinks.items():
         cat = classify_wikilink(name)
         if cat == "технология":
-            technologies[name] = count
+            технологии[name] = count
         elif cat == "материал":
-            materials[name] = count
+            материалы[name] = count
         elif cat == "конечный_рынок":
-            applications[name] = count
+            применения[name] = count
         elif cat == "локальная_компания" and count >= 2:
-            companies_local[name] = count
+            компании_российские[name] = count
         elif cat == "иностранная_компания" and count >= 2:
-            companies_intl[name] = count
+            компании_иностранные[name] = count
         # Единичные упоминания в индекс не включаем
 
-    return technologies, materials, applications, companies_intl, companies_local
+    return технологии, материалы, применения, компании_иностранные, компании_российские
 
 
 def build_section(title, items, limit=None):
@@ -85,7 +85,7 @@ def main():
         sys.stdout.reconfigure(encoding="utf-8")
 
     wikilinks = collect_wikilinks()
-    tech, mat, app, intl, local = categorize(wikilinks)
+    тех, мат, прим, ин, лок = categorize(wikilinks)
 
     lines = [
         "# Индекс викилинков",
@@ -97,21 +97,21 @@ def main():
         "",
     ]
 
-    lines.extend(build_section("Технологии и стандарты", tech))
-    lines.extend(build_section("Материалы и сырьё", mat))
-    lines.extend(build_section("Конечные рынки и применения", app))
-    lines.extend(build_section("Иностранные компании", intl, limit=200))
-    lines.extend(build_section("Российские компании", local, limit=300))
+    lines.extend(build_section("Технологии и стандарты", тех))
+    lines.extend(build_section("Материалы и сырьё", мат))
+    lines.extend(build_section("Конечные рынки и применения", прим))
+    lines.extend(build_section("Иностранные компании", ин, limit=200))
+    lines.extend(build_section("Российские компании", лок, limit=300))
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
 
     print(f"Сгенерирован WIKILINKS.md: {len(wikilinks)} уникальных викилинков")
-    print(f"  Технологии: {len(tech)}")
-    print(f"  Материалы: {len(mat)}")
-    print(f"  Применения: {len(app)}")
-    print(f"  Иностранные компании: {len(intl)}")
-    print(f"  Российские компании: {len(local)}")
+    print(f"  Технологии: {len(тех)}")
+    print(f"  Материалы: {len(мат)}")
+    print(f"  Применения: {len(прим)}")
+    print(f"  Иностранные компании: {len(ин)}")
+    print(f"  Российские компании: {len(лок)}")
 
 
 if __name__ == "__main__":

@@ -21,7 +21,7 @@ from collections import defaultdict
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import (
     REPORTS_DIR, setup_stdout,
-    classify_wikilink, CATEGORY_COLORS, CATEGORY_LABELS, TICKER_PATTERN,
+    classify_wikilink, ЦВЕТА_КАТЕГОРИЙ, МЕТКИ_КАТЕГОРИЙ, TICKER_PATTERN,
     split_before_financial_section, extract_wikilinks,
 )
 
@@ -85,8 +85,8 @@ def scan_graph(min_weight=5, top_n=None):
             "имя": name,
             "упоминания": node_counts[name],
             "категория": cat,
-            "метка_категории": CATEGORY_LABELS[cat],
-            "цвет": CATEGORY_COLORS[cat],
+            "метка_категории": МЕТКИ_КАТЕГОРИЙ[cat],
+            "цвет": ЦВЕТА_КАТЕГОРИЙ[cat],
         })
 
     edge_list = []
@@ -109,7 +109,7 @@ def build_html(nodes, edges):
         f'<div style="width:14px;height:14px;border-radius:50%;background:{color};margin-right:6px"></div>'
         f'<span style="font-size:13px">{label}</span></div>'
         for cat, (color, label) in {
-            k: (CATEGORY_COLORS[k], CATEGORY_LABELS[k]) for k in CATEGORY_COLORS
+            k: (ЦВЕТА_КАТЕГОРИЙ[k], МЕТКИ_КАТЕГОРИЙ[k]) for k in ЦВЕТА_КАТЕГОРИЙ
         }.items()
     )
 

@@ -33,7 +33,7 @@ from utils import (
 )
 
 # Финансовые метрики для извлечения
-METRICS_KEYS = {
+КЛЮЧИ_МЕТРИК = {
     "выручка": ["Total Revenue"],
     "валовая_прибыль": ["Gross Profit"],
     "коммерческие_расходы": ["Selling And Marketing Expense"],
@@ -47,7 +47,7 @@ METRICS_KEYS = {
     "капитальные_затраты": ["Capital Expenditure", "Capital Expenditures"],
 }
 
-METRIC_LABELS = {
+МЕТКИ_МЕТРИК = {
     "выручка": "Выручка",
     "валовая_прибыль": "Валовая прибыль",
     "валовая_маржа": "Валовая маржа (%)",
@@ -82,8 +82,8 @@ def calc_margin(numerator, denominator):
 
 def calc_admin_exp(income_stmt):
     """Получает административные расходы, при отсутствии — вычисляет как SGA − коммерческие расходы."""
-    admin = get_series(income_stmt, METRICS_KEYS["общехозяйственные_расходы"])
-    selling = get_series(income_stmt, METRICS_KEYS["коммерческие_расходы"])
+    admin = get_series(income_stmt, КЛЮЧИ_МЕТРИК["общехозяйственные_расходы"])
+    selling = get_series(income_stmt, КЛЮЧИ_МЕТРИК["коммерческие_расходы"])
     sga = get_series(income_stmt, ["Selling General And Administration"])
 
     if admin.empty and not sga.empty and not selling.empty:
@@ -101,40 +101,40 @@ def extract_metrics(income_stmt, cashflow):
         return pd.DataFrame()
 
     data = {
-        METRIC_LABELS["выручка"]: get_series(income_stmt, METRICS_KEYS["выручка"]),
-        METRIC_LABELS["валовая_прибыль"]: get_series(income_stmt, METRICS_KEYS["валовая_прибыль"]),
-        METRIC_LABELS["валовая_маржа"]: calc_margin(
-            get_series(income_stmt, METRICS_KEYS["валовая_прибыль"]),
-            get_series(income_stmt, METRICS_KEYS["выручка"]),
+        МЕТКИ_МЕТРИК["выручка"]: get_series(income_stmt, КЛЮЧИ_МЕТРИК["выручка"]),
+        МЕТКИ_МЕТРИК["валовая_прибыль"]: get_series(income_stmt, КЛЮЧИ_МЕТРИК["валовая_прибыль"]),
+        МЕТКИ_МЕТРИК["валовая_маржа"]: calc_margin(
+            get_series(income_stmt, КЛЮЧИ_МЕТРИК["валовая_прибыль"]),
+            get_series(income_stmt, КЛЮЧИ_МЕТРИК["выручка"]),
         ),
-        METRIC_LABELS["коммерческие_расходы"]: get_series(income_stmt, METRICS_KEYS["коммерческие_расходы"]),
-        METRIC_LABELS["расходы_ниокр"]: get_series(income_stmt, METRICS_KEYS["расходы_ниокр"]),
-        METRIC_LABELS["общехозяйственные_расходы"]: calc_admin_exp(income_stmt),
-        METRIC_LABELS["операционная_прибыль"]: get_series(income_stmt, METRICS_KEYS["операционная_прибыль"]),
-        METRIC_LABELS["операционная_маржа"]: calc_margin(
-            get_series(income_stmt, METRICS_KEYS["операционная_прибыль"]),
-            get_series(income_stmt, METRICS_KEYS["выручка"]),
+        МЕТКИ_МЕТРИК["коммерческие_расходы"]: get_series(income_stmt, КЛЮЧИ_МЕТРИК["коммерческие_расходы"]),
+        МЕТКИ_МЕТРИК["расходы_ниокр"]: get_series(income_stmt, КЛЮЧИ_МЕТРИК["расходы_ниокр"]),
+        МЕТКИ_МЕТРИК["общехозяйственные_расходы"]: calc_admin_exp(income_stmt),
+        МЕТКИ_МЕТРИК["операционная_прибыль"]: get_series(income_stmt, КЛЮЧИ_МЕТРИК["операционная_прибыль"]),
+        МЕТКИ_МЕТРИК["операционная_маржа"]: calc_margin(
+            get_series(income_stmt, КЛЮЧИ_МЕТРИК["операционная_прибыль"]),
+            get_series(income_stmt, КЛЮЧИ_МЕТРИК["выручка"]),
         ),
-        METRIC_LABELS["чистая_прибыль"]: get_series(income_stmt, METRICS_KEYS["чистая_прибыль"]),
-        METRIC_LABELS["чистая_маржа"]: calc_margin(
-            get_series(income_stmt, METRICS_KEYS["чистая_прибыль"]),
-            get_series(income_stmt, METRICS_KEYS["выручка"]),
+        МЕТКИ_МЕТРИК["чистая_прибыль"]: get_series(income_stmt, КЛЮЧИ_МЕТРИК["чистая_прибыль"]),
+        МЕТКИ_МЕТРИК["чистая_маржа"]: calc_margin(
+            get_series(income_stmt, КЛЮЧИ_МЕТРИК["чистая_прибыль"]),
+            get_series(income_stmt, КЛЮЧИ_МЕТРИК["выручка"]),
         ),
-        METRIC_LABELS["операционный_поток"]: get_series(cashflow, METRICS_KEYS["операционный_поток"]),
-        METRIC_LABELS["инвестиционный_поток"]: get_series(cashflow, METRICS_KEYS["инвестиционный_поток"]),
-        METRIC_LABELS["финансовый_поток"]: get_series(cashflow, METRICS_KEYS["финансовый_поток"]),
-        METRIC_LABELS["капитальные_затраты"]: get_series(cashflow, METRICS_KEYS["капитальные_затраты"]),
+        МЕТКИ_МЕТРИК["операционный_поток"]: get_series(cashflow, КЛЮЧИ_МЕТРИК["операционный_поток"]),
+        МЕТКИ_МЕТРИК["инвестиционный_поток"]: get_series(cashflow, КЛЮЧИ_МЕТРИК["инвестиционный_поток"]),
+        МЕТКИ_МЕТРИК["финансовый_поток"]: get_series(cashflow, КЛЮЧИ_МЕТРИК["финансовый_поток"]),
+        МЕТКИ_МЕТРИК["капитальные_затраты"]: get_series(cashflow, КЛЮЧИ_МЕТРИК["капитальные_затраты"]),
     }
 
     # Выводим CAPEX из FCF при отсутствии: CAPEX = FCF − операционный поток (отрицательный)
-    capex = data[METRIC_LABELS["капитальные_затраты"]]
-    ocf = data[METRIC_LABELS["операционный_поток"]]
+    capex = data[МЕТКИ_МЕТРИК["капитальные_затраты"]]
+    ocf = data[МЕТКИ_МЕТРИК["операционный_поток"]]
     fcf = get_series(cashflow, ["Free Cash Flow"])
     if not capex.empty and not ocf.empty and not fcf.empty:
         derived_capex = fcf - ocf
-        data[METRIC_LABELS["капитальные_затраты"]] = capex.fillna(derived_capex)
+        data[МЕТКИ_МЕТРИК["капитальные_затраты"]] = capex.fillna(derived_capex)
     elif capex.empty and not ocf.empty and not fcf.empty:
-        data[METRIC_LABELS["капитальные_затраты"]] = fcf - ocf
+        data[МЕТКИ_МЕТРИК["капитальные_затраты"]] = fcf - ocf
 
     df = pd.DataFrame(data).T
     # Очищаем заголовки столбцов: убираем временную часть из datetime
@@ -188,8 +188,8 @@ def prepare_statement_df(df, suffix, max_columns):
     if df.empty:
         return df
 
-    if METRIC_LABELS["выручка"] in df.index:
-        valid_cols = df.columns[df.loc[METRIC_LABELS["выручка"]].notna()]
+    if МЕТКИ_МЕТРИК["выручка"] in df.index:
+        valid_cols = df.columns[df.loc[МЕТКИ_МЕТРИК["выручка"]].notna()]
         df = df[valid_cols]
     else:
         df = df.dropna(axis=1, how="all")
