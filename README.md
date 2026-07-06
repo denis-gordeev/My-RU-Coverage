@@ -5,7 +5,7 @@
 ## Текущее состояние
 
 - 42 российских отчёта в `Pilot_Reports/` проходят аудит качества (`scripts/audit_ru_reports.py`).
-- `themes/` содержит 31 российскую тему.
+- `themes/` содержит 29 российских тем.
 - `WIKILINKS.md`, `network/graph_data.json` и `network/index.html` пересобираются из актуального российского корпуса.
 - Для рабочего процесса MOEX приоритетны `scripts/moex_blue_chip_queue.py`, `scripts/generate_moex_reports.py`, `scripts/update_financials.py`, `scripts/update_valuation.py`.
 - Статус-сводка по покрытию: `python scripts/moex_status.py`.
