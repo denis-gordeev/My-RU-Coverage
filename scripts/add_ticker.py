@@ -11,7 +11,7 @@ add_ticker.py — Генерация отчёта нового тикера с �
   python scripts/add_ticker.py GAZP Газпром                         # Автоопределение сектора
   python scripts/add_ticker.py GAZP Газпром --sector Энергетика      # Указать сектор
 
-После генерации используйте update_enrichment.py для добавления описаний бизнеса.
+После генерации используйте update_enrichment.py для добавления описаний деятельности.
 """
 
 import os
@@ -127,7 +127,7 @@ def main():
 
     print(f"Создан файл: {filepath}")
     print(f"Сектор: {folder_name}")
-    print("\nДальше: используйте update_enrichment.py, чтобы добавить описание бизнеса, цепочку поставок и контрагентов.")
+    print("\nДальше: используйте update_enrichment.py, чтобы добавить описание деятельности, цепочку поставок и контрагентов.")
 
 
 if __name__ == "__main__":
