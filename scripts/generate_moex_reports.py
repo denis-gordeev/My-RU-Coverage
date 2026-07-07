@@ -6,7 +6,7 @@ generate_moex_reports.py — Генерация базовых MOEX-отчёто
 
 Применение:
   python scripts/generate_moex_reports.py
-  python scripts/generate_moex_reports.py --index MOEXBMI --top 5
+  python scripts/generate_moex_reports.py --index MOEXBMI --лимит 5
   python scripts/generate_moex_reports.py DOMRF AKRN AFLT
   python scripts/generate_moex_reports.py --dry-run --all-missing
 """
@@ -190,7 +190,7 @@ def main():
         ),
     )
     parser.add_argument(
-        "--top",
+        "--лимит",
         type=int,
         default=5,
         help="Сколько новых карточек создать из начала очереди. По умолчанию 5.",
@@ -198,7 +198,7 @@ def main():
     parser.add_argument(
         "--all-missing",
         action="store_true",
-        help="Игнорировать лимит --top и обработать всю очередь непокрытых тикеров.",
+        help="Игнорировать лимит --лимит и обработать всю очередь непокрытых тикеров.",
     )
     parser.add_argument(
         "--dry-run",
@@ -222,7 +222,7 @@ def main():
         print("Очередь уже покрыта: новых карточек для создания нет.")
         return
 
-    limit = None if args.all_missing or args.tickers else max(args.top, 0)
+    limit = None if args.all_missing or args.tickers else max(args.лимит, 0)
     print(
         f"Генерирую базовые MOEX-карточки из очереди {', '.join(index_codes)} "
         f"на дату {report['дата_торгов']}..."

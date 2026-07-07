@@ -139,7 +139,7 @@ def search_reports(buzzword, sectors_filter=None):
             bare_count = len(bare_matches)
 
             if linked_count > 0 or bare_count > 0:
-                # Короткие контекстные сниппеты
+                # Короткие контекстные фрагменты
                 contexts = []
                 for match in bare_matches[:3]:
                     start = max(0, match.start() - 30)

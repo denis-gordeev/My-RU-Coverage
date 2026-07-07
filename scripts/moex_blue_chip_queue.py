@@ -3,7 +3,7 @@ moex_blue_chip_queue.py — Проверка официальных корзин
 
 Показывает актуальный состав одного или нескольких индексов MOEX и отмечает,
 для каких тикеров в `Pilot_Reports/` ещё нет российских карточек покрытия.
-По умолчанию объединяет полностью покрытую корзину голубых фишек (`MOEXBC`)
+По умолчанию объединяет полностью покрытую корзину крупнейших акций (`MOEXBC`)
 и более широкий ликвидный индекс (`MOEXBMI`), чтобы сформировать следующую
 очередь для исследования.
 
@@ -27,7 +27,7 @@ from utils import find_ticker_files, setup_stdout, make_ru_parser
 ISS_URL = "https://iss.moex.com/iss/statistics/engines/stock/markets/index/analytics/MOEXBC/constituents.json"
 DEFAULT_INDEX_CODES = ["MOEXBC", "MOEXBMI"]
 INDEX_LABELS = {
-    "MOEXBC": "Индекс голубых фишек",
+    "MOEXBC": "Индекс крупнейших акций",
     "MOEXBMI": "Индекс широкого рынка",
     "MOEXOG": "Нефть и газ",
     "MOEXTL": "Телекоммуникации",

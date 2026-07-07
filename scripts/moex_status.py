@@ -80,11 +80,11 @@ def get_queue_summary():
         from moex_blue_chip_queue import build_report, DEFAULT_INDEX_CODES
         report = build_report(DEFAULT_INDEX_CODES)
         queue = report.get("следующая_очередь", [])
-        top5 = [
+        первые_5 = [
             {"тикер": item["тикер"], "название": item["название"]}
             for item in queue[:5]
         ]
-        return len(queue), top5, report.get("дата_торгов")
+        return len(queue), первые_5, report.get("дата_торгов")
     except Exception as e:
         return None, None, None, str(e)
 
@@ -101,10 +101,10 @@ def main():
     queue_result = get_queue_summary()
 
     if len(queue_result) == 4:
-        queue_len, queue_top5, queue_date = None, None, None
+        queue_len, очередь_первые_5, queue_date = None, None, None
         queue_error = queue_result[3]
     else:
-        queue_len, queue_top5, queue_date = queue_result
+        queue_len, очередь_первые_5, queue_date = queue_result
         queue_error = None
 
     audit_pct = (audit_clean / audit_total * 100) if audit_total > 0 else 0
@@ -123,7 +123,7 @@ def main():
         "очередь": {
             "непокрытых": queue_len,
             "дата": queue_date,
-            "топ5": queue_top5,
+            "первые_5": очередь_первые_5,
         },
     }
 
@@ -149,9 +149,9 @@ def main():
 
     if queue_len is not None:
         print(f"  Очередь MOEX:   {queue_len} непокрытых ({queue_date})")
-        if queue_top5:
+        if очередь_первые_5:
             print("  Следующие:")
-            for item in queue_top5:
+            for item in очередь_первые_5:
                 print(f"    - {item['тикер']} ({item['название']})")
     else:
         print(f"  Очередь MOEX:   недоступна ({queue_error})")

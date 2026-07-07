@@ -9,7 +9,7 @@ build_network.py — Строит данные и HTML-визуализацию 
 Использование:
   python scripts/build_network.py                 # порог по умолчанию: 5
   python scripts/build_network.py --min-weight 10  # выше порог -> меньше рёбер
-  python scripts/build_network.py --top 100        # только топ-N узлов
+  python scripts/build_network.py --лимит 100        # только лимит-N узлов
 """
 
 import json
@@ -29,7 +29,7 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 NETWORK_DIR = os.path.join(PROJECT_ROOT, "network")
 
 
-def scan_graph(min_weight=5, top_n=None):
+def scan_graph(min_weight=5, лимит_узлов=None):
     """Собирает граф совместной встречаемости викилинков."""
     # Шаг 1: собираем викилинки по файлам
     node_counts = defaultdict(int)
@@ -52,19 +52,19 @@ def scan_graph(min_weight=5, top_n=None):
             for wl in wls:
                 node_counts[wl] += 1
 
-    # Шаг 2: при необходимости режем до топ-N узлов
-    if top_n:
-        top_nodes = set(
-            name for name, _ in sorted(node_counts.items(), key=lambda x: -x[1])[:top_n]
+    # Шаг 2: при необходимости режем до лимита-N узлов
+    if лимит_узлов:
+        ведущие_узлы = set(
+            name for name, _ in sorted(node_counts.items(), key=lambda x: -x[1])[:лимит_узлов]
         )
     else:
         # Иначе оставляем хотя бы сущности, встречающиеся минимум в 2 файлах
-        top_nodes = set(name for name, count in node_counts.items() if count >= 2)
+        ведущие_узлы = set(name for name, count in node_counts.items() if count >= 2)
 
     # Шаг 3: считаем совместные появления
     edges = defaultdict(int)
     for ticker, wls in wl_per_file.items():
-        filtered = sorted(wls & top_nodes)
+        filtered = sorted(wls & ведущие_узлы)
         for i in range(len(filtered)):
             for j in range(i + 1, len(filtered)):
                 edges[(filtered[i], filtered[j])] += 1
@@ -270,18 +270,18 @@ def main():
 
     args = sys.argv[1:]
     min_weight = 2
-    top_n = None
+    лимит_узлов = None
 
     for i, arg in enumerate(args):
         if arg == "--min-weight" and i + 1 < len(args):
             min_weight = int(args[i + 1])
-        elif arg == "--top" and i + 1 < len(args):
-            top_n = int(args[i + 1])
+        elif arg == "--лимит" and i + 1 < len(args):
+            лимит_узлов = int(args[i + 1])
 
     os.makedirs(NETWORK_DIR, exist_ok=True)
 
     print(f"Сканирую совместную встречаемость викилинков (мин. вес: {min_weight})...")
-    nodes, edges = scan_graph(min_weight=min_weight, top_n=top_n)
+    nodes, edges = scan_graph(min_weight=min_weight, лимит_узлов=лимит_узлов)
     print(f"Граф: узлов {len(nodes)}, связей {len(edges)}")
 
     # Сохраняем JSON
@@ -299,7 +299,7 @@ def main():
     print(f"Сохранён файл: {html_path}")
 
     print(f"\nОткройте в браузере: {html_path}")
-    print("Или поднимите локальный сервер: python -m http.server 8000 --directory network/")
+    print("Или поднимите местный сервер: python -m http.server 8000 --directory network/")
 
 
 if __name__ == "__main__":

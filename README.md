@@ -94,7 +94,7 @@ python scripts/moex_blue_chip_queue.py --index MOEXBMI
 
 ```bash
 python scripts/generate_moex_reports.py
-python scripts/generate_moex_reports.py --index MOEXBMI --top 5
+python scripts/generate_moex_reports.py --index MOEXBMI --лимит 5
 python scripts/generate_moex_reports.py DOMRF AKRN AFLT
 ```
 

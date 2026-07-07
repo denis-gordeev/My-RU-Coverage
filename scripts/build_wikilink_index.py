@@ -52,7 +52,7 @@ def categorize(wikilinks):
             материалы[name] = count
         elif cat == "конечный_рынок":
             применения[name] = count
-        elif cat == "локальная_компания" and count >= 2:
+        elif cat == "российская_компания" and count >= 2:
             компании_российские[name] = count
         elif cat == "иностранная_компания" and count >= 2:
             компании_иностранные[name] = count
