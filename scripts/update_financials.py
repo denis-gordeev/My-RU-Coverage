@@ -81,16 +81,16 @@ def calc_margin(numerator, denominator):
 
 
 def calc_admin_exp(income_stmt):
-    """Получает административные расходы, при отсутствии — вычисляет как SGA − коммерческие расходы."""
+    """Получает административные расходы, при отсутствии — вычисляет как управленческие и коммерческие расходы (SGA) − коммерческие расходы."""
     admin = get_series(income_stmt, КЛЮЧИ_МЕТРИК["общехозяйственные_расходы"])
     selling = get_series(income_stmt, КЛЮЧИ_МЕТРИК["коммерческие_расходы"])
     sga = get_series(income_stmt, ["Selling General And Administration"])
 
     if admin.empty and not sga.empty and not selling.empty:
-        # Выводим управленческие расходы = SGA − коммерческие
+        # Выводим управленческие расходы = управленческие и коммерческие (SGA) − коммерческие
         return sga - selling
     elif not admin.empty and not sga.empty:
-        # Заполняем пропуски в управленческих расходах из SGA − коммерческие
+        # Заполняем пропуски в управленческих расходах из управленческих и коммерческих (SGA) − коммерческие
         derived = sga - selling
         return admin.fillna(derived)
     return admin
@@ -126,7 +126,7 @@ def extract_metrics(income_stmt, cashflow):
         МЕТКИ_МЕТРИК["капитальные_затраты"]: get_series(cashflow, КЛЮЧИ_МЕТРИК["капитальные_затраты"]),
     }
 
-    # Выводим CAPEX из FCF при отсутствии: CAPEX = FCF − операционный поток (отрицательный)
+    # Выводим капитальные затраты (CAPEX) из свободного денежного потока (FCF) при отсутствии: CAPEX = FCF − операционный поток (отрицательный)
     capex = data[МЕТКИ_МЕТРИК["капитальные_затраты"]]
     ocf = data[МЕТКИ_МЕТРИК["операционный_поток"]]
     fcf = get_series(cashflow, ["Free Cash Flow"])

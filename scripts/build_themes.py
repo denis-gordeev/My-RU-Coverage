@@ -429,7 +429,7 @@ def build_index(themes_built):
     lines.append("")
     lines.append("---")
     lines.append("")
-    lines.append("## Фокус текущего покрытия")
+    lines.append("## Акцент текущего покрытия")
     lines.append("")
     lines.append(
         f"- Российский контур сейчас охватывает {ru_built} {ru_plural(ru_built, 'тему', 'темы', 'тем')} "

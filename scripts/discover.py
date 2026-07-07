@@ -5,13 +5,13 @@ discover.py — Обратный поиск компаний по ключево
 "редкоземы", "СПГ" или "карбид кремния", скрипт:
 
 1. Ищет упоминания по всем релевантным карточкам эмитентов
-2. При необходимости добавляет [[wikilinks]] для найденного термина
+2. При необходимости добавляет [[викилинки]] для найденного термина
 3. Показывает, какие компании и в каком контексте связаны с темой
 4. По запросу пересобирает темы, граф и индекс викилинков
 
 Примеры:
   python scripts/discover.py "импортозамещение"                            # искать по всем секторам
-  python scripts/discover.py "СПГ" --apply                                 # проставить [[wikilinks]]
+  python scripts/discover.py "СПГ" --apply                                 # проставить [[викилинки]]
   python scripts/discover.py "СПГ" --apply --rebuild                       # + пересобрать темы/граф/индекс
   python scripts/discover.py "редкоземы" --smart                           # автофильтр секторов
   python scripts/discover.py "нефтегаз" --sector Энергетика               # ограничить одним сектором
@@ -130,7 +130,7 @@ def search_reports(buzzword, sectors_filter=None):
             financial_split = re.split(SECTION_HEADER_REGEX["финансовый_обзор"], content, maxsplit=1)
             text = financial_split[0]
 
-            # Уже проставленные [[wikilinks]]
+            # Уже проставленные [[викилинки]]
             linked_count = len(re.findall(r"\[\[" + re.escape(buzzword) + r"\]\]", text))
 
             # Обычные упоминания вне [[ ]]
@@ -176,7 +176,7 @@ def search_reports(buzzword, sectors_filter=None):
 
 
 def apply_wikilinks(results, buzzword):
-    """Добавляет [[wikilinks]] там, где термин найден без разметки."""
+    """Добавляет [[викилинки]] там, где термин найден без разметки."""
     applied = 0
     for r in results:
         if r["без_викилинка"] == 0:
@@ -192,7 +192,7 @@ def apply_wikilinks(results, buzzword):
 
         text = content[: financial_match.start()]
         financial_part = content[financial_match.start() :]
-        # Не даём задвоить существующие [[wikilinks]]
+        # Не даём задвоить существующие [[викилинки]]
         pattern = (
             r"(?<!\[\[)"
             + re.escape(buzzword)
@@ -252,7 +252,7 @@ def main():
         print('  python scripts/discover.py "импортозамещение"        # искать по всем секторам')
         print('  python scripts/discover.py "СПГ" --smart              # автофильтр секторов')
         print('  python scripts/discover.py "нефтегаз" --sector Энергетика')
-        print('  python scripts/discover.py "редкоземы" --apply        # проставить [[wikilinks]]')
+        print('  python scripts/discover.py "редкоземы" --apply        # проставить [[викилинки]]')
         print('  python scripts/discover.py "СПГ" --apply --rebuild    # + пересобрать темы/граф')
         sys.exit(1)
 
@@ -290,7 +290,7 @@ def main():
     # Отчёт
     print_report(results, buzzword)
 
-    # Применение [[wikilinks]]
+    # Применение [[викилинки]]
     if do_apply and results:
         bare_count = sum(r["без_викилинка"] for r in results)
         if bare_count > 0:
