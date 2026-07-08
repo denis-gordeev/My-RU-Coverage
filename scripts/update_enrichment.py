@@ -116,7 +116,7 @@ def main():
 
     args = [a for a in sys.argv[1:]]
 
-    # Извлекаем флаг --data
+    # Извлекаем флаг --данные
     json_path = None
     if "--данные" in args:
         idx = args.index("--данные")
