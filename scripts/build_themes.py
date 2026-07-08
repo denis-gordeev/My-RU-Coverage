@@ -7,7 +7,7 @@ build_themes.py — Генерация тематических инвестиц
 
 Использование:
   python scripts/build_themes.py              # Пересобрать все темы
-  python scripts/build_themes.py --list       # Список доступных тем
+  python scripts/build_themes.py --список     # Список доступных тем
   python scripts/build_themes.py "нефтегаз"   # Пересобрать одну тему
 
 Вывод: папка themes/ с одним .md на тему.
@@ -458,7 +458,7 @@ def main():
 
     args = sys.argv[1:]
 
-    if "--list" in args:
+    if "--список" in args:
         for tag, defn in sorted(THEME_DEFINITIONS.items()):
             print(f"  {tag}: {defn['название']}")
         return
@@ -468,7 +468,7 @@ def main():
     print(f"Найдено уникальных викилинков: {len(wl_map)}.\n")
 
     # Фильтр по запрошенной теме или сборка всех
-    if args and args[0] != "--list":
+    if args and args[0] != "--список":
         themes_to_build = {args[0]: THEME_DEFINITIONS.get(args[0])}
         if not themes_to_build[args[0]]:
             print(f"Тема '{args[0]}' отсутствует в THEME_DEFINITIONS. Используйте --list для списка доступных тем.")

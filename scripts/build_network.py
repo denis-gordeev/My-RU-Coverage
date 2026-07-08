@@ -8,8 +8,8 @@ build_network.py — Строит данные и HTML-визуализацию 
 
 Использование:
   python scripts/build_network.py                 # порог по умолчанию: 5
-  python scripts/build_network.py --min-weight 10  # выше порог -> меньше рёбер
-  python scripts/build_network.py --лимит 100        # только лимит-N узлов
+  python scripts/build_network.py --мин-вес 10    # выше порог -> меньше рёбер
+  python scripts/build_network.py --лимит 100     # только лимит-N узлов
 """
 
 import json
@@ -273,7 +273,7 @@ def main():
     лимит_узлов = None
 
     for i, arg in enumerate(args):
-        if arg == "--min-weight" and i + 1 < len(args):
+        if arg == "--мин-вес" and i + 1 < len(args):
             min_weight = int(args[i + 1])
         elif arg == "--лимит" and i + 1 < len(args):
             лимит_узлов = int(args[i + 1])

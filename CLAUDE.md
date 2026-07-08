@@ -6,10 +6,10 @@
 ## Золотые правила
 
 ### 1. Викилинки должны указывать на конкретные сущности
-Каждый `[[wikilink]]` должен вести к компании, технологии, материалу, бренду, продукту или другому поисковому имени собственному. Общие слова вроде `[[поставщик]]` или `[[клиент]]` недопустимы.
+Каждый `[[викилинк]]` должен вести к компании, технологии, материалу, бренду, продукту или другому поисковому имени собственному. Общие слова вроде `[[поставщик]]` или `[[клиент]]` недопустимы.
 
 ### 2. Проверяйте соответствие тикера и файла
-Перед обогащением файла убедитесь, что исследуете именно ту компанию, которая указана в имени файла: `<ticker>_<company>.md`.
+Перед обогащением файла убедитесь, что исследуете именно ту компанию, которая указана в имени файла: `<тикер>_<компания>.md`.
 
 ### 3. Новые описания пишутся по-русски
 Для новых и обновляемых материалов основной язык описаний — русский. Исторические секции на китайском допустимы только в `Pilot_Reports_LEGACY/`.
@@ -46,7 +46,7 @@ Pilot_Reports/{Отрасль}/{Тикер}_{Название_компании}.
 
 Разделы файла должны идти в таком порядке:
 
-1. `# {Ticker} - [[{Company}]]`
+1. `# {Тикер} - [[{Название_компании}]]`
 2. `## Описание деятельности`
 3. `## Положение в цепочке поставок`
 4. `## Ключевые клиенты и поставщики`
@@ -54,17 +54,17 @@ Pilot_Reports/{Отрасль}/{Тикер}_{Название_компании}.
 
 ## Заметки о скриптах
 
-- `python scripts/add_ticker.py SBER Сбер`
+- `python scripts/add_ticker.py SBER Сбер --сектор Финансовые услуги`
 - `python scripts/update_financials.py SBER`
 - `python scripts/update_valuation.py SBER`
-- `python scripts/update_enrichment.py --data enrichment.json SBER`
+- `python scripts/update_enrichment.py --данные enrichment.json SBER`
 - `python scripts/build_wikilink_index.py`
 - `python scripts/build_network.py`
 - `python scripts/audit_ru_reports.py`
 - `python scripts/moex_status.py`
-- `python scripts/moex_blue_chip_queue.py`
-- `python scripts/generate_moex_reports.py`
-- `python scripts/discover.py "импортозамещение"`
+- `python scripts/moex_blue_chip_queue.py --индекс MOEXBC`
+- `python scripts/generate_moex_reports.py --индекс MOEXBMI --лимит 5`
+- `python scripts/discover.py "импортозамещение" --умный`
 
 ## Приоритеты исследования
 

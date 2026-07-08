@@ -9,8 +9,8 @@ update_financials.py — Обновление финансовых таблиц 
   python scripts/update_financials.py                       # Обновить ВСЕ тикеры
   python scripts/update_financials.py SBER                  # Один тикер
   python scripts/update_financials.py SBER GAZP LKOH        # Несколько тикеров
-  python scripts/update_financials.py --sector Энергетика   # Весь сектор
-  python scripts/update_financials.py --dry-run SBER        # Предпросмотр без записи
+  python scripts/update_financials.py --сектор Энергетика   # Весь сектор
+  python scripts/update_financials.py --пробный-запуск SBER # Предпросмотр без записи
 
 Единицы измерения зависят от суффикса биржи: `.ME` -> млн руб.
 """
@@ -347,9 +347,9 @@ def main():
     setup_stdout()
 
     args = list(sys.argv[1:])
-    dry_run = "--dry-run" in args
+    dry_run = "--пробный-запуск" in args
     if dry_run:
-        args.remove("--dry-run")
+        args.remove("--пробный-запуск")
 
     tickers, sector, desc = parse_scope_args(args)
     print(f"Обновляю финансовый блок для области: {desc}...")

@@ -9,7 +9,7 @@ add_ticker.py — Генерация отчёта нового тикера с �
 
 Использование:
   python scripts/add_ticker.py GAZP Газпром                         # Автоопределение сектора
-  python scripts/add_ticker.py GAZP Газпром --sector Энергетика      # Указать сектор
+  python scripts/add_ticker.py GAZP Газпром --сектор Энергетика      # Указать сектор
 
 После генерации используйте update_enrichment.py для добавления описаний деятельности.
 """
@@ -92,7 +92,7 @@ def main():
     if not args or args[0] in {"-h", "--help"}:
         print("Использование:")
         print("  python scripts/add_ticker.py <тикер> <название>")
-        print("  python scripts/add_ticker.py <тикер> <название> --sector <сектор>")
+        print("  python scripts/add_ticker.py <тикер> <название> --сектор <сектор>")
         return
 
     # Разбор аргументов
@@ -100,8 +100,8 @@ def main():
     name = args[1] if len(args) > 1 else "Без названия"
 
     sector = None
-    if "--sector" in args:
-        idx = args.index("--sector")
+    if "--сектор" in args:
+        idx = args.index("--сектор")
         sector = " ".join(args[idx + 1 :])
 
     # Проверяем, не существует ли уже тикер

@@ -38,7 +38,7 @@ pip install -r requirements.txt
 
 ```bash
 python scripts/add_ticker.py SBER Сбер
-python scripts/add_ticker.py GAZP Газпром --sector Энергетика
+python scripts/add_ticker.py GAZP Газпром --сектор Энергетика
 ```
 
 Обновить финансовый блок:
@@ -46,20 +46,20 @@ python scripts/add_ticker.py GAZP Газпром --sector Энергетика
 ```bash
 python scripts/update_financials.py SBER
 python scripts/update_financials.py SBER GAZP
-python scripts/update_financials.py --sector Энергетика
+python scripts/update_financials.py --сектор Энергетика
 ```
 
 Обновить только мультипликаторы:
 
 ```bash
 python scripts/update_valuation.py SBER
-python scripts/update_valuation.py --sector Энергетика
+python scripts/update_valuation.py --сектор Энергетика
 ```
 
 Применить заранее подготовленное обогащение:
 
 ```bash
-python scripts/update_enrichment.py --data enrichment.json SBER
+python scripts/update_enrichment.py --данные enrichment.json SBER
 ```
 
 Прогнать аудит качества российских карточек:
@@ -86,15 +86,15 @@ python scripts/build_themes.py
 
 ```bash
 python scripts/moex_blue_chip_queue.py
-python scripts/moex_blue_chip_queue.py --index MOEXBC
-python scripts/moex_blue_chip_queue.py --index MOEXBMI
+python scripts/moex_blue_chip_queue.py --индекс MOEXBC
+python scripts/moex_blue_chip_queue.py --индекс MOEXBMI
 ```
 
 Сгенерировать базовые MOEX-карточки из живой очереди:
 
 ```bash
 python scripts/generate_moex_reports.py
-python scripts/generate_moex_reports.py --index MOEXBMI --лимит 5
+python scripts/generate_moex_reports.py --индекс MOEXBMI --лимит 5
 python scripts/generate_moex_reports.py DOMRF AKRN AFLT
 ```
 

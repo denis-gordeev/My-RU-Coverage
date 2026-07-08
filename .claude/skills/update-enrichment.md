@@ -12,7 +12,7 @@ user_invocable: true
 
 - `/update-enrichment SBER` — один тикер
 - `/update-enrichment SBER YDEX OZON` — несколько тикеров
-- `/update-enrichment --sector Финансовые услуги` — весь сектор
+- `/update-enrichment --сектор Финансовые услуги` — весь сектор
 - `/update-enrichment` — все тикеры (запросит подтверждение)
 
 ## Инструкции
@@ -37,10 +37,10 @@ user_invocable: true
 Запишите данные обогащения в JSON-файл, затем запустите:
 
 ```bash
-python scripts/update_enrichment.py --data enrichment.json [область]
+python scripts/update_enrichment.py --данные enrichment.json [область]
 ```
 
-Опции области: `SBER`, `SBER YDEX`, `--sector Финансовые услуги`, или пропустите для всех записей в JSON.
+Опции области: `SBER`, `SBER YDEX`, `--сектор Финансовые услуги`, или пропустите для всех записей в JSON.
 
 ### Шаг 4: Аудит
 

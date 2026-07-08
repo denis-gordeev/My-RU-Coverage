@@ -9,8 +9,8 @@ moex_blue_chip_queue.py — Проверка официальных корзин
 
 Использование:
   python scripts/moex_blue_chip_queue.py
-  python scripts/moex_blue_chip_queue.py --index MOEXBC
-  python scripts/moex_blue_chip_queue.py --index MOEXBMI --date 2026-04-03
+  python scripts/moex_blue_chip_queue.py --индекс MOEXBC
+  python scripts/moex_blue_chip_queue.py --индекс MOEXBMI --дата 2026-04-03
   python scripts/moex_blue_chip_queue.py --json
 """
 
@@ -173,9 +173,9 @@ def main():
             "и собрать следующую очередь покрытия."
         )
     )
-    parser.add_argument("--date", help="Дата состава в формате YYYY-MM-DD")
+    parser.add_argument("--дата", help="Дата состава в формате YYYY-MM-DD")
     parser.add_argument(
-        "--index",
+        "--индекс",
         dest="indices",
         action="append",
         help=(
@@ -192,7 +192,7 @@ def main():
     index_codes = args.indices or DEFAULT_INDEX_CODES
 
     try:
-        report = build_report(index_codes, args.date)
+        report = build_report(index_codes, args.дата)
     except HTTPError as exc:
         print(f"Ошибка HTTP при запросе MOEX ISS: {exc}", file=sys.stderr)
         sys.exit(1)

@@ -6,9 +6,9 @@ generate_moex_reports.py — Генерация базовых MOEX-отчёто
 
 Применение:
   python scripts/generate_moex_reports.py
-  python scripts/generate_moex_reports.py --index MOEXBMI --лимит 5
+  python scripts/generate_moex_reports.py --индекс MOEXBMI --лимит 5
   python scripts/generate_moex_reports.py DOMRF AKRN AFLT
-  python scripts/generate_moex_reports.py --dry-run --all-missing
+  python scripts/generate_moex_reports.py --пробный-запуск --все-непокрытые
 """
 
 import os
@@ -175,13 +175,13 @@ def main():
         )
     )
     parser.add_argument(
-        "tickers",
+        "тикеры",
         nargs="*",
         help="Явно указанные тикеры. Если не заданы, используется очередь непокрытых тикеров из MOEX ISS.",
     )
-    parser.add_argument("--date", help="Дата состава индекса в формате YYYY-MM-DD")
+    parser.add_argument("--дата", help="Дата состава индекса в формате YYYY-MM-DD")
     parser.add_argument(
-        "--index",
+        "--индекс",
         dest="indices",
         action="append",
         help=(
@@ -196,12 +196,12 @@ def main():
         help="Сколько новых карточек создать из начала очереди. По умолчанию 5.",
     )
     parser.add_argument(
-        "--all-missing",
+        "--все-непокрытые",
         action="store_true",
         help="Игнорировать лимит --лимит и обработать всю очередь непокрытых тикеров.",
     )
     parser.add_argument(
-        "--dry-run",
+        "--пробный-запуск",
         action="store_true",
         help="Показать, какие карточки будут созданы, без записи файлов.",
     )
@@ -209,7 +209,7 @@ def main():
 
     index_codes = args.indices or DEFAULT_INDEX_CODES
     try:
-        report = build_report(index_codes, args.date)
+        report = build_report(index_codes, args.дата)
     except HTTPError as exc:
         print(f"Ошибка HTTP при запросе MOEX ISS: {exc}", file=sys.stderr)
         sys.exit(1)
@@ -217,17 +217,17 @@ def main():
         print(f"Сетевой сбой при запросе MOEX ISS: {exc}", file=sys.stderr)
         sys.exit(1)
 
-    items = select_queue_items(report, [ticker.upper() for ticker in args.tickers])
+    items = select_queue_items(report, [ticker.upper() for ticker in args.тикеры])
     if not items:
         print("Очередь уже покрыта: новых карточек для создания нет.")
         return
 
-    limit = None if args.all_missing or args.tickers else max(args.лимит, 0)
+    limit = None if args.все_непокрытые or args.тикеры else max(args.лимит, 0)
     print(
         f"Генерирую базовые MOEX-карточки из очереди {', '.join(index_codes)} "
         f"на дату {report['дата_торгов']}..."
     )
-    created, skipped = create_reports(items, limit=limit, dry_run=args.dry_run)
+    created, skipped = create_reports(items, limit=limit, dry_run=args.пробный_запуск)
     print(f"\nГотово. Создано: {created} | Пропущено: {skipped}")
 
 

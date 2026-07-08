@@ -9,8 +9,8 @@ update_valuation.py — Обновление ТОЛЬКО оценочных м�
   python scripts/update_valuation.py                        # ВСЕ тикеры
   python scripts/update_valuation.py SBER                   # Один тикер
   python scripts/update_valuation.py SBER GAZP LKOH         # Несколько тикеров
-  python scripts/update_valuation.py --sector Энергетика    # По сектору
-  python scripts/update_valuation.py --dry-run SBER         # Предпросмотр без записи
+  python scripts/update_valuation.py --сектор Энергетика    # По сектору
+  python scripts/update_valuation.py --пробный-запуск SBER  # Предпросмотр без записи
 """
 
 import os
@@ -108,9 +108,9 @@ def main():
     setup_stdout()
 
     args = list(sys.argv[1:])
-    dry_run = "--dry-run" in args
+    dry_run = "--пробный-запуск" in args
     if dry_run:
-        args.remove("--dry-run")
+        args.remove("--пробный-запуск")
 
     tickers, sector, desc = parse_scope_args(args)
     print(f"Обновляю оценочные мультипликаторы для области: {desc}...")

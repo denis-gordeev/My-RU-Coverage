@@ -7,9 +7,9 @@ update_enrichment.py — Обновление содержимого обога�
 сохраняя метаданные и финансовый блок.
 
 Использование:
-  python scripts/update_enrichment.py --data enrichment.json             # Из JSON-файла
-  python scripts/update_enrichment.py --data enrichment.json SBER        # Один тикер из JSON
-  python scripts/update_enrichment.py --data enrichment.json --sector Энергетика
+  python scripts/update_enrichment.py --данные enrichment.json             # Из JSON-файла
+  python scripts/update_enrichment.py --данные enrichment.json SBER        # Один тикер из JSON
+  python scripts/update_enrichment.py --данные enrichment.json --сектор Энергетика
 
 Формат JSON:
 {
@@ -118,14 +118,14 @@ def main():
 
     # Извлекаем флаг --data
     json_path = None
-    if "--data" in args:
-        idx = args.index("--data")
+    if "--данные" in args:
+        idx = args.index("--данные")
         json_path = args[idx + 1]
         args = args[:idx] + args[idx + 2:]
 
     if not json_path:
-        print("Использование: python scripts/update_enrichment.py --data <json-файл> [область]")
-        print("  Область: SBER | SBER GAZP | --sector Энергетика | без аргументов = все")
+        print("Использование: python scripts/update_enrichment.py --данные <json-файл> [область]")
+        print("  Область: SBER | SBER GAZP | --сектор Энергетика | без аргументов = все")
         return
 
     # Загружаем данные обогащения

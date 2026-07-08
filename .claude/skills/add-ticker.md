@@ -11,14 +11,14 @@ user_invocable: true
 ## Использование
 
 - `/add-ticker SBER Сбер` — автоопределение сектора через yfinance
-- `/add-ticker SBER Сбер --sector Финансовые услуги` — указать сектор вручную
+- `/add-ticker SBER Сбер --сектор Финансовые услуги` — указать сектор вручную
 
 ## Инструкции
 
 ### Шаг 1: Генерация базового файла
 
 ```bash
-python scripts/add_ticker.py <тикер> <название> [--sector <сектор>]
+python scripts/add_ticker.py <тикер> <название> [--сектор <сектор>]
 ```
 
 Создаёт .md файл с метаданными и финансовыми данными из yfinance (суффикс `.ME` для MOEX), а также секции-заглушки для обогащения.
@@ -42,7 +42,7 @@ python scripts/add_ticker.py <тикер> <название> [--sector <сект
 
 4. Сохраните во временный файл и примените:
 ```bash
-python scripts/update_enrichment.py --data /tmp/enrich.json <тикер>
+python scripts/update_enrichment.py --данные /tmp/enrich.json <тикер>
 ```
 
 ### Шаг 3: Аудит

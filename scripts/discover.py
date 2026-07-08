@@ -11,16 +11,16 @@ discover.py — Обратный поиск компаний по ключево
 
 Примеры:
   python scripts/discover.py "импортозамещение"                            # искать по всем секторам
-  python scripts/discover.py "СПГ" --apply                                 # проставить [[викилинки]]
-  python scripts/discover.py "СПГ" --apply --rebuild                       # + пересобрать темы/граф/индекс
-  python scripts/discover.py "редкоземы" --smart                           # автофильтр секторов
-  python scripts/discover.py "нефтегаз" --sector Энергетика               # ограничить одним сектором
-  python scripts/discover.py "нефтегаз" --sectors "Энергетика,Финансовые услуги"
+  python scripts/discover.py "СПГ" --применить                             # проставить [[викилинки]]
+  python scripts/discover.py "СПГ" --применить --пересобрать               # + пересобрать темы/граф/индекс
+  python scripts/discover.py "редкоземы" --умный                           # автофильтр секторов
+  python scripts/discover.py "нефтегаз" --сектор Энергетика                # ограничить одним сектором
+  python scripts/discover.py "нефтегаз" --секторы "Энергетика,Финансовые услуги"
 
 Фильтрация секторов:
   Технологические ключевые слова обычно пропускают банки, страхование,
   недвижимость, продукты питания, текстиль и прочие нерелевантные сектора.
-  Используйте --smart для автофильтрации или --sector/--sectors вручную.
+  Используйте --умный для автофильтрации или --сектор/--секторы вручную.
 """
 
 import os
@@ -250,28 +250,27 @@ def main():
     if len(sys.argv) < 2:
         print("Использование:")
         print('  python scripts/discover.py "импортозамещение"        # искать по всем секторам')
-        print('  python scripts/discover.py "СПГ" --smart              # автофильтр секторов')
-        print('  python scripts/discover.py "нефтегаз" --sector Энергетика')
-        print('  python scripts/discover.py "редкоземы" --apply        # проставить [[викилинки]]')
-        print('  python scripts/discover.py "СПГ" --apply --rebuild    # + пересобрать темы/граф')
+        print('  python scripts/discover.py "СПГ" --умный              # автофильтр секторов')
+        print('  python scripts/discover.py "нефтегаз" --сектор Энергетика')
+        print('  python scripts/discover.py "редкоземы" --применить     # проставить [[викилинки]]')
+        print('  python scripts/discover.py "СПГ" --применить --пересобрать  # + пересобрать темы/граф')
         sys.exit(1)
 
     buzzword = sys.argv[1]
     args = sys.argv[2:]
 
     # Разбор флагов
-    do_apply = "--apply" in args
-    do_rebuild = "--rebuild" in args
-    smart = "--smart" in args
+    do_apply = "--применить" in args
+    do_rebuild = "--пересобрать" in args
+    smart = "--умный" in args
 
-    # Разбор фильтра по секторам
     sectors_filter = None
-    if "--sector" in args:
-        idx = args.index("--sector")
+    if "--сектор" in args:
+        idx = args.index("--сектор")
         if idx + 1 < len(args):
             sectors_filter = {args[idx + 1]}
-    elif "--sectors" in args:
-        idx = args.index("--sectors")
+    elif "--секторы" in args:
+        idx = args.index("--секторы")
         if idx + 1 < len(args):
             sectors_filter = set(s.strip() for s in args[idx + 1].split(","))
     elif smart:
@@ -281,7 +280,7 @@ def main():
             print(
                 f"Умный режим: профиль '{МЕТКИ_ПРОФИЛЕЙ.get(profile, profile)}', поиск по {len(sectors_filter)} секторам"
             )
-            print("  Внимание: возможны пропуски межсекторальных совпадений. Для полного охвата запускайте без --smart.")
+            print("  Внимание: возможны пропуски межсекторальных совпадений. Для полного охвата запускайте без --умный.")
 
     # Поиск
     print(f"Ищу «{buzzword}»...")
