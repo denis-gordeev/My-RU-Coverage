@@ -24,14 +24,14 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import (
     find_ticker_files, parse_scope_args, setup_stdout,
     fetch_valuation_data, build_valuation_table, update_metadata,
-    DEFAULT_MARKET_SUFFIXES, get_market_profile,
-    SECTION_HEADER_REGEX,
+    СУФФИКСЫ_РЫНКА_ПО_УМОЛЧАНИЮ, get_market_profile,
+    РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ,
 )
 
 
 def fetch_valuation(ticker):
     """Загружает только оценочные мультипликаторы. Пробует суффиксы в приоритетном порядке."""
-    for suffix in DEFAULT_MARKET_SUFFIXES:
+    for suffix in СУФФИКСЫ_РЫНКА_ПО_УМОЛЧАНИЮ:
         try:
             stock = yf.Ticker(f"{ticker}{suffix}")
             info = stock.info
@@ -75,15 +75,15 @@ def update_file(filepath, ticker, dry_run=False):
 
     new_table = build_valuation_table(data["оценка"])
 
-    if re.search(SECTION_HEADER_REGEX["оценочные_мультипликаторы"], content):
+    if re.search(РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["оценочные_мультипликаторы"], content):
         content = re.sub(
-            rf"{SECTION_HEADER_REGEX['оценочные_мультипликаторы']}.*?(?=\n{SECTION_HEADER_REGEX['годовые_показатели']})",
+            rf"{РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ['оценочные_мультипликаторы']}.*?(?=\n{РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ['годовые_показатели']})",
             new_table + "\n",
             content,
             flags=re.DOTALL,
         )
-    elif re.search(SECTION_HEADER_REGEX["финансовый_обзор"], content):
-        annual_match = re.search(SECTION_HEADER_REGEX["годовые_показатели"], content)
+    elif re.search(РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["финансовый_обзор"], content):
+        annual_match = re.search(РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["годовые_показатели"], content)
         if annual_match:
             content = content[: annual_match.start()] + new_table + "\n\n" + content[annual_match.start() :]
 

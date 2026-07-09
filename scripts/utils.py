@@ -13,11 +13,11 @@ import glob
 import argparse
 from datetime import date, datetime
 
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-REPORTS_DIR = os.path.join(PROJECT_ROOT, "Pilot_Reports")
-TICKER_PATTERN = r"[A-Z0-9][A-Z0-9._-]{0,11}"
+КОРЕНЬ_ПРОЕКТА = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ДИРЕКТОРИЯ_ОТЧЁТОВ = os.path.join(КОРЕНЬ_ПРОЕКТА, "Pilot_Reports")
+ШАБЛОН_ТИКЕРА = r"[A-Z0-9][A-Z0-9._-]{0,11}"
 
-MARKET_PROFILES = {
+ПРОФИЛИ_РЫНКОВ = {
     ".ME": {
         "единица": "млн руб.",
         "символ_цены": "₽",
@@ -25,10 +25,10 @@ MARKET_PROFILES = {
     },
 }
 
-DEFAULT_MARKET_SUFFIXES = [".ME"]
-DEFAULT_UNIT_LABEL = MARKET_PROFILES[".ME"]["единица"]
+СУФФИКСЫ_РЫНКА_ПО_УМОЛЧАНИЮ = [".ME"]
+МЕТКА_ЕДИНИЦЫ_ПО_УМОЛЧАНИЮ = ПРОФИЛИ_РЫНКОВ[".ME"]["единица"]
 
-TICKER_SOURCE_OVERRIDES = {
+ПЕРЕОПРЕДЕЛЕНИЯ_ИСТОЧНИКОВ_ТИКЕРОВ = {
     "SNGS": {
         "кандидаты": ["SNGS.ME"],
         "сектор": "Энергетика",
@@ -68,7 +68,7 @@ TICKER_SOURCE_OVERRIDES = {
 }
 
 # Соответствие английских названий секторов/отраслей русским (для обратной совместимости и миграции)
-SECTOR_TRANSLATION = {
+ПЕРЕВОД_СЕКТОРОВ = {
     "Energy": "Энергетика",
     "Financial Services": "Финансовые услуги",
     "Communication Services": "Связь",
@@ -94,7 +94,7 @@ SECTOR_TRANSLATION = {
     "Unknown": "Не определено",
 }
 
-INDUSTRY_TRANSLATION = {
+ПЕРЕВОД_ОТРАСЛЕЙ = {
     # Энергетика
     "Oil & Gas Integrated": "Нефтегазовая интегрированная",
     "Oil & Gas E&P": "Нефтегазовая разведка и добыча",
@@ -143,24 +143,24 @@ def translate_sector(sector: str) -> str:
     """Переводит название сектора на русский, если есть в списке соответствий."""
     if not sector:
         return sector
-    return SECTOR_TRANSLATION.get(sector, sector)
+    return ПЕРЕВОД_СЕКТОРОВ.get(sector, sector)
 
 
 def translate_industry(industry: str) -> str:
     """Переводит название отрасли на русский, если есть в списке соответствий."""
     if not industry:
         return industry
-    return INDUSTRY_TRANSLATION.get(industry, industry)
+    return ПЕРЕВОД_ОТРАСЛЕЙ.get(industry, industry)
 
-BUSINESS_SECTION_TITLE = "## Описание деятельности"
-SUPPLY_CHAIN_SECTION_TITLE = "## Положение в цепочке поставок"
-CUSTOMERS_SECTION_TITLE = "## Ключевые клиенты и поставщики"
-FINANCIAL_SECTION_TITLE = "## Финансовый обзор"
-VALUATION_SECTION_TITLE = "### Оценочные мультипликаторы"
-ANNUAL_SECTION_TITLE = "### Ключевые финансовые показатели по годам (3 года)"
-QUARTERLY_SECTION_TITLE = "### Ключевые финансовые показатели по кварталам (4 квартала)"
+ЗАГОЛОВОК_СЕКЦИИ_ОПИСАНИЯ = "## Описание деятельности"
+ЗАГОЛОВОК_СЕКЦИИ_ЦЕПОЧКИ = "## Положение в цепочке поставок"
+ЗАГОЛОВОК_СЕКЦИИ_КЛИЕНТОВ = "## Ключевые клиенты и поставщики"
+ЗАГОЛОВОК_СЕКЦИИ_ФИНАНСОВ = "## Финансовый обзор"
+ЗАГОЛОВОК_СЕКЦИИ_МУЛЬТИПЛИКАТОРОВ = "### Оценочные мультипликаторы"
+ЗАГОЛОВОК_СЕКЦИИ_ГОДОВЫХ = "### Ключевые финансовые показатели по годам (3 года)"
+ЗАГОЛОВОК_СЕКЦИИ_КВАРТАЛЬНЫХ = "### Ключевые финансовые показатели по кварталам (4 квартала)"
 
-SECTION_HEADER_REGEX = {
+РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ = {
     "описание_деятельности": r"## Описание деятельности",
     "цепочка_поставок": r"## Положение в цепочке поставок",
     "клиенты_и_поставщики": r"## Ключевые клиенты и поставщики",
@@ -170,7 +170,7 @@ SECTION_HEADER_REGEX = {
     "квартальные_показатели": r"### Ключевые финансовые показатели по кварталам \(4 квартала\)",
 }
 
-METADATA_LABEL_PATTERNS = {
+ШАБЛОНЫ_МЕТОК_МЕТАДАННЫХ = {
     "сектор": [r"\*\*Сектор:\*\*"],
     "отрасль": [r"\*\*Отрасль:\*\*"],
     "рыночная_капитализация": [r"\*\*Рыночная капитализация:\*\*"],
@@ -187,9 +187,9 @@ def find_ticker_files(tickers=None, sector=None):
     Возвращает dict: {тикер: путь_к_файлу}
     """
     files = {}
-    for fp in glob.glob(os.path.join(REPORTS_DIR, "**", "*.md"), recursive=True):
+    for fp in glob.glob(os.path.join(ДИРЕКТОРИЯ_ОТЧЁТОВ, "**", "*.md"), recursive=True):
         fn = os.path.basename(fp)
-        m = re.match(rf"^({TICKER_PATTERN})_", fn, re.IGNORECASE)
+        m = re.match(rf"^({ШАБЛОН_ТИКЕРА})_", fn, re.IGNORECASE)
         if not m:
             continue
         t = m.group(1)
@@ -208,7 +208,7 @@ def find_ticker_files(tickers=None, sector=None):
 def get_ticker_from_filename(filepath):
     """Извлекает тикер и название компании из имени файла отчёта."""
     fn = os.path.basename(filepath)
-    m = re.match(rf"^({TICKER_PATTERN})_(.+)\.md$", fn, re.IGNORECASE)
+    m = re.match(rf"^({ШАБЛОН_ТИКЕРА})_(.+)\.md$", fn, re.IGNORECASE)
     if m:
         return m.group(1), m.group(2)
     return None, None
@@ -232,7 +232,7 @@ def parse_scope_args(args):
         return None, sector, f"все тикеры из сектора: {sector}"
     else:
         tickers = [
-            t.strip() for t in args if re.match(rf"^{TICKER_PATTERN}$", t.strip(), re.IGNORECASE)
+            t.strip() for t in args if re.match(rf"^{ШАБЛОН_ТИКЕРА}$", t.strip(), re.IGNORECASE)
         ]
         return tickers, None, f"{len(tickers)} тикеров: {', '.join(tickers)}"
 
@@ -249,7 +249,7 @@ def setup_stdout():
 
 # Соответствие канонических имён: алиас -> каноническое
 # Российский рынок: кириллические алиасы -> канонические имена.
-WIKILINK_ALIASES = {
+АЛИАСЫ_ВИКИЛИНКОВ = {
     "Сбер": "SBER", "Сбербанк": "SBER",
     "Газпром": "GAZP",
     "Яндекс": "YDEX", "МКПАО Яндекс": "YDEX",
@@ -407,6 +407,8 @@ WIKILINK_ALIASES = {
     "НЭК": "РЭЦ",
     "голубая фишка": "крупнейшая акция",
     "голубые фишки": "крупнейшие акции",
+    "IMOEX": "Индекс МосБиржи",
+    "RTS": "Индекс РТС",
     "сниппет": "фрагмент",
     "инвестпрезентация": "инвестиционная презентация",
 }
@@ -424,7 +426,7 @@ def normalize_wikilinks(content):
     text, financial_part = split_parts
 
     # Шаг 1: Заменяем алиасы викилинков на канонические имена
-    for alias, canonical in WIKILINK_ALIASES.items():
+    for alias, canonical in АЛИАСЫ_ВИКИЛИНКОВ.items():
         text = text.replace("[[" + alias + "]]", "[[" + canonical + "]]")
 
     # Шаг 2: Схлопываем дубликаты [[X]] ([[X]])
@@ -557,12 +559,12 @@ def classify_wikilink(name):
 
 def get_market_profile(suffix=None):
     """Возвращает настройки единиц измерения для суффикса тикера."""
-    return MARKET_PROFILES.get(suffix, MARKET_PROFILES[".ME"])
+    return ПРОФИЛИ_РЫНКОВ.get(suffix, ПРОФИЛИ_РЫНКОВ[".ME"])
 
 
 def split_before_financial_section(content):
     """Разделяет содержимое на текст до финансовой секции и саму финансовую секцию."""
-    match = re.search(SECTION_HEADER_REGEX["финансовый_обзор"], content)
+    match = re.search(РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["финансовый_обзор"], content)
     if not match:
         return None
     return content[: match.start()], content[match.start() :]
@@ -631,22 +633,22 @@ def build_valuation_table(v):
     period_note = " | ".join(period_parts) if period_parts else ""
 
     title = (
-        f"{VALUATION_SECTION_TITLE} ({period_note})\n"
+        f"{ЗАГОЛОВОК_СЕКЦИИ_МУЛЬТИПЛИКАТОРОВ} ({period_note})\n"
         if period_note
-        else f"{VALUATION_SECTION_TITLE}\n"
+        else f"{ЗАГОЛОВОК_СЕКЦИИ_МУЛЬТИПЛИКАТОРОВ}\n"
     )
     footnote = "\n*P/E — цена/прибыль, P/S — цена/выручка, P/B — цена/балансовая стоимость, EV/EBITDA — стоимость предприятия/прибыль до вычета процентов, налогов и амортизации*"
     return title + header_row + "\n" + sep_row + "\n" + val_row + footnote
 
 
-def update_metadata(content, market_cap, enterprise_value, unit_label=DEFAULT_UNIT_LABEL):
+def update_metadata(content, market_cap, enterprise_value, unit_label=МЕТКА_ЕДИНИЦЫ_ПО_УМОЛЧАНИЮ):
     """Обновляет метаданные рыночной капитализации и стоимости предприятия в содержимом файла."""
     market_cap_value = market_cap if market_cap not in (None, "", "None") else "Н/Д"
     enterprise_value_value = enterprise_value if enterprise_value not in (None, "", "None") else "Н/Д"
 
-    for pattern in METADATA_LABEL_PATTERNS["рыночная_капитализация"]:
+    for pattern in ШАБЛОНЫ_МЕТОК_МЕТАДАННЫХ["рыночная_капитализация"]:
         content = re.sub(rf"({pattern}) .+", rf"\1 {market_cap_value} {unit_label}", content)
-    for pattern in METADATA_LABEL_PATTERNS["стоимость_предприятия"]:
+    for pattern in ШАБЛОНЫ_МЕТОК_МЕТАДАННЫХ["стоимость_предприятия"]:
         content = re.sub(rf"({pattern}) .+", rf"\1 {enterprise_value_value} {unit_label}", content)
     return content
 
@@ -657,11 +659,11 @@ def update_company_classification(content, sector=None, industry=None):
     """
     if sector and sector not in {"", "Н/Д", "Не определено"}:
         sector = translate_sector(sector)
-        for pattern in METADATA_LABEL_PATTERNS["сектор"]:
+        for pattern in ШАБЛОНЫ_МЕТОК_МЕТАДАННЫХ["сектор"]:
             content = re.sub(rf"({pattern}) .+", rf"\1 {sector}", content)
     if industry and industry not in {"", "Н/Д", "Не определено"}:
         industry = translate_industry(industry)
-        for pattern in METADATA_LABEL_PATTERNS["отрасль"]:
+        for pattern in ШАБЛОНЫ_МЕТОК_МЕТАДАННЫХ["отрасль"]:
             content = re.sub(rf"({pattern}) .+", rf"\1 {industry}", content)
     return content
 

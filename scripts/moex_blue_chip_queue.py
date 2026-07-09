@@ -25,8 +25,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import find_ticker_files, setup_stdout, make_ru_parser
 
 ISS_URL = "https://iss.moex.com/iss/statistics/engines/stock/markets/index/analytics/MOEXBC/constituents.json"
-DEFAULT_INDEX_CODES = ["MOEXBC", "MOEXBMI"]
-INDEX_LABELS = {
+КОДЫ_ИНДЕКСОВ_ПО_УМОЛЧАНИЮ = ["MOEXBC", "MOEXBMI"]
+МЕТКИ_ИНДЕКСОВ = {
     "MOEXBC": "Индекс крупнейших акций",
     "MOEXBMI": "Индекс широкого рынка",
     "MOEXOG": "Нефть и газ",
@@ -73,7 +73,7 @@ def build_index_report(index_code, items):
     missing = [item for item in items if item["ticker"] not in covered]
     report = {
         "код_индекса": index_code,
-        "название_индекса": INDEX_LABELS.get(index_code, index_code),
+        "название_индекса": МЕТКИ_ИНДЕКСОВ.get(index_code, index_code),
         "дата_торгов": items[0]["tradedate"] if items else None,
         "количество": len(items),
         "покрыто": len(items) - len(missing),
@@ -189,7 +189,7 @@ def main():
         help="Вывести результат в JSON",
     )
     args = parser.parse_args()
-    index_codes = args.indices or DEFAULT_INDEX_CODES
+    index_codes = args.indices or КОДЫ_ИНДЕКСОВ_ПО_УМОЛЧАНИЮ
 
     try:
         report = build_report(index_codes, args.дата)

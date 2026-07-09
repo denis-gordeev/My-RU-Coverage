@@ -33,9 +33,9 @@ import json
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import (
-    find_ticker_files, parse_scope_args, PROJECT_ROOT, normalize_wikilinks,
-    BUSINESS_SECTION_TITLE, SUPPLY_CHAIN_SECTION_TITLE, CUSTOMERS_SECTION_TITLE,
-    SECTION_HEADER_REGEX,
+    find_ticker_files, parse_scope_args, КОРЕНЬ_ПРОЕКТА, normalize_wikilinks,
+    ЗАГОЛОВОК_СЕКЦИИ_ОПИСАНИЯ, ЗАГОЛОВОК_СЕКЦИИ_ЦЕПОЧКИ, ЗАГОЛОВОК_СЕКЦИИ_КЛИЕНТОВ,
+    РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ,
 )
 
 
@@ -54,7 +54,7 @@ def apply_enrichment(filepath, ticker, data):
             f"**Рыночная капитализация:** Н/Д млн руб.\n"
             f"**Стоимость предприятия (EV):** Н/Д млн руб.\n\n"
         )
-        content = re.sub(SECTION_HEADER_REGEX["описание_деятельности"] + r"\n", BUSINESS_SECTION_TITLE + "\n" + meta, content, count=1)
+        content = re.sub(РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["описание_деятельности"] + r"\n", ЗАГОЛОВОК_СЕКЦИИ_ОПИСАНИЯ + "\n" + meta, content, count=1)
 
     # Заменяем описание деятельности (сохраняя блок метаданных выше)
     if "описание" in data:
@@ -87,9 +87,9 @@ def apply_enrichment(filepath, ticker, data):
             flags=re.DOTALL,
         )
 
-    content = re.sub(SECTION_HEADER_REGEX["описание_деятельности"], BUSINESS_SECTION_TITLE, content)
-    content = re.sub(SECTION_HEADER_REGEX["цепочка_поставок"], SUPPLY_CHAIN_SECTION_TITLE, content)
-    content = re.sub(SECTION_HEADER_REGEX["клиенты_и_поставщики"], CUSTOMERS_SECTION_TITLE, content)
+    content = re.sub(РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["описание_деятельности"], ЗАГОЛОВОК_СЕКЦИИ_ОПИСАНИЯ, content)
+    content = re.sub(РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["цепочка_поставок"], ЗАГОЛОВОК_СЕКЦИИ_ЦЕПОЧКИ, content)
+    content = re.sub(РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["клиенты_и_поставщики"], ЗАГОЛОВОК_СЕКЦИИ_КЛИЕНТОВ, content)
 
     # Нормализуем викилинки: стандартизируем алиасы, схлопываем дубли
     content = normalize_wikilinks(content)
@@ -130,7 +130,7 @@ def main():
 
     # Загружаем данные обогащения
     if not os.path.isabs(json_path):
-        json_path = os.path.join(PROJECT_ROOT, json_path)
+        json_path = os.path.join(КОРЕНЬ_ПРОЕКТА, json_path)
     enrichment_data = load_enrichment_data(json_path)
     print(f"Загружено записей по тикерам: {len(enrichment_data)} из {os.path.basename(json_path)}")
 

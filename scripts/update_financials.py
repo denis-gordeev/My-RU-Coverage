@@ -27,9 +27,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import (
     find_ticker_files, parse_scope_args, setup_stdout,
     fetch_valuation_data, build_valuation_table, update_metadata,
-    update_company_classification, DEFAULT_MARKET_SUFFIXES, get_market_profile,
-    FINANCIAL_SECTION_TITLE, ANNUAL_SECTION_TITLE, QUARTERLY_SECTION_TITLE,
-    SECTION_HEADER_REGEX, TICKER_SOURCE_OVERRIDES,
+    update_company_classification, СУФФИКСЫ_РЫНКА_ПО_УМОЛЧАНИЮ, get_market_profile,
+    ЗАГОЛОВОК_СЕКЦИИ_ФИНАНСОВ, ЗАГОЛОВОК_СЕКЦИИ_ГОДОВЫХ, ЗАГОЛОВОК_СЕКЦИИ_КВАРТАЛЬНЫХ,
+    РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ, ПЕРЕОПРЕДЕЛЕНИЯ_ИСТОЧНИКОВ_ТИКЕРОВ,
 )
 
 # Финансовые метрики для извлечения
@@ -152,15 +152,15 @@ def localize_metric_labels(df, suffix):
 
 def get_source_candidates(ticker):
     """Возвращает приоритизированный список кандидатов источников финансов для тикера."""
-    override = TICKER_SOURCE_OVERRIDES.get(ticker, {})
+    override = ПЕРЕОПРЕДЕЛЕНИЯ_ИСТОЧНИКОВ_ТИКЕРОВ.get(ticker, {})
     candidates = override.get("кандидаты")
     if candidates:
         return candidates
-    return [f"{ticker}{suffix}" for suffix in DEFAULT_MARKET_SUFFIXES]
+    return [f"{ticker}{suffix}" for suffix in СУФФИКСЫ_РЫНКА_ПО_УМОЛЧАНИЮ]
 
 
 def infer_market_suffix(symbol):
-    for suffix in DEFAULT_MARKET_SUFFIXES:
+    for suffix in СУФФИКСЫ_РЫНКА_ПО_УМОЛЧАНИЮ:
         if symbol.endswith(suffix):
             return suffix
     return ".ME"
@@ -168,7 +168,7 @@ def infer_market_suffix(symbol):
 
 def is_identity_match(ticker, symbol, info):
     """Отклоняет очевидные совпадения символов, например `T` -> AT&T."""
-    override = TICKER_SOURCE_OVERRIDES.get(ticker, {})
+    override = ПЕРЕОПРЕДЕЛЕНИЯ_ИСТОЧНИКОВ_ТИКЕРОВ.get(ticker, {})
     keywords = override.get("ключевые_слова_идентификации", [])
     if not keywords:
         return True
@@ -211,7 +211,7 @@ def score_source(data):
 
 def fetch_financials(ticker):
     """Загружает финансовые данные с проверкой приоритета источников."""
-    override = TICKER_SOURCE_OVERRIDES.get(ticker, {})
+    override = ПЕРЕОПРЕДЕЛЕНИЯ_ИСТОЧНИКОВ_ТИКЕРОВ.get(ticker, {})
     best_data = None
     best_score = (-1, -1, -1)
 
@@ -285,18 +285,18 @@ def df_to_clean_markdown(df):
 
 def build_financial_section(data):
     unit_label = data.get("единица_измерения", "млн руб.")
-    section = f"{FINANCIAL_SECTION_TITLE} (единицы: {unit_label}, маржа указана в %)\n"
+    section = f"{ЗАГОЛОВОК_СЕКЦИИ_ФИНАНСОВ} (единицы: {unit_label}, маржа указана в %)\n"
 
     v = data.get("оценка", {})
     if v:
         section += build_valuation_table(v) + "\n\n"
 
-    section += f"{ANNUAL_SECTION_TITLE}\n"
+    section += f"{ЗАГОЛОВОК_СЕКЦИИ_ГОДОВЫХ}\n"
     if data["годовые"] is not None and not data["годовые"].empty:
         section += df_to_clean_markdown(data["годовые"]) + "\n\n"
     else:
         section += "Нет доступных данных.\n\n"
-    section += f"{QUARTERLY_SECTION_TITLE}\n"
+    section += f"{ЗАГОЛОВОК_СЕКЦИИ_КВАРТАЛЬНЫХ}\n"
     if data["квартальные"] is not None and not data["квартальные"].empty:
         section += df_to_clean_markdown(data["квартальные"]) + "\n"
     else:
@@ -315,8 +315,8 @@ def update_file(filepath, ticker, dry_run=False):
 
     new_fin = build_financial_section(data)
 
-    if re.search(SECTION_HEADER_REGEX["финансовый_обзор"], content):
-        new_content = re.sub(rf"{SECTION_HEADER_REGEX['финансовый_обзор']}.*", new_fin, content, flags=re.DOTALL)
+    if re.search(РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["финансовый_обзор"], content):
+        new_content = re.sub(rf"{РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ['финансовый_обзор']}.*", new_fin, content, flags=re.DOTALL)
     else:
         new_content = content.rstrip() + "\n\n" + new_fin
 

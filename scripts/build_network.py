@@ -20,13 +20,13 @@ from collections import defaultdict
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import (
-    REPORTS_DIR, setup_stdout,
-    classify_wikilink, ЦВЕТА_КАТЕГОРИЙ, МЕТКИ_КАТЕГОРИЙ, TICKER_PATTERN,
+    ДИРЕКТОРИЯ_ОТЧЁТОВ, setup_stdout,
+    classify_wikilink, ЦВЕТА_КАТЕГОРИЙ, МЕТКИ_КАТЕГОРИЙ, ШАБЛОН_ТИКЕРА,
     split_before_financial_section, extract_wikilinks,
 )
 
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-NETWORK_DIR = os.path.join(PROJECT_ROOT, "network")
+КОРЕНЬ_ПРОЕКТА = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ДИРЕКТОРИЯ_СЕТИ = os.path.join(КОРЕНЬ_ПРОЕКТА, "network")
 
 
 def scan_graph(min_weight=5, лимит_узлов=None):
@@ -35,11 +35,11 @@ def scan_graph(min_weight=5, лимит_узлов=None):
     node_counts = defaultdict(int)
     wl_per_file = {}
 
-    for root, dirs, files in os.walk(REPORTS_DIR):
+    for root, dirs, files in os.walk(ДИРЕКТОРИЯ_ОТЧЁТОВ):
         for f in files:
             if not f.endswith(".md"):
                 continue
-            m = re.match(rf"^({TICKER_PATTERN})", f, re.IGNORECASE)
+            m = re.match(rf"^({ШАБЛОН_ТИКЕРА})", f, re.IGNORECASE)
             if not m:
                 continue
             with open(os.path.join(root, f), "r", encoding="utf-8") as fh:
@@ -278,7 +278,7 @@ def main():
         elif arg == "--лимит" and i + 1 < len(args):
             лимит_узлов = int(args[i + 1])
 
-    os.makedirs(NETWORK_DIR, exist_ok=True)
+    os.makedirs(ДИРЕКТОРИЯ_СЕТИ, exist_ok=True)
 
     print(f"Сканирую совместную встречаемость викилинков (мин. вес: {min_weight})...")
     nodes, edges = scan_graph(min_weight=min_weight, лимит_узлов=лимит_узлов)
@@ -286,14 +286,14 @@ def main():
 
     # Сохраняем JSON
     graph_data = {"узлы": nodes, "связи": edges}
-    json_path = os.path.join(NETWORK_DIR, "graph_data.json")
+    json_path = os.path.join(ДИРЕКТОРИЯ_СЕТИ, "graph_data.json")
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(graph_data, f, ensure_ascii=False, indent=2)
     print(f"Сохранён файл: {json_path}")
 
     # Генерируем HTML
     html = build_html(nodes, edges)
-    html_path = os.path.join(NETWORK_DIR, "index.html")
+    html_path = os.path.join(ДИРЕКТОРИЯ_СЕТИ, "index.html")
     with open(html_path, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"Сохранён файл: {html_path}")

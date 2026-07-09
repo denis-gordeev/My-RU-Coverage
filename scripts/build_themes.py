@@ -19,10 +19,10 @@ import sys
 from collections import defaultdict
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from utils import TICKER_PATTERN, extract_wikilinks
+from utils import ШАБЛОН_ТИКЕРА, extract_wikilinks
 
-REPORTS_DIR = os.path.join(os.path.dirname(__file__), "..", "Pilot_Reports")
-THEMES_DIR = os.path.join(os.path.dirname(__file__), "..", "themes")
+ДИРЕКТОРИЯ_ОТЧЁТОВ = os.path.join(os.path.dirname(__file__), "..", "Pilot_Reports")
+ДИРЕКТОРИЯ_ТЕМ = os.path.join(os.path.dirname(__file__), "..", "themes")
 
 ТЕМЫ_RU = [
     "банки",
@@ -62,7 +62,7 @@ THEMES_DIR = os.path.join(os.path.dirname(__file__), "..", "themes")
 
 # Кураторские определения тем и связанных тегов.
 # Формат: тема_викилинка -> { название, описание, связанные }
-THEME_DEFINITIONS = {
+ОПРЕДЕЛЕНИЯ_ТЕМ = {
     # === Темы российского / СНГ рынка ===
     "банки": {
         "название": "Банковский сектор России",
@@ -267,14 +267,14 @@ def scan_wikilinks():
     """Просканировать все отчёты и вернуть карту викилинков с контекстом."""
     wl_map = defaultdict(list)
 
-    for sector_dir in os.listdir(REPORTS_DIR):
-        sector_path = os.path.join(REPORTS_DIR, sector_dir)
+    for sector_dir in os.listdir(ДИРЕКТОРИЯ_ОТЧЁТОВ):
+        sector_path = os.path.join(ДИРЕКТОРИЯ_ОТЧЁТОВ, sector_dir)
         if not os.path.isdir(sector_path):
             continue
         for f in os.listdir(sector_path):
             if not f.endswith(".md"):
                 continue
-            m = re.match(rf"^({TICKER_PATTERN})_(.+)\.md$", f, re.IGNORECASE)
+            m = re.match(rf"^({ШАБЛОН_ТИКЕРА})_(.+)\.md$", f, re.IGNORECASE)
             if not m:
                 continue
             ticker, company = m.group(1), m.group(2)
@@ -454,12 +454,12 @@ def main():
     if sys.platform == "win32":
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-    os.makedirs(THEMES_DIR, exist_ok=True)
+    os.makedirs(ДИРЕКТОРИЯ_ТЕМ, exist_ok=True)
 
     args = sys.argv[1:]
 
     if "--список" in args:
-        for tag, defn in sorted(THEME_DEFINITIONS.items()):
+        for tag, defn in sorted(ОПРЕДЕЛЕНИЯ_ТЕМ.items()):
             print(f"  {tag}: {defn['название']}")
         return
 
@@ -469,19 +469,19 @@ def main():
 
     # Фильтр по запрошенной теме или сборка всех
     if args and args[0] != "--список":
-        themes_to_build = {args[0]: THEME_DEFINITIONS.get(args[0])}
+        themes_to_build = {args[0]: ОПРЕДЕЛЕНИЯ_ТЕМ.get(args[0])}
         if not themes_to_build[args[0]]:
-            print(f"Тема '{args[0]}' отсутствует в THEME_DEFINITIONS. Используйте --список для списка доступных тем.")
+            print(f"Тема '{args[0]}' отсутствует в ОПРЕДЕЛЕНИЯ_ТЕМ. Используйте --список для списка доступных тем.")
             return
     else:
-        themes_to_build = THEME_DEFINITIONS
+        themes_to_build = ОПРЕДЕЛЕНИЯ_ТЕМ
 
     themes_built = {}
     for tag, defn in themes_to_build.items():
         page = build_theme_page(tag, defn, wl_map)
         if page:
             safe_name = tag.replace(" ", "_").replace("/", "_")
-            filepath = os.path.join(THEMES_DIR, f"{safe_name}.md")
+            filepath = os.path.join(ДИРЕКТОРИЯ_ТЕМ, f"{safe_name}.md")
             with open(filepath, "w", encoding="utf-8") as f:
                 f.write(page)
             count = len(wl_map.get(tag, []))
@@ -490,7 +490,7 @@ def main():
 
     # Сборка индекса
     index = build_index(themes_built)
-    with open(os.path.join(THEMES_DIR, "README.md"), "w", encoding="utf-8") as f:
+    with open(os.path.join(ДИРЕКТОРИЯ_ТЕМ, "README.md"), "w", encoding="utf-8") as f:
         f.write(index)
 
     print(f"\nГотово. Сгенерировано тематических страниц: {len(themes_built)} в каталоге themes/")

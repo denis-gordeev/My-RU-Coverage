@@ -18,14 +18,14 @@ from utils import (
     extract_wikilinks, classify_wikilink,
 )
 
-REPORTS_DIR = os.path.join(os.path.dirname(__file__), "..", "Pilot_Reports")
-OUTPUT_FILE = os.path.join(os.path.dirname(__file__), "..", "WIKILINKS.md")
+ДИРЕКТОРИЯ_ОТЧЁТОВ = os.path.join(os.path.dirname(__file__), "..", "Pilot_Reports")
+ФАЙЛ_ВЫВОДА = os.path.join(os.path.dirname(__file__), "..", "WIKILINKS.md")
 
 
 def collect_wikilinks():
     """Возвращает словарь `{wikilink: число_упоминаний}` по всем отчётам."""
     wikilinks = {}
-    for root, dirs, files in os.walk(REPORTS_DIR):
+    for root, dirs, files in os.walk(ДИРЕКТОРИЯ_ОТЧЁТОВ):
         for f in files:
             if not f.endswith(".md"):
                 continue
@@ -103,7 +103,7 @@ def main():
     lines.extend(build_section("Иностранные компании", ин, limit=200))
     lines.extend(build_section("Российские компании", лок, limit=300))
 
-    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+    with open(ФАЙЛ_ВЫВОДА, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
 
     print(f"Сгенерирован WIKILINKS.md: {len(wikilinks)} уникальных викилинков")

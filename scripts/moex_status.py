@@ -17,11 +17,11 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from utils import find_ticker_files, setup_stdout, TICKER_PATTERN, make_ru_parser
+from utils import find_ticker_files, setup_stdout, ШАБЛОН_ТИКЕРА, make_ru_parser
 
-ROOT = Path(__file__).resolve().parents[1]
-REPORTS_DIR = ROOT / "Pilot_Reports"
-THEMES_DIR = ROOT / "themes"
+КОРЕНЬ = Path(__file__).resolve().parents[1]
+ДИРЕКТОРИЯ_ОТЧЁТОВ = КОРЕНЬ / "Pilot_Reports"
+ДИРЕКТОРИЯ_ТЕМ = КОРЕНЬ / "themes"
 
 
 def count_reports():
@@ -34,16 +34,16 @@ def count_reports():
 
 
 def count_themes():
-    if not THEMES_DIR.exists():
+    if not ДИРЕКТОРИЯ_ТЕМ.exists():
         return 0
-    return len([f for f in THEMES_DIR.iterdir() if f.suffix == ".md" and f.name != "README.md"])
+    return len([f for f in ДИРЕКТОРИЯ_ТЕМ.iterdir() if f.suffix == ".md" and f.name != "README.md"])
 
 
 def check_audit():
     total = 0
     clean = 0
     issues_count = 0
-    for subdir in sorted(REPORTS_DIR.iterdir()):
+    for subdir in sorted(ДИРЕКТОРИЯ_ОТЧЁТОВ.iterdir()):
         if not subdir.is_dir():
             continue
         for md_file in sorted(subdir.glob("*.md")):
@@ -77,8 +77,8 @@ def check_audit():
 
 def get_queue_summary():
     try:
-        from moex_blue_chip_queue import build_report, DEFAULT_INDEX_CODES
-        report = build_report(DEFAULT_INDEX_CODES)
+        from moex_blue_chip_queue import build_report, КОДЫ_ИНДЕКСОВ_ПО_УМОЛЧАНИЮ
+        report = build_report(КОДЫ_ИНДЕКСОВ_ПО_УМОЛЧАНИЮ)
         queue = report.get("следующая_очередь", [])
         первые_5 = [
             {"тикер": item["тикер"], "название": item["название"]}

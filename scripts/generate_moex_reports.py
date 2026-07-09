@@ -17,10 +17,10 @@ from urllib.error import HTTPError, URLError
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from add_ticker import generate_report, sanitize_folder_name
-from moex_blue_chip_queue import DEFAULT_INDEX_CODES, build_report
-from utils import REPORTS_DIR, find_ticker_files, setup_stdout, make_ru_parser
+from moex_blue_chip_queue import КОДЫ_ИНДЕКСОВ_ПО_УМОЛЧАНИЮ, build_report
+from utils import ДИРЕКТОРИЯ_ОТЧЁТОВ, find_ticker_files, setup_stdout, make_ru_parser
 
-REPORT_OVERRIDES = {
+ПЕРЕОПРЕДЕЛЕНИЯ_ОТЧЁТОВ = {
     "DOMRF": {
         "название": "ДОМ.РФ",
         "сектор": "Финансовые услуги",
@@ -83,11 +83,11 @@ REPORT_OVERRIDES = {
     },
 }
 
-SHORTNAME_SUFFIXES = (" ао", " ап", "-ао", "-ап")
+СУФФИКСЫ_КОРОТКОГО_ИМЕНИ = (" ао", " ап", "-ао", "-ап")
 
 
 def normalize_company_name(ticker, shortname):
-    override = REPORT_OVERRIDES.get(ticker, {})
+    override = ПЕРЕОПРЕДЕЛЕНИЯ_ОТЧЁТОВ.get(ticker, {})
     if override.get("название"):
         return override["название"]
 
@@ -95,7 +95,7 @@ def normalize_company_name(ticker, shortname):
     if cleaned[:1].lower() == "i" and len(cleaned) > 1 and cleaned[1].isalpha():
         cleaned = cleaned[1:]
     lowered = cleaned.lower()
-    for suffix in SHORTNAME_SUFFIXES:
+    for suffix in СУФФИКСЫ_КОРОТКОГО_ИМЕНИ:
         if lowered.endswith(suffix):
             cleaned = cleaned[: -len(suffix)]
             break
@@ -115,7 +115,7 @@ def select_queue_items(report, requested_tickers=None):
             items.append(
                 {
                     "тикер": ticker,
-                    "название": REPORT_OVERRIDES.get(ticker, {}).get("название", ticker),
+                    "название": ПЕРЕОПРЕДЕЛЕНИЯ_ОТЧЁТОВ.get(ticker, {}).get("название", ticker),
                 }
             )
         else:
@@ -126,7 +126,7 @@ def select_queue_items(report, requested_tickers=None):
 def build_output_path(ticker, company_name, sector_name):
     safe_sector = sanitize_folder_name(sector_name)
     filename = f"{ticker}_{company_name}.md"
-    return os.path.join(REPORTS_DIR, safe_sector, filename)
+    return os.path.join(ДИРЕКТОРИЯ_ОТЧЁТОВ, safe_sector, filename)
 
 
 def create_reports(items, limit=None, dry_run=False):
@@ -144,7 +144,7 @@ def create_reports(items, limit=None, dry_run=False):
             skipped += 1
             continue
 
-        override = REPORT_OVERRIDES.get(ticker, {})
+        override = ПЕРЕОПРЕДЕЛЕНИЯ_ОТЧЁТОВ.get(ticker, {})
         company_name = normalize_company_name(ticker, item.get("название", ticker))
         sector = override.get("сектор")
         industry = override.get("отрасль")
@@ -207,7 +207,7 @@ def main():
     )
     args = parser.parse_args()
 
-    index_codes = args.indices or DEFAULT_INDEX_CODES
+    index_codes = args.indices or КОДЫ_ИНДЕКСОВ_ПО_УМОЛЧАНИЮ
     try:
         report = build_report(index_codes, args.дата)
     except HTTPError as exc:

@@ -4,12 +4,12 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-REPORTS_DIR = ROOT / "Pilot_Reports"
+КОРЕНЬ = Path(__file__).resolve().parents[1]
+ДИРЕКТОРИЯ_ОТЧЁТОВ = КОРЕНЬ / "Pilot_Reports"
 УСТАРЕВШИЕ_ТЕМАТИЧЕСКИЕ_МЕТКИ = {
     "HBM", "CoWoS", "CPO", "EUV", "VCSEL",
 }
-HAN_RE = re.compile(r"[\u4e00-\u9fff]")
+РЕГЕКС_ИЕРОГЛИФОВ = re.compile(r"[\u4e00-\u9fff]")
 
 def check_file(filepath):
     """Вернуть список замечаний по одному отчёту."""
@@ -89,7 +89,7 @@ def check_file(filepath):
     legacy_hits = []
     for wl in wikilinks:
         base = wl.split("|")[0].strip()
-        if base in УСТАРЕВШИЕ_ТЕМАТИЧЕСКИЕ_МЕТКИ or HAN_RE.search(base):
+        if base in УСТАРЕВШИЕ_ТЕМАТИЧЕСКИЕ_МЕТКИ or РЕГЕКС_ИЕРОГЛИФОВ.search(base):
             legacy_hits.append(base)
     if legacy_hits:
         issues.append(
@@ -103,7 +103,7 @@ def check_file(filepath):
 def main():
     all_issues = {}
     total = 0
-    for subdir in sorted(REPORTS_DIR.iterdir()):
+    for subdir in sorted(ДИРЕКТОРИЯ_ОТЧЁТОВ.iterdir()):
         if not subdir.is_dir():
             continue
         for md_file in sorted(subdir.glob("*.md")):

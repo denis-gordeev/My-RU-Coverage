@@ -30,7 +30,7 @@ import subprocess
 from collections import defaultdict
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from utils import REPORTS_DIR, PROJECT_ROOT, setup_stdout, TICKER_PATTERN, SECTION_HEADER_REGEX
+from utils import ДИРЕКТОРИЯ_ОТЧЁТОВ, КОРЕНЬ_ПРОЕКТА, setup_stdout, ШАБЛОН_ТИКЕРА, РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ
 
 # Группы секторов для умной фильтрации (русские названия папок)
 СЕКТОРЫ_ТЕХНОЛОГИЙ = {
@@ -105,8 +105,8 @@ def search_reports(buzzword, sectors_filter=None):
     """Ищет упоминания темы по карточкам эмитентов."""
     results = []
 
-    for sector_dir in sorted(os.listdir(REPORTS_DIR)):
-        sector_path = os.path.join(REPORTS_DIR, sector_dir)
+    for sector_dir in sorted(os.listdir(ДИРЕКТОРИЯ_ОТЧЁТОВ)):
+        sector_path = os.path.join(ДИРЕКТОРИЯ_ОТЧЁТОВ, sector_dir)
         if not os.path.isdir(sector_path):
             continue
 
@@ -117,7 +117,7 @@ def search_reports(buzzword, sectors_filter=None):
         for f in sorted(os.listdir(sector_path)):
             if not f.endswith(".md"):
                 continue
-            m = re.match(rf"^({TICKER_PATTERN})_(.+)\.md$", f, re.IGNORECASE)
+            m = re.match(rf"^({ШАБЛОН_ТИКЕРА})_(.+)\.md$", f, re.IGNORECASE)
             if not m:
                 continue
 
@@ -127,7 +127,7 @@ def search_reports(buzzword, sectors_filter=None):
             with open(filepath, "r", encoding="utf-8") as fh:
                 content = fh.read()
 
-            financial_split = re.split(SECTION_HEADER_REGEX["финансовый_обзор"], content, maxsplit=1)
+            financial_split = re.split(РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["финансовый_обзор"], content, maxsplit=1)
             text = financial_split[0]
 
             # Уже проставленные [[викилинки]]
@@ -150,9 +150,9 @@ def search_reports(buzzword, sectors_filter=None):
                 # Примерно определяем роль по разделу
                 role = "упоминание"
                 for section_name, role_name in [
-                    (SECTION_HEADER_REGEX["описание_деятельности"], "основное_направление"),
-                    (SECTION_HEADER_REGEX["цепочка_поставок"], "цепочка_поставок"),
-                    (SECTION_HEADER_REGEX["клиенты_и_поставщики"], "клиент_поставщик"),
+                    (РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["описание_деятельности"], "основное_направление"),
+                    (РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["цепочка_поставок"], "цепочка_поставок"),
+                    (РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["клиенты_и_поставщики"], "клиент_поставщик"),
                 ]:
                     section_match = re.search(
                         rf"{section_name}\n(.*?)(?=\n## |\Z)", text, re.DOTALL
@@ -186,7 +186,7 @@ def apply_wikilinks(results, buzzword):
             content = f.read()
 
         # Финансовый раздел не трогаем
-        financial_match = re.search(SECTION_HEADER_REGEX["финансовый_обзор"], content)
+        financial_match = re.search(РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["финансовый_обзор"], content)
         if not financial_match:
             continue
 
@@ -302,18 +302,18 @@ def main():
     if do_rebuild:
         print("\nПересобираю тематические страницы...")
         subprocess.run(
-            [sys.executable, os.path.join(PROJECT_ROOT, "scripts", "build_themes.py")],
-            cwd=PROJECT_ROOT,
+            [sys.executable, os.path.join(КОРЕНЬ_ПРОЕКТА, "scripts", "build_themes.py")],
+            cwd=КОРЕНЬ_ПРОЕКТА,
         )
         print("Пересобираю сетевой граф...")
         subprocess.run(
-            [sys.executable, os.path.join(PROJECT_ROOT, "scripts", "build_network.py")],
-            cwd=PROJECT_ROOT,
+            [sys.executable, os.path.join(КОРЕНЬ_ПРОЕКТА, "scripts", "build_network.py")],
+            cwd=КОРЕНЬ_ПРОЕКТА,
         )
         print("Пересобираю индекс викилинков...")
         subprocess.run(
-            [sys.executable, os.path.join(PROJECT_ROOT, "scripts", "build_wikilink_index.py")],
-            cwd=PROJECT_ROOT,
+            [sys.executable, os.path.join(КОРЕНЬ_ПРОЕКТА, "scripts", "build_wikilink_index.py")],
+            cwd=КОРЕНЬ_ПРОЕКТА,
         )
 
     # Итог

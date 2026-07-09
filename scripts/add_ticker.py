@@ -20,9 +20,9 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import (
-    find_ticker_files, REPORTS_DIR, PROJECT_ROOT,
-    BUSINESS_SECTION_TITLE, SUPPLY_CHAIN_SECTION_TITLE, CUSTOMERS_SECTION_TITLE,
-    FINANCIAL_SECTION_TITLE, ANNUAL_SECTION_TITLE, QUARTERLY_SECTION_TITLE,
+    find_ticker_files, ДИРЕКТОРИЯ_ОТЧЁТОВ, КОРЕНЬ_ПРОЕКТА,
+    ЗАГОЛОВОК_СЕКЦИИ_ОПИСАНИЯ, ЗАГОЛОВОК_СЕКЦИИ_ЦЕПОЧКИ, ЗАГОЛОВОК_СЕКЦИИ_КЛИЕНТОВ,
+    ЗАГОЛОВОК_СЕКЦИИ_ФИНАНСОВ, ЗАГОЛОВОК_СЕКЦИИ_ГОДОВЫХ, ЗАГОЛОВОК_СЕКЦИИ_КВАРТАЛЬНЫХ,
 )
 
 # Импорт загрузчика финансовых данных
@@ -51,14 +51,14 @@ def generate_report(ticker, name, sector=None, industry=None):
         enterprise_value = "Н/Д"
         unit_label = "млн руб."
         fin_section = (
-            f"{FINANCIAL_SECTION_TITLE} (единицы: {unit_label}, маржа указана в %)\n"
-            f"{ANNUAL_SECTION_TITLE}\nНет доступных данных.\n\n"
-            f"{QUARTERLY_SECTION_TITLE}\nНет доступных данных.\n"
+            f"{ЗАГОЛОВОК_СЕКЦИИ_ФИНАНСОВ} (единицы: {unit_label}, маржа указана в %)\n"
+            f"{ЗАГОЛОВОК_СЕКЦИИ_ГОДОВЫХ}\nНет доступных данных.\n\n"
+            f"{ЗАГОЛОВОК_СЕКЦИИ_КВАРТАЛЬНЫХ}\nНет доступных данных.\n"
         )
 
     content = f"""# {ticker} - [[{name}]]
 
-{BUSINESS_SECTION_TITLE}
+{ЗАГОЛОВОК_СЕКЦИИ_ОПИСАНИЯ}
 **Сектор:** {sector}
 **Отрасль:** {industry}
 **Рыночная капитализация:** {market_cap} {unit_label}
@@ -66,10 +66,10 @@ def generate_report(ticker, name, sector=None, industry=None):
 
 *(Нужно обогащение: заполните описание через `update_enrichment.py`.)*
 
-{SUPPLY_CHAIN_SECTION_TITLE}
+{ЗАГОЛОВОК_СЕКЦИИ_ЦЕПОЧКИ}
 *(Нужно обогащение.)*
 
-{CUSTOMERS_SECTION_TITLE}
+{ЗАГОЛОВОК_СЕКЦИИ_КЛИЕНТОВ}
 *(Нужно обогащение.)*
 
 {fin_section}"""
@@ -116,7 +116,7 @@ def main():
 
     # Определяем папку вывода
     folder_name = sanitize_folder_name(sector or detected_sector)
-    output_dir = os.path.join(REPORTS_DIR, folder_name)
+    output_dir = os.path.join(ДИРЕКТОРИЯ_ОТЧЁТОВ, folder_name)
     os.makedirs(output_dir, exist_ok=True)
 
     # Записываем файл
