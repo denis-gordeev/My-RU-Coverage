@@ -129,7 +129,7 @@ def build_output_path(ticker, company_name, sector_name):
     return os.path.join(ДИРЕКТОРИЯ_ОТЧЁТОВ, safe_sector, filename)
 
 
-def create_reports(items, limit=None, dry_run=False):
+def create_reports(items, limit=None, пробный_запуск=False):
     existing = find_ticker_files()
     created = 0
     skipped = 0
@@ -152,7 +152,7 @@ def create_reports(items, limit=None, dry_run=False):
         target_sector = sector or detected_sector or "Не определено"
         output_path = build_output_path(ticker, company_name, target_sector)
 
-        if dry_run:
+        if пробный_запуск:
             print(f"  {ticker}: черновик -> {output_path}")
             created += 1
             continue
@@ -227,7 +227,7 @@ def main():
         f"Генерирую базовые MOEX-карточки из очереди {', '.join(index_codes)} "
         f"на дату {report['дата_торгов']}..."
     )
-    created, skipped = create_reports(items, limit=limit, dry_run=args.пробный_запуск)
+    created, skipped = create_reports(items, limit=limit, пробный_запуск=args.пробный_запуск)
     print(f"\nГотово. Создано: {created} | Пропущено: {skipped}")
 
 

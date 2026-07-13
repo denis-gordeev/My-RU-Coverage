@@ -304,7 +304,7 @@ def build_financial_section(data):
     return section
 
 
-def update_file(filepath, ticker, dry_run=False):
+def update_file(filepath, ticker, пробный_запуск=False):
     with open(filepath, "r", encoding="utf-8") as f:
         content = f.read()
 
@@ -333,7 +333,7 @@ def update_file(filepath, ticker, dry_run=False):
         data.get("отрасль"),
     )
 
-    if dry_run:
+    if пробный_запуск:
         print(f"  {ticker}: черновое обновление ({data['символ_источника']})")
         return True
 
@@ -347,8 +347,8 @@ def main():
     setup_stdout()
 
     args = list(sys.argv[1:])
-    dry_run = "--пробный-запуск" in args
-    if dry_run:
+    пробный_запуск = "--пробный-запуск" in args
+    if пробный_запуск:
         args.remove("--пробный-запуск")
 
     tickers, sector, desc = parse_scope_args(args)
@@ -364,7 +364,7 @@ def main():
 
     for ticker in sorted(files.keys()):
         try:
-            if update_file(files[ticker], ticker, dry_run):
+            if update_file(files[ticker], ticker, пробный_запуск):
                 updated += 1
             else:
                 skipped += 1

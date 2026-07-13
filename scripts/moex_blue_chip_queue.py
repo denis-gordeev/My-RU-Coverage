@@ -24,7 +24,7 @@ from urllib.request import urlopen
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import find_ticker_files, setup_stdout, make_ru_parser
 
-ISS_URL = "https://iss.moex.com/iss/statistics/engines/stock/markets/index/analytics/MOEXBC/constituents.json"
+АДРЕС_ISS = "https://iss.moex.com/iss/statistics/engines/stock/markets/index/analytics/MOEXBC/constituents.json"
 КОДЫ_ИНДЕКСОВ_ПО_УМОЛЧАНИЮ = ["MOEXBC", "MOEXBMI"]
 МЕТКИ_ИНДЕКСОВ = {
     "MOEXBC": "Индекс крупнейших акций",
@@ -44,7 +44,7 @@ def fetch_constituents(index_code, tradedate=None):
     if tradedate:
         params["date"] = tradedate
 
-    iss_url = ISS_URL.replace("/MOEXBC/", f"/{index_code}/")
+    iss_url = АДРЕС_ISS.replace("/MOEXBC/", f"/{index_code}/")
     url = f"{iss_url}?{urlencode(params)}"
     with urlopen(url, timeout=20) as response:
         payload = json.load(response)
