@@ -32,7 +32,6 @@ from collections import defaultdict
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import ДИРЕКТОРИЯ_ОТЧЁТОВ, КОРЕНЬ_ПРОЕКТА, настроить_вывод, ШАБЛОН_ТИКЕРА, РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ
 
-# Группы секторов для умной фильтрации (русские названия папок)
 СЕКТОРЫ_ТЕХНОЛОГИЙ = {
     "Программное обеспечение — приложения",
     "Технологии", "Связь", "Телекоммуникации",
@@ -103,14 +102,13 @@ def определить_профиль(ключевое_слово):
 
 def искать_в_отчётах(ключевое_слово, фильтр_секторов=None):
     """Ищет упоминания темы по карточкам эмитентов."""
-    results = []
+    результаты = []
 
     for sector_dir in sorted(os.listdir(ДИРЕКТОРИЯ_ОТЧЁТОВ)):
         sector_path = os.path.join(ДИРЕКТОРИЯ_ОТЧЁТОВ, sector_dir)
         if not os.path.isdir(sector_path):
             continue
 
-        # Ограничение по списку секторов
         if фильтр_секторов and sector_dir not in фильтр_секторов:
             continue
 
@@ -121,84 +119,78 @@ def искать_в_отчётах(ключевое_слово, фильтр_с�
             if not m:
                 continue
 
-            ticker, company = m.group(1), m.group(2)
+            тикер, компания = m.group(1), m.group(2)
             filepath = os.path.join(sector_path, f)
 
             with open(filepath, "r", encoding="utf-8") as fh:
                 content = fh.read()
 
-            financial_split = re.split(РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["финансовый_обзор"], content, maxsplit=1)
-            text = financial_split[0]
+            разделение_финансов = re.split(РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["финансовый_обзор"], content, maxsplit=1)
+            текст = разделение_финансов[0]
 
-            # Уже проставленные [[викилинки]]
-            linked_count = len(re.findall(r"\[\[" + re.escape(ключевое_слово) + r"\]\]", text))
+            linked_count = len(re.findall(r"\[\[" + re.escape(ключевое_слово) + r"\]\]", текст))
 
-            # Обычные упоминания вне [[ ]]
             bare_pattern = r"(?<!\[\[)" + re.escape(ключевое_слово) + r"(?!\]\])"
-            bare_matches = list(re.finditer(bare_pattern, text))
-            bare_count = len(bare_matches)
+            голые_совпадения = list(re.finditer(bare_pattern, текст))
+            количество_голых = len(голые_совпадения)
 
-            if linked_count > 0 or bare_count > 0:
-                # Короткие контекстные фрагменты
-                contexts = []
-                for match in bare_matches[:3]:
+            if linked_count > 0 or количество_голых > 0:
+                контексты = []
+                for match in голые_совпадения[:3]:
                     start = max(0, match.start() - 30)
-                    end = min(len(text), match.end() + 30)
-                    snippet = text[start:end].replace("\n", " ").strip()
-                    contexts.append(f"...{snippet}...")
+                    end = min(len(текст), match.end() + 30)
+                    snippet = текст[start:end].replace("\n", " ").strip()
+                    контексты.append(f"...{snippet}...")
 
-                # Примерно определяем роль по разделу
-                role = "упоминание"
+                роль = "упоминание"
                 for section_name, role_name in [
                     (РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["описание_деятельности"], "основное_направление"),
                     (РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["цепочка_поставок"], "цепочка_поставок"),
                     (РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["клиенты_и_поставщики"], "клиент_поставщик"),
                 ]:
                     section_match = re.search(
-                        rf"{section_name}\n(.*?)(?=\n## |\Z)", text, re.DOTALL
+                        rf"{section_name}\n(.*?)(?=\n## |\Z)", текст, re.DOTALL
                     )
                     if section_match and ключевое_слово in section_match.group(1):
-                        role = role_name
+                        роль = role_name
                         break
 
-                results.append({
-                    "тикер": ticker,
-                    "компания": company,
+                результаты.append({
+                    "тикер": тикер,
+                    "компания": компания,
                     "сектор": sector_dir,
                     "путь": filepath,
                     "с_викилинком": linked_count,
-                    "без_викилинка": bare_count,
-                    "роль": role,
-                    "контексты": contexts,
+                    "без_викилинка": количество_голых,
+                    "роль": роль,
+                    "контексты": контексты,
                 })
 
-    return results
+    return результаты
 
 
-def применить_викилинки(results, ключевое_слово):
+def применить_викилинки(результаты, ключевое_слово):
     """Добавляет [[викилинки]] там, где термин найден без разметки."""
     applied = 0
-    for r in results:
+    for r in результаты:
         if r["без_викилинка"] == 0:
             continue
 
         with open(r["путь"], "r", encoding="utf-8") as f:
             content = f.read()
 
-        # Финансовый раздел не трогаем
         financial_match = re.search(РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["финансовый_обзор"], content)
         if not financial_match:
             continue
 
-        text = content[: financial_match.start()]
+        текст = content[: financial_match.start()]
         financial_part = content[financial_match.start() :]
-        # Не даём задвоить существующие [[викилинки]]
         pattern = (
             r"(?<!\[\[)"
             + re.escape(ключевое_слово)
             + r"(?!\]\])(?![A-Za-z\u0400-\u04FF])"
         )
-        new_text, count = re.subn(pattern, f"[[{ключевое_слово}]]", text)
+        new_text, count = re.subn(pattern, f"[[{ключевое_слово}]]", текст)
 
         if count > 0:
             content = new_text + financial_part
@@ -209,37 +201,36 @@ def применить_викилинки(results, ключевое_слово):
     return applied
 
 
-def вывести_отчёт(results, ключевое_слово):
+def вывести_отчёт(результаты, ключевое_слово):
     """Печатает сводку по найденным совпадениям."""
-    if not results:
+    if not результаты:
         print(f"\nНе найдено компаний, где упоминается «{ключевое_слово}».")
         return
 
-    # Группировка по типу связи
     по_роли = defaultdict(list)
-    for r in results:
+    for r in результаты:
         по_роли[r["роль"]].append(r)
 
     print(f"\n{'=' * 60}")
-    print(f"Компании, связанные с темой «{ключевое_слово}»: {len(results)}")
+    print(f"Компании, связанные с темой «{ключевое_слово}»: {len(результаты)}")
     print(f"{'=' * 60}")
 
-    role_labels = {
+    метки_ролей = {
         "основное_направление": "Связь через основное направление",
         "цепочка_поставок": "Связь через цепочку поставок",
         "клиент_поставщик": "Связь через клиентов/поставщиков",
         "упоминание": "Прочие упоминания",
     }
 
-    for role, label in role_labels.items():
-        entries = по_роли.get(role, [])
+    for роль, label in метки_ролей.items():
+        entries = по_роли.get(роль, [])
         if not entries:
             continue
         print(f"\n### {label} ({len(entries)})")
         for r in sorted(entries, key=lambda x: x["тикер"]):
-            link_status = "✓" if r["с_викилинком"] > 0 else "○"
-            bare_note = f" (+{r['без_викилинка']} без [[викилинк]])" if r["без_викилинка"] > 0 else ""
-            print(f"  {link_status} {r['тикер']} {r['компания']} ({r['сектор']}){bare_note}")
+            статус_ссылки = "✓" if r["с_викилинком"] > 0 else "○"
+            пометка_о_голых = f" (+{r['без_викилинка']} без [[викилинк]])" if r["без_викилинка"] > 0 else ""
+            print(f"  {статус_ссылки} {r['тикер']} {r['компания']} ({r['сектор']}){пометка_о_голых}")
             for ctx in r["контексты"][:1]:
                 print(f"    -> {ctx}")
 
@@ -259,7 +250,6 @@ def main():
     ключевое_слово = sys.argv[1]
     args = sys.argv[2:]
 
-    # Разбор флагов
     применять = "--применить" in args
     пересобирать = "--пересобрать" in args
     smart = "--умный" in args
@@ -282,23 +272,19 @@ def main():
             )
             print("  Внимание: возможны пропуски межсекторальных совпадений. Для полного охвата запускайте без --умный.")
 
-    # Поиск
     print(f"Ищу «{ключевое_слово}»...")
-    results = искать_в_отчётах(ключевое_слово, фильтр_секторов)
+    результаты = искать_в_отчётах(ключевое_слово, фильтр_секторов)
 
-    # Отчёт
-    вывести_отчёт(results, ключевое_слово)
+    вывести_отчёт(результаты, ключевое_слово)
 
-    # Применение [[викилинки]]
-    if применять and results:
-        bare_count = sum(r["без_викилинка"] for r in results)
-        if bare_count > 0:
-            applied = применить_викилинки(results, ключевое_слово)
+    if применять and результаты:
+        количество_голых = sum(r["без_викилинка"] for r in результаты)
+        if количество_голых > 0:
+            applied = применить_викилинки(результаты, ключевое_слово)
             print(f"\nДобавлено {applied} вхождений [[{ключевое_слово}]].")
         else:
             print(f"\nВсе упоминания уже размечены как [[{ключевое_слово}]].")
 
-    # Пересборка производных артефактов
     if пересобирать:
         print("\nПересобираю тематические страницы...")
         subprocess.run(
@@ -316,10 +302,9 @@ def main():
             cwd=КОРЕНЬ_ПРОЕКТА,
         )
 
-    # Итог
-    linked = sum(1 for r in results if r["с_викилинком"] > 0)
-    unlinked = sum(1 for r in results if r["без_викилинка"] > 0 and r["с_викилинком"] == 0)
-    print(f"\nИтог: {len(results)} компаний упоминают «{ключевое_слово}»")
+    linked = sum(1 for r in результаты if r["с_викилинком"] > 0)
+    unlinked = sum(1 for r in результаты if r["без_викилинка"] > 0 and r["с_викилинком"] == 0)
+    print(f"\nИтог: {len(результаты)} компаний упоминают «{ключевое_слово}»")
     print(f"  Уже размечено: {linked} | Только голые упоминания: {unlinked}")
 
 

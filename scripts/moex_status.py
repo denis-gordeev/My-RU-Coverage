@@ -27,9 +27,9 @@ from utils import найти_файлы_тикеров, настроить_вы�
 def посчитать_отчёты():
     reports = найти_файлы_тикеров()
     по_сектору = {}
-    for ticker, filepath in reports.items():
-        sector = os.path.basename(os.path.dirname(filepath))
-        по_сектору.setdefault(sector, []).append(ticker)
+    for тикер, путь_к_файлу in reports.items():
+        сектор = os.path.basename(os.path.dirname(путь_к_файлу))
+        по_сектору.setdefault(сектор, []).append(тикер)
     return len(reports), по_сектору
 
 
@@ -107,7 +107,7 @@ def main():
         длина_очереди, очередь_первые_5, дата_очереди = queue_result
         ошибка_очереди = None
 
-    audit_pct = (audit_clean / audit_total * 100) if audit_total > 0 else 0
+    доля_аудита = (audit_clean / audit_total * 100) if audit_total > 0 else 0
 
     result = {
         "отчёты": report_count,
@@ -118,7 +118,7 @@ def main():
             "всего": audit_total,
             "чистых": audit_clean,
             "замечаний": audit_issues,
-            "доля_%": round(audit_pct, 1),
+            "доля_%": round(доля_аудита, 1),
         },
         "очередь": {
             "непокрытых": длина_очереди,
@@ -142,7 +142,7 @@ def main():
     print(f"  Секторы:        {len(по_сектору)}")
     print(f"  Темы:           {theme_count}")
     print()
-    print(f"  Проверка:      {audit_clean}/{audit_total} ({audit_pct:.0f}%) проходят")
+    print(f"  Проверка:      {audit_clean}/{audit_total} ({доля_аудита:.0f}%) проходят")
     if audit_issues:
         print(f"                  {audit_issues} с замечаниями")
     print()
@@ -158,8 +158,8 @@ def main():
 
     print()
     print("  Секторы:")
-    for sector, tickers in sorted(по_сектору.items(), key=lambda x: -len(x[1])):
-        print(f"    {sector}: {len(tickers)}")
+    for сектор, tickers in sorted(по_сектору.items(), key=lambda x: -len(x[1])):
+        print(f"    {сектор}: {len(tickers)}")
     print()
     print("=" * 50)
 

@@ -31,7 +31,6 @@ from utils import (
 
 def сканировать_граф(минимальный_вес=5, лимит_узлов=None):
     """Собирает граф совместной встречаемости викилинков."""
-    # Шаг 1: собираем викилинки по файлам
     число_упоминаний_узлов = defaultdict(int)
     викилинки_по_файлу = {}
 
@@ -52,59 +51,54 @@ def сканировать_граф(минимальный_вес=5, лимит_
             for wl in wls:
                 число_упоминаний_узлов[wl] += 1
 
-    # Шаг 2: при необходимости режем до лимита-N узлов
     if лимит_узлов:
         ведущие_узлы = set(
-            name for name, _ in sorted(число_упоминаний_узлов.items(), key=lambda x: -x[1])[:лимит_узлов]
+            имя for имя, _ in sorted(число_упоминаний_узлов.items(), key=lambda x: -x[1])[:лимит_узлов]
         )
     else:
-        # Иначе оставляем хотя бы сущности, встречающиеся минимум в 2 файлах
-        ведущие_узлы = set(name for name, count in число_упоминаний_узлов.items() if count >= 2)
+        ведущие_узлы = set(имя for имя, count in число_упоминаний_узлов.items() if count >= 2)
 
-    # Шаг 3: считаем совместные появления
     рёбра = defaultdict(int)
-    for ticker, wls in викилинки_по_файлу.items():
+    for тикер, wls in викилинки_по_файлу.items():
         filtered = sorted(wls & ведущие_узлы)
         for i in range(len(filtered)):
             for j in range(i + 1, len(filtered)):
                 рёбра[(filtered[i], filtered[j])] += 1
 
-    # Шаг 4: фильтруем рёбра по весу
     отфильтрованные_рёбра = {k: v for k, v in рёбра.items() if v >= минимальный_вес}
 
-    # Шаг 5: оставляем только узлы хотя бы с одной связью
     активные_узлы = set()
     for (a, b) in отфильтрованные_рёбра:
         активные_узлы.add(a)
         активные_узлы.add(b)
 
-    nodes = []
-    for name in активные_узлы:
-        cat = классифицировать_викилинк(name)
-        nodes.append({
-            "имя": name,
-            "упоминания": число_упоминаний_узлов[name],
+    узлы = []
+    for имя in активные_узлы:
+        cat = классифицировать_викилинк(имя)
+        узлы.append({
+            "имя": имя,
+            "упоминания": число_упоминаний_узлов[имя],
             "категория": cat,
             "метка_категории": МЕТКИ_КАТЕГОРИЙ[cat],
             "цвет": ЦВЕТА_КАТЕГОРИЙ[cat],
         })
 
     список_рёбер = []
-    for (source, target), weight in отфильтрованные_рёбра.items():
+    for (источник, цель), вес in отфильтрованные_рёбра.items():
         список_рёбер.append({
-            "источник": source,
-            "цель": target,
-            "вес": weight,
+            "источник": источник,
+            "цель": цель,
+            "вес": вес,
         })
 
-    return nodes, список_рёбер
+    return узлы, список_рёбер
 
 
 def построить_html(узлы, связи):
     """Генерирует автономную HTML-визуализацию на D3.js."""
-    graph_json = json.dumps({"узлы": узлы, "связи": связи}, ensure_ascii=False)
+    json_графа = json.dumps({"узлы": узлы, "связи": связи}, ensure_ascii=False)
 
-    legend_items = "".join(
+    элементы_легенды = "".join(
         f'<div style="display:flex;align-items:center;margin:4px 12px">'
         f'<div style="width:14px;height:14px;border-radius:50%;background:{color};margin-right:6px"></div>'
         f'<span style="font-size:13px">{label}</span></div>'
@@ -140,14 +134,14 @@ def построить_html(узлы, связи):
   <label>Поиск:</label>
   <input type="text" id="search" placeholder="например, Газпром, Сбер, Яндекс">
 </div>
-<div id="legend">{legend_items}</div>
+<div id="legend">{элементы_легенды}</div>
 <div id="tooltip"></div>
 <div id="stats"></div>
 <svg></svg>
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
-const fullData = {graph_json};
+const fullData = {json_графа};
 
 // Сопоставление русских ключей JSON во внутренние английские для D3.js
 fullData.узлы.forEach(n => {{
@@ -281,18 +275,16 @@ def main():
     os.makedirs(ДИРЕКТОРИЯ_СЕТИ, exist_ok=True)
 
     print(f"Сканирую совместную встречаемость викилинков (мин. вес: {минимальный_вес})...")
-    nodes, edges = сканировать_граф(минимальный_вес=минимальный_вес, лимит_узлов=лимит_узлов)
-    print(f"Граф: узлов {len(nodes)}, связей {len(edges)}")
+    узлы, рёбра = сканировать_граф(минимальный_вес=минимальный_вес, лимит_узлов=лимит_узлов)
+    print(f"Граф: узлов {len(узлы)}, связей {len(рёбра)}")
 
-    # Сохраняем JSON
-    данные_графа = {"узлы": nodes, "связи": edges}
+    данные_графа = {"узлы": узлы, "связи": рёбра}
     json_path = os.path.join(ДИРЕКТОРИЯ_СЕТИ, "graph_data.json")
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(данные_графа, f, ensure_ascii=False, indent=2)
     print(f"Сохранён файл: {json_path}")
 
-    # Генерируем HTML
-    html = построить_html(nodes, edges)
+    html = построить_html(узлы, рёбра)
     html_path = os.path.join(ДИРЕКТОРИЯ_СЕТИ, "index.html")
     with open(html_path, "w", encoding="utf-8") as f:
         f.write(html)
