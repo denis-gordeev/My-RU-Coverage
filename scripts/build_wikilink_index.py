@@ -15,28 +15,28 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import (
-    extract_wikilinks, classify_wikilink,
+    извлечь_викилинки, классифицировать_викилинк,
 )
 
 ДИРЕКТОРИЯ_ОТЧЁТОВ = os.path.join(os.path.dirname(__file__), "..", "Pilot_Reports")
 ФАЙЛ_ВЫВОДА = os.path.join(os.path.dirname(__file__), "..", "WIKILINKS.md")
 
 
-def collect_wikilinks():
+def собрать_викилинки():
     """Возвращает словарь `{wikilink: число_упоминаний}` по всем отчётам."""
-    wikilinks = {}
+    викилинки = {}
     for root, dirs, files in os.walk(ДИРЕКТОРИЯ_ОТЧЁТОВ):
         for f in files:
             if not f.endswith(".md"):
                 continue
             with open(os.path.join(root, f), "r", encoding="utf-8") as fh:
                 content = fh.read()
-            for wl in extract_wikilinks(content):
-                wikilinks[wl] = wikilinks.get(wl, 0) + 1
-    return wikilinks
+            for wl in извлечь_викилинки(content):
+                викилинки[wl] = викилинки.get(wl, 0) + 1
+    return викилинки
 
 
-def categorize(wikilinks):
+def категоризировать(викилинки):
     """Разбивает викилинки по смысловым категориям."""
     технологии = {}
     материалы = {}
@@ -44,8 +44,8 @@ def categorize(wikilinks):
     компании_российские = {}
     компании_иностранные = {}
 
-    for name, count in wikilinks.items():
-        cat = classify_wikilink(name)
+    for name, count in викилинки.items():
+        cat = классифицировать_викилинк(name)
         if cat == "технология":
             технологии[name] = count
         elif cat == "материал":
@@ -61,18 +61,18 @@ def categorize(wikilinks):
     return технологии, материалы, применения, компании_иностранные, компании_российские
 
 
-def build_section(title, items, limit=None):
+def построить_секцию(заголовок, элементы, лимит=None):
     """Строит markdown-раздел из словаря `{имя: счётчик}`."""
     lines = []
-    sorted_items = sorted(items.items(), key=lambda x: -x[1])
-    if limit:
-        shown = sorted_items[:limit]
-        total_label = f" ({len(items)} всего, показаны первые {limit})"
+    sorted_items = sorted(элементы.items(), key=lambda x: -x[1])
+    if лимит:
+        shown = sorted_items[:лимит]
+        total_label = f" ({len(элементы)} всего, показаны первые {лимит})"
     else:
         shown = sorted_items
-        total_label = f" ({len(items)})"
+        total_label = f" ({len(элементы)})"
 
-    lines.append(f"## {title}{total_label}")
+    lines.append(f"## {заголовок}{total_label}")
     lines.append("")
     for name, count in shown:
         lines.append(f"- [[{name}]] ({count})")
@@ -84,29 +84,29 @@ def main():
     if sys.platform == "win32":
         sys.stdout.reconfigure(encoding="utf-8")
 
-    wikilinks = collect_wikilinks()
-    тех, мат, прим, ин, лок = categorize(wikilinks)
+    викилинки = собрать_викилинки()
+    тех, мат, прим, ин, лок = категоризировать(викилинки)
 
     lines = [
         "# Индекс викилинков",
         "",
-        f"> **{len(wikilinks)} уникальных викилинков** по всем отчётам. Файл генерируется автоматически.",
+        f"> **{len(викилинки)} уникальных викилинков** по всем отчётам. Файл генерируется автоматически.",
         f"> Пересобрать: `python scripts/build_wikilink_index.py`",
         "",
         "---",
         "",
     ]
 
-    lines.extend(build_section("Технологии и стандарты", тех))
-    lines.extend(build_section("Материалы и сырьё", мат))
-    lines.extend(build_section("Конечные рынки и применения", прим))
-    lines.extend(build_section("Иностранные компании", ин, limit=200))
-    lines.extend(build_section("Российские компании", лок, limit=300))
+    lines.extend(построить_секцию("Технологии и стандарты", тех))
+    lines.extend(построить_секцию("Материалы и сырьё", мат))
+    lines.extend(построить_секцию("Конечные рынки и применения", прим))
+    lines.extend(построить_секцию("Иностранные компании", ин, лимит=200))
+    lines.extend(построить_секцию("Российские компании", лок, лимит=300))
 
     with open(ФАЙЛ_ВЫВОДА, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
 
-    print(f"Сгенерирован WIKILINKS.md: {len(wikilinks)} уникальных викилинков")
+    print(f"Сгенерирован WIKILINKS.md: {len(викилинки)} уникальных викилинков")
     print(f"  Технологии: {len(тех)}")
     print(f"  Материалы: {len(мат)}")
     print(f"  Применения: {len(прим)}")

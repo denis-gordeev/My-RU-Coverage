@@ -30,7 +30,7 @@ import subprocess
 from collections import defaultdict
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from utils import ДИРЕКТОРИЯ_ОТЧЁТОВ, КОРЕНЬ_ПРОЕКТА, setup_stdout, ШАБЛОН_ТИКЕРА, РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ
+from utils import ДИРЕКТОРИЯ_ОТЧЁТОВ, КОРЕНЬ_ПРОЕКТА, настроить_вывод, ШАБЛОН_ТИКЕРА, РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ
 
 # Группы секторов для умной фильтрации (русские названия папок)
 СЕКТОРЫ_ТЕХНОЛОГИЙ = {
@@ -90,18 +90,18 @@ from utils import ДИРЕКТОРИЯ_ОТЧЁТОВ, КОРЕНЬ_ПРОЕКТ
 ]
 
 
-def detect_profile(buzzword):
+def определить_профиль(ключевое_слово):
     """Автоопределение профиля секторов по содержанию запроса."""
     for kw in КЛЮЧЕВЫЕ_СЛОВА_ТЕХ:
-        if kw in buzzword:
+        if kw in ключевое_слово:
             return "технологический"
     for kw in КЛЮЧЕВЫЕ_СЛОВА_ЭНЕРГЕТИКИ:
-        if kw in buzzword:
+        if kw in ключевое_слово:
             return "энергетический"
     return "все"
 
 
-def search_reports(buzzword, sectors_filter=None):
+def искать_в_отчётах(ключевое_слово, фильтр_секторов=None):
     """Ищет упоминания темы по карточкам эмитентов."""
     results = []
 
@@ -111,7 +111,7 @@ def search_reports(buzzword, sectors_filter=None):
             continue
 
         # Ограничение по списку секторов
-        if sectors_filter and sector_dir not in sectors_filter:
+        if фильтр_секторов and sector_dir not in фильтр_секторов:
             continue
 
         for f in sorted(os.listdir(sector_path)):
@@ -131,10 +131,10 @@ def search_reports(buzzword, sectors_filter=None):
             text = financial_split[0]
 
             # Уже проставленные [[викилинки]]
-            linked_count = len(re.findall(r"\[\[" + re.escape(buzzword) + r"\]\]", text))
+            linked_count = len(re.findall(r"\[\[" + re.escape(ключевое_слово) + r"\]\]", text))
 
             # Обычные упоминания вне [[ ]]
-            bare_pattern = r"(?<!\[\[)" + re.escape(buzzword) + r"(?!\]\])"
+            bare_pattern = r"(?<!\[\[)" + re.escape(ключевое_слово) + r"(?!\]\])"
             bare_matches = list(re.finditer(bare_pattern, text))
             bare_count = len(bare_matches)
 
@@ -157,7 +157,7 @@ def search_reports(buzzword, sectors_filter=None):
                     section_match = re.search(
                         rf"{section_name}\n(.*?)(?=\n## |\Z)", text, re.DOTALL
                     )
-                    if section_match and buzzword in section_match.group(1):
+                    if section_match and ключевое_слово in section_match.group(1):
                         role = role_name
                         break
 
@@ -175,7 +175,7 @@ def search_reports(buzzword, sectors_filter=None):
     return results
 
 
-def apply_wikilinks(results, buzzword):
+def применить_викилинки(results, ключевое_слово):
     """Добавляет [[викилинки]] там, где термин найден без разметки."""
     applied = 0
     for r in results:
@@ -195,10 +195,10 @@ def apply_wikilinks(results, buzzword):
         # Не даём задвоить существующие [[викилинки]]
         pattern = (
             r"(?<!\[\[)"
-            + re.escape(buzzword)
+            + re.escape(ключевое_слово)
             + r"(?!\]\])(?![A-Za-z\u0400-\u04FF])"
         )
-        new_text, count = re.subn(pattern, f"[[{buzzword}]]", text)
+        new_text, count = re.subn(pattern, f"[[{ключевое_слово}]]", text)
 
         if count > 0:
             content = new_text + financial_part
@@ -209,19 +209,19 @@ def apply_wikilinks(results, buzzword):
     return applied
 
 
-def print_report(results, buzzword):
+def вывести_отчёт(results, ключевое_слово):
     """Печатает сводку по найденным совпадениям."""
     if not results:
-        print(f"\nНе найдено компаний, где упоминается «{buzzword}».")
+        print(f"\nНе найдено компаний, где упоминается «{ключевое_слово}».")
         return
 
     # Группировка по типу связи
-    by_role = defaultdict(list)
+    по_роли = defaultdict(list)
     for r in results:
-        by_role[r["роль"]].append(r)
+        по_роли[r["роль"]].append(r)
 
     print(f"\n{'=' * 60}")
-    print(f"Компании, связанные с темой «{buzzword}»: {len(results)}")
+    print(f"Компании, связанные с темой «{ключевое_слово}»: {len(results)}")
     print(f"{'=' * 60}")
 
     role_labels = {
@@ -232,7 +232,7 @@ def print_report(results, buzzword):
     }
 
     for role, label in role_labels.items():
-        entries = by_role.get(role, [])
+        entries = по_роли.get(role, [])
         if not entries:
             continue
         print(f"\n### {label} ({len(entries)})")
@@ -245,7 +245,7 @@ def print_report(results, buzzword):
 
 
 def main():
-    setup_stdout()
+    настроить_вывод()
 
     if len(sys.argv) < 2:
         print("Использование:")
@@ -256,50 +256,50 @@ def main():
         print('  python scripts/discover.py "СПГ" --применить --пересобрать  # + пересобрать темы/граф')
         sys.exit(1)
 
-    buzzword = sys.argv[1]
+    ключевое_слово = sys.argv[1]
     args = sys.argv[2:]
 
     # Разбор флагов
-    do_apply = "--применить" in args
-    do_rebuild = "--пересобрать" in args
+    применять = "--применить" in args
+    пересобирать = "--пересобрать" in args
     smart = "--умный" in args
 
-    sectors_filter = None
+    фильтр_секторов = None
     if "--сектор" in args:
         idx = args.index("--сектор")
         if idx + 1 < len(args):
-            sectors_filter = {args[idx + 1]}
+            фильтр_секторов = {args[idx + 1]}
     elif "--секторы" in args:
         idx = args.index("--секторы")
         if idx + 1 < len(args):
-            sectors_filter = set(s.strip() for s in args[idx + 1].split(","))
+            фильтр_секторов = set(s.strip() for s in args[idx + 1].split(","))
     elif smart:
-        profile = detect_profile(buzzword)
-        sectors_filter = УМНЫЕ_ПРОФИЛИ[profile]
-        if sectors_filter:
+        profile = определить_профиль(ключевое_слово)
+        фильтр_секторов = УМНЫЕ_ПРОФИЛИ[profile]
+        if фильтр_секторов:
             print(
-                f"Умный режим: профиль '{МЕТКИ_ПРОФИЛЕЙ.get(profile, profile)}', поиск по {len(sectors_filter)} секторам"
+                f"Умный режим: профиль '{МЕТКИ_ПРОФИЛЕЙ.get(profile, profile)}', поиск по {len(фильтр_секторов)} секторам"
             )
             print("  Внимание: возможны пропуски межсекторальных совпадений. Для полного охвата запускайте без --умный.")
 
     # Поиск
-    print(f"Ищу «{buzzword}»...")
-    results = search_reports(buzzword, sectors_filter)
+    print(f"Ищу «{ключевое_слово}»...")
+    results = искать_в_отчётах(ключевое_слово, фильтр_секторов)
 
     # Отчёт
-    print_report(results, buzzword)
+    вывести_отчёт(results, ключевое_слово)
 
     # Применение [[викилинки]]
-    if do_apply and results:
+    if применять and results:
         bare_count = sum(r["без_викилинка"] for r in results)
         if bare_count > 0:
-            applied = apply_wikilinks(results, buzzword)
-            print(f"\nДобавлено {applied} вхождений [[{buzzword}]].")
+            applied = применить_викилинки(results, ключевое_слово)
+            print(f"\nДобавлено {applied} вхождений [[{ключевое_слово}]].")
         else:
-            print(f"\nВсе упоминания уже размечены как [[{buzzword}]].")
+            print(f"\nВсе упоминания уже размечены как [[{ключевое_слово}]].")
 
     # Пересборка производных артефактов
-    if do_rebuild:
+    if пересобирать:
         print("\nПересобираю тематические страницы...")
         subprocess.run(
             [sys.executable, os.path.join(КОРЕНЬ_ПРОЕКТА, "scripts", "build_themes.py")],
@@ -319,7 +319,7 @@ def main():
     # Итог
     linked = sum(1 for r in results if r["с_викилинком"] > 0)
     unlinked = sum(1 for r in results if r["без_викилинка"] > 0 and r["с_викилинком"] == 0)
-    print(f"\nИтог: {len(results)} компаний упоминают «{buzzword}»")
+    print(f"\nИтог: {len(results)} компаний упоминают «{ключевое_слово}»")
     print(f"  Уже размечено: {linked} | Только голые упоминания: {unlinked}")
 
 

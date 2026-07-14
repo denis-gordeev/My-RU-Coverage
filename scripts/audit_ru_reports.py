@@ -11,9 +11,9 @@ from pathlib import Path
 }
 РЕГЕКС_ИЕРОГЛИФОВ = re.compile(r"[\u4e00-\u9fff]")
 
-def check_file(filepath):
+def проверить_файл(filepath):
     """Вернуть список замечаний по одному отчёту."""
-    issues = []
+    замечания = []
     content = filepath.read_text(encoding="utf-8")
 
     # 1. Ищем слишком общие викилинк-сущности.
@@ -57,7 +57,7 @@ def check_file(filepath):
                 общие_викилинки.append(wl)
                 break
     if общие_викилинки:
-        issues.append(f"Слишком общие викилинк-сущности: {', '.join(общие_викилинки)}")
+        замечания.append(f"Слишком общие викилинк-сущности: {', '.join(общие_викилинки)}")
 
     # 2. Проверяем размер секции про клиентов и поставщиков.
     client_match = re.search(r"## Ключевые клиенты? и поставщики?", content)
@@ -68,7 +68,7 @@ def check_file(filepath):
             section = section[:next_section.start()]
         lines = [line for line in section.strip().split("\n") if line.strip()]
         if len(lines) < 4:
-            issues.append(f"Слишком короткий блок клиентов/поставщиков: {len(lines)} строк")
+            замечания.append(f"Слишком короткий блок клиентов/поставщиков: {len(lines)} строк")
 
     # 3. Проверяем обязательные разделы.
     required = [
@@ -79,54 +79,54 @@ def check_file(filepath):
     ]
     for sec in required:
         if sec not in content:
-            issues.append(f"Отсутствует обязательный раздел: {sec}")
+            замечания.append(f"Отсутствует обязательный раздел: {sec}")
 
     # 4. Проверяем минимальное число викилинков.
     if len(wikilinks) < 10:
-        issues.append(f"Недостаточно викилинков: {len(wikilinks)} (нужно >= 10)")
+        замечания.append(f"Недостаточно викилинков: {len(wikilinks)} (нужно >= 10)")
 
     # 5. Ловим остаточные устаревшие темы и китайские сущности в российском корпусе.
-    legacy_hits = []
+    устаревшие_совпадения = []
     for wl in wikilinks:
         base = wl.split("|")[0].strip()
         if base in УСТАРЕВШИЕ_ТЕМАТИЧЕСКИЕ_МЕТКИ or РЕГЕКС_ИЕРОГЛИФОВ.search(base):
-            legacy_hits.append(base)
-    if legacy_hits:
-        issues.append(
+            устаревшие_совпадения.append(base)
+    if устаревшие_совпадения:
+        замечания.append(
             "Обнаружены устаревшие сущности вне российского контура: "
-            + ", ".join(sorted(set(legacy_hits)))
+            + ", ".join(sorted(set(устаревшие_совпадения)))
         )
 
-    return issues
+    return замечания
 
 
 def main():
-    all_issues = {}
+    все_замечания = {}
     total = 0
     for subdir in sorted(ДИРЕКТОРИЯ_ОТЧЁТОВ.iterdir()):
         if not subdir.is_dir():
             continue
         for md_file in sorted(subdir.glob("*.md")):
             total += 1
-            issues = check_file(md_file)
-            if issues:
+            замечания = проверить_файл(md_file)
+            if замечания:
                 key = f"{subdir.name}/{md_file.name}"
-                all_issues[key] = issues
+                все_замечания[key] = замечания
 
     print("=" * 60)
     print(f"Проверено российских отчётов: {total}")
-    print(f"Отчётов с замечаниями: {len(all_issues)}/{total}")
+    print(f"Отчётов с замечаниями: {len(все_замечания)}/{total}")
     print("=" * 60)
 
-    if all_issues:
+    if все_замечания:
         print()
-        for key, issues in sorted(all_issues.items()):
+        for key, замечания in sorted(все_замечания.items()):
             print(f"  [{key}]")
-            for issue in issues:
+            for issue in замечания:
                 print(f"    - {issue}")
             print()
 
-    if all_issues:
+    if все_замечания:
         sys.exit(1)
 
     print("Все отчёты проходят проверку качества.")

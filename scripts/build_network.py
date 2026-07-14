@@ -20,20 +20,20 @@ from collections import defaultdict
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import (
-    ДИРЕКТОРИЯ_ОТЧЁТОВ, setup_stdout,
-    classify_wikilink, ЦВЕТА_КАТЕГОРИЙ, МЕТКИ_КАТЕГОРИЙ, ШАБЛОН_ТИКЕРА,
-    split_before_financial_section, extract_wikilinks,
+    ДИРЕКТОРИЯ_ОТЧЁТОВ, настроить_вывод,
+    классифицировать_викилинк, ЦВЕТА_КАТЕГОРИЙ, МЕТКИ_КАТЕГОРИЙ, ШАБЛОН_ТИКЕРА,
+    разделить_перед_финансами, извлечь_викилинки,
 )
 
 КОРЕНЬ_ПРОЕКТА = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ДИРЕКТОРИЯ_СЕТИ = os.path.join(КОРЕНЬ_ПРОЕКТА, "network")
 
 
-def scan_graph(min_weight=5, лимит_узлов=None):
+def сканировать_граф(минимальный_вес=5, лимит_узлов=None):
     """Собирает граф совместной встречаемости викилинков."""
     # Шаг 1: собираем викилинки по файлам
-    node_counts = defaultdict(int)
-    wl_per_file = {}
+    число_упоминаний_узлов = defaultdict(int)
+    викилинки_по_файлу = {}
 
     for root, dirs, files in os.walk(ДИРЕКТОРИЯ_ОТЧЁТОВ):
         for f in files:
@@ -44,65 +44,65 @@ def scan_graph(min_weight=5, лимит_узлов=None):
                 continue
             with open(os.path.join(root, f), "r", encoding="utf-8") as fh:
                 content = fh.read()
-            split_parts = split_before_financial_section(content)
+            split_parts = разделить_перед_финансами(content)
             if split_parts:
                 content = split_parts[0]
-            wls = set(extract_wikilinks(content))
-            wl_per_file[m.group(1)] = wls
+            wls = set(извлечь_викилинки(content))
+            викилинки_по_файлу[m.group(1)] = wls
             for wl in wls:
-                node_counts[wl] += 1
+                число_упоминаний_узлов[wl] += 1
 
     # Шаг 2: при необходимости режем до лимита-N узлов
     if лимит_узлов:
         ведущие_узлы = set(
-            name for name, _ in sorted(node_counts.items(), key=lambda x: -x[1])[:лимит_узлов]
+            name for name, _ in sorted(число_упоминаний_узлов.items(), key=lambda x: -x[1])[:лимит_узлов]
         )
     else:
         # Иначе оставляем хотя бы сущности, встречающиеся минимум в 2 файлах
-        ведущие_узлы = set(name for name, count in node_counts.items() if count >= 2)
+        ведущие_узлы = set(name for name, count in число_упоминаний_узлов.items() if count >= 2)
 
     # Шаг 3: считаем совместные появления
-    edges = defaultdict(int)
-    for ticker, wls in wl_per_file.items():
+    рёбра = defaultdict(int)
+    for ticker, wls in викилинки_по_файлу.items():
         filtered = sorted(wls & ведущие_узлы)
         for i in range(len(filtered)):
             for j in range(i + 1, len(filtered)):
-                edges[(filtered[i], filtered[j])] += 1
+                рёбра[(filtered[i], filtered[j])] += 1
 
     # Шаг 4: фильтруем рёбра по весу
-    filtered_edges = {k: v for k, v in edges.items() if v >= min_weight}
+    отфильтрованные_рёбра = {k: v for k, v in рёбра.items() if v >= минимальный_вес}
 
     # Шаг 5: оставляем только узлы хотя бы с одной связью
-    active_nodes = set()
-    for (a, b) in filtered_edges:
-        active_nodes.add(a)
-        active_nodes.add(b)
+    активные_узлы = set()
+    for (a, b) in отфильтрованные_рёбра:
+        активные_узлы.add(a)
+        активные_узлы.add(b)
 
     nodes = []
-    for name in active_nodes:
-        cat = classify_wikilink(name)
+    for name in активные_узлы:
+        cat = классифицировать_викилинк(name)
         nodes.append({
             "имя": name,
-            "упоминания": node_counts[name],
+            "упоминания": число_упоминаний_узлов[name],
             "категория": cat,
             "метка_категории": МЕТКИ_КАТЕГОРИЙ[cat],
             "цвет": ЦВЕТА_КАТЕГОРИЙ[cat],
         })
 
-    edge_list = []
-    for (source, target), weight in filtered_edges.items():
-        edge_list.append({
+    список_рёбер = []
+    for (source, target), weight in отфильтрованные_рёбра.items():
+        список_рёбер.append({
             "источник": source,
             "цель": target,
             "вес": weight,
         })
 
-    return nodes, edge_list
+    return nodes, список_рёбер
 
 
-def build_html(nodes, edges):
+def построить_html(узлы, связи):
     """Генерирует автономную HTML-визуализацию на D3.js."""
-    graph_json = json.dumps({"узлы": nodes, "связи": edges}, ensure_ascii=False)
+    graph_json = json.dumps({"узлы": узлы, "связи": связи}, ensure_ascii=False)
 
     legend_items = "".join(
         f'<div style="display:flex;align-items:center;margin:4px 12px">'
@@ -266,33 +266,33 @@ render(5);
 
 
 def main():
-    setup_stdout()
+    настроить_вывод()
 
     args = sys.argv[1:]
-    min_weight = 2
+    минимальный_вес = 2
     лимит_узлов = None
 
     for i, arg in enumerate(args):
         if arg == "--мин-вес" and i + 1 < len(args):
-            min_weight = int(args[i + 1])
+            минимальный_вес = int(args[i + 1])
         elif arg == "--лимит" and i + 1 < len(args):
             лимит_узлов = int(args[i + 1])
 
     os.makedirs(ДИРЕКТОРИЯ_СЕТИ, exist_ok=True)
 
-    print(f"Сканирую совместную встречаемость викилинков (мин. вес: {min_weight})...")
-    nodes, edges = scan_graph(min_weight=min_weight, лимит_узлов=лимит_узлов)
+    print(f"Сканирую совместную встречаемость викилинков (мин. вес: {минимальный_вес})...")
+    nodes, edges = сканировать_граф(минимальный_вес=минимальный_вес, лимит_узлов=лимит_узлов)
     print(f"Граф: узлов {len(nodes)}, связей {len(edges)}")
 
     # Сохраняем JSON
-    graph_data = {"узлы": nodes, "связи": edges}
+    данные_графа = {"узлы": nodes, "связи": edges}
     json_path = os.path.join(ДИРЕКТОРИЯ_СЕТИ, "graph_data.json")
     with open(json_path, "w", encoding="utf-8") as f:
-        json.dump(graph_data, f, ensure_ascii=False, indent=2)
+        json.dump(данные_графа, f, ensure_ascii=False, indent=2)
     print(f"Сохранён файл: {json_path}")
 
     # Генерируем HTML
-    html = build_html(nodes, edges)
+    html = построить_html(nodes, edges)
     html_path = os.path.join(ДИРЕКТОРИЯ_СЕТИ, "index.html")
     with open(html_path, "w", encoding="utf-8") as f:
         f.write(html)

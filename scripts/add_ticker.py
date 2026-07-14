@@ -20,7 +20,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import (
-    find_ticker_files, ДИРЕКТОРИЯ_ОТЧЁТОВ, КОРЕНЬ_ПРОЕКТА,
+    найти_файлы_тикеров, ДИРЕКТОРИЯ_ОТЧЁТОВ, КОРЕНЬ_ПРОЕКТА,
     ЗАГОЛОВОК_СЕКЦИИ_ОПИСАНИЯ, ЗАГОЛОВОК_СЕКЦИИ_ЦЕПОЧКИ, ЗАГОЛОВОК_СЕКЦИИ_КЛИЕНТОВ,
     ЗАГОЛОВОК_СЕКЦИИ_ФИНАНСОВ, ЗАГОЛОВОК_СЕКЦИИ_ГОДОВЫХ, ЗАГОЛОВОК_СЕКЦИИ_КВАРТАЛЬНЫХ,
 )
@@ -29,7 +29,7 @@ from utils import (
 from update_financials import fetch_financials, build_financial_section
 
 
-def generate_report(ticker, name, sector=None, industry=None):
+def сгенерировать_отчёт(ticker, name, sector=None, industry=None):
     """Генерирует полный файл отчёта для нового тикера."""
     fin_data = fetch_financials(ticker)
 
@@ -77,7 +77,7 @@ def generate_report(ticker, name, sector=None, industry=None):
     return content, sector
 
 
-def sanitize_folder_name(name):
+def очистить_имя_папки(name):
     """Очищает название сектора для использования в имени папки."""
     # Заменяем символы, проблемные для путей Windows
     return re.sub(r'[<>:"/\\|?*]', "", name).strip()
@@ -105,17 +105,17 @@ def main():
         sector = " ".join(args[idx + 1 :])
 
     # Проверяем, не существует ли уже тикер
-    existing = find_ticker_files([ticker])
-    if existing:
-        print(f"Тикер {ticker} уже существует: {existing[ticker]}")
+    существующие = найти_файлы_тикеров([ticker])
+    if существующие:
+        print(f"Тикер {ticker} уже существует: {существующие[ticker]}")
         print("Для обновления используйте update_financials.py или update_enrichment.py.")
         return
 
     print(f"Создаю карточку для {ticker} ({name})...")
-    content, detected_sector = generate_report(ticker, name, sector)
+    content, detected_sector = сгенерировать_отчёт(ticker, name, sector)
 
     # Определяем папку вывода
-    folder_name = sanitize_folder_name(sector or detected_sector)
+    folder_name = очистить_имя_папки(sector or detected_sector)
     output_dir = os.path.join(ДИРЕКТОРИЯ_ОТЧЁТОВ, folder_name)
     os.makedirs(output_dir, exist_ok=True)
 

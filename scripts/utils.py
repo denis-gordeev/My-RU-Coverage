@@ -139,14 +139,14 @@ from datetime import date, datetime
 }
 
 
-def translate_sector(sector: str) -> str:
+def перевести_сектор(sector: str) -> str:
     """Переводит название сектора на русский, если есть в списке соответствий."""
     if not sector:
         return sector
     return ПЕРЕВОД_СЕКТОРОВ.get(sector, sector)
 
 
-def translate_industry(industry: str) -> str:
+def перевести_отрасль(industry: str) -> str:
     """Переводит название отрасли на русский, если есть в списке соответствий."""
     if not industry:
         return industry
@@ -182,11 +182,11 @@ def translate_industry(industry: str) -> str:
 # Поиск файлов
 # =============================================================================
 
-def find_ticker_files(tickers=None, sector=None):
+def найти_файлы_тикеров(тикеры=None, сектор=None):
     """Находит файлы отчётов по заданным тикерам или сектору.
     Возвращает dict: {тикер: путь_к_файлу}
     """
-    files = {}
+    результат = {}
     for fp in glob.glob(os.path.join(ДИРЕКТОРИЯ_ОТЧЁТОВ, "**", "*.md"), recursive=True):
         fn = os.path.basename(fp)
         m = re.match(rf"^({ШАБЛОН_ТИКЕРА})_", fn, re.IGNORECASE)
@@ -194,20 +194,20 @@ def find_ticker_files(tickers=None, sector=None):
             continue
         t = m.group(1)
 
-        if sector:
-            folder = os.path.basename(os.path.dirname(fp))
-            if folder.lower() != sector.lower():
+        if сектор:
+            папка = os.path.basename(os.path.dirname(fp))
+            if папка.lower() != сектор.lower():
                 continue
 
-        if tickers is None or t in tickers:
-            files[t] = fp
+        if тикеры is None or t in тикеры:
+            результат[t] = fp
 
-    return files
+    return результат
 
 
-def get_ticker_from_filename(filepath):
+def получить_тикер_из_имени_файла(путь):
     """Извлекает тикер и название компании из имени файла отчёта."""
-    fn = os.path.basename(filepath)
+    fn = os.path.basename(путь)
     m = re.match(rf"^({ШАБЛОН_ТИКЕРА})_(.+)\.md$", fn, re.IGNORECASE)
     if m:
         return m.group(1), m.group(2)
@@ -218,26 +218,26 @@ def get_ticker_from_filename(filepath):
 # Разбор области действия
 # =============================================================================
 
-def parse_scope_args(args):
+def разобрать_аргументы_области(аргументы):
     """Разбирает аргументы CLI в область действия: список тикеров, сектор или None (все).
     Возвращает (список_тикеров_или_None, сектор_или_None, строка_описания)
     """
-    if not args:
+    if not аргументы:
         return None, None, "все тикеры"
-    elif args[0] == "--сектор":
-        if len(args) < 2:
+    elif аргументы[0] == "--сектор":
+        if len(аргументы) < 2:
             print("Параметр --сектор требует название сектора")
             sys.exit(1)
-        sector = " ".join(args[1:])
-        return None, sector, f"все тикеры из сектора: {sector}"
+        сектор = " ".join(аргументы[1:])
+        return None, сектор, f"все тикеры из сектора: {сектор}"
     else:
-        tickers = [
-            t.strip() for t in args if re.match(rf"^{ШАБЛОН_ТИКЕРА}$", t.strip(), re.IGNORECASE)
+        тикеры = [
+            t.strip() for t in аргументы if re.match(rf"^{ШАБЛОН_ТИКЕРА}$", t.strip(), re.IGNORECASE)
         ]
-        return tickers, None, f"{len(tickers)} тикеров: {', '.join(tickers)}"
+        return тикеры, None, f"{len(тикеры)} тикеров: {', '.join(тикеры)}"
 
 
-def setup_stdout():
+def настроить_вывод():
     """Настраивает stdout для UTF-8 на Windows."""
     if sys.platform == "win32":
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -414,16 +414,16 @@ def setup_stdout():
 }
 
 
-def normalize_wikilinks(content):
+def нормализовать_викилинки(содержимое):
     """Нормализует все викилинки в содержимом к каноническим именам.
     Также схлопывает дубликаты с круглыми скобками вроде [[X]] ([[X]]).
     Работает только на тексте до секции финансов для защиты таблиц.
     """
-    split_parts = split_before_financial_section(content)
-    if split_parts is None:
-        return content
+    разделённые_части = разделить_перед_финансами(содержимое)
+    if разделённые_части is None:
+        return содержимое
 
-    text, financial_part = split_parts
+    text, финансовая_часть = разделённые_части
 
     # Шаг 1: Заменяем алиасы викилинков на канонические имена
     for alias, canonical in АЛИАСЫ_ВИКИЛИНКОВ.items():
@@ -436,15 +436,15 @@ def normalize_wikilinks(content):
         text,
     )
 
-    return text + financial_part
+    return text + финансовая_часть
 
 
-def extract_wikilinks(content):
+def извлечь_викилинки(содержимое):
     """Извлекает канонические цели викилинков, игнорируя опциональные алиасы."""
-    wikilinks = []
-    for raw in re.findall(r"\[\[([^\]]+)\]\]", content):
-        wikilinks.append(raw.split("|", 1)[0].strip())
-    return wikilinks
+    викилинки = []
+    for raw in re.findall(r"\[\[([^\]]+)\]\]", содержимое):
+        викилинки.append(raw.split("|", 1)[0].strip())
+    return викилинки
 
 
 # =============================================================================
@@ -516,13 +516,13 @@ def extract_wikilinks(content):
 }
 
 
-def is_cyrillic_name(s):
+def является_кириллическим_именем(строка):
     """Проверяет, записана ли строка преимущественно на кириллице."""
-    if not s:
+    if not строка:
         return False
 
-    cyrillic = sum(1 for c in s if "\u0400" <= c <= "\u04FF")
-    return cyrillic > len(s) * 0.3
+    cyrillic = sum(1 for c in строка if "\u0400" <= c <= "\u04FF")
+    return cyrillic > len(строка) * 0.3
 
 
 ТИКЕРЫ_РОССИЙСКИХ_КОМПАНИЙ = {
@@ -537,48 +537,48 @@ def is_cyrillic_name(s):
     "МТС Облако", "Ростелеком Центр обработки данных",
 }
 
-def classify_wikilink(name):
+def классифицировать_викилинк(имя):
     """Классифицирует викилинк по категории."""
-    lower = name.lower()
-    if lower in {t.lower() for t in ТЕХНОЛОГИЧЕСКИЕ_ТЕРМИНЫ} or name in ТЕХНОЛОГИЧЕСКИЕ_ТЕРМИНЫ:
+    нижний_регистр = имя.lower()
+    if нижний_регистр in {t.lower() for t in ТЕХНОЛОГИЧЕСКИЕ_ТЕРМИНЫ} or имя in ТЕХНОЛОГИЧЕСКИЕ_ТЕРМИНЫ:
         return "технология"
-    if lower in {t.lower() for t in ТЕРМИНЫ_МАТЕРИАЛОВ} or name in ТЕРМИНЫ_МАТЕРИАЛОВ:
+    if нижний_регистр in {t.lower() for t in ТЕРМИНЫ_МАТЕРИАЛОВ} or имя in ТЕРМИНЫ_МАТЕРИАЛОВ:
         return "материал"
-    if lower in {t.lower() for t in ТЕРМИНЫ_КОНЕЧНЫХ_РЫНКОВ} or name in ТЕРМИНЫ_КОНЕЧНЫХ_РЫНКОВ:
+    if нижний_регистр in {t.lower() for t in ТЕРМИНЫ_КОНЕЧНЫХ_РЫНКОВ} or имя in ТЕРМИНЫ_КОНЕЧНЫХ_РЫНКОВ:
         return "конечный_рынок"
-    if name in ТИКЕРЫ_РОССИЙСКИХ_КОМПАНИЙ:
+    if имя in ТИКЕРЫ_РОССИЙСКИХ_КОМПАНИЙ:
         return "российская_компания"
-    if name in НОРМАТИВНЫЕ_ТЕРМИНЫ:
+    if имя in НОРМАТИВНЫЕ_ТЕРМИНЫ:
         return "регулирование"
-    if name in ГЕОГРАФИЧЕСКИЕ_ТЕРМИНЫ:
+    if имя in ГЕОГРАФИЧЕСКИЕ_ТЕРМИНЫ:
         return "географический_объект"
-    if is_cyrillic_name(name):
+    if является_кириллическим_именем(имя):
         return "российская_компания"
     return "иностранная_компания"
 
 
-def get_market_profile(suffix=None):
+def получить_профиль_рынка(суффикс=None):
     """Возвращает настройки единиц измерения для суффикса тикера."""
-    return ПРОФИЛИ_РЫНКОВ.get(suffix, ПРОФИЛИ_РЫНКОВ[".ME"])
+    return ПРОФИЛИ_РЫНКОВ.get(суффикс, ПРОФИЛИ_РЫНКОВ[".ME"])
 
 
-def split_before_financial_section(content):
+def разделить_перед_финансами(содержимое):
     """Разделяет содержимое на текст до финансовой секции и саму финансовую секцию."""
-    match = re.search(РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["финансовый_обзор"], content)
-    if not match:
+    совпадение = re.search(РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["финансовый_обзор"], содержимое)
+    if not совпадение:
         return None
-    return content[: match.start()], content[match.start() :]
+    return содержимое[: совпадение.start()], содержимое[совпадение.start() :]
 
 
 # =============================================================================
 # Формирование таблиц оценки (общее для update_financials и update_valuation)
 # =============================================================================
 
-def fetch_valuation_data(info):
+def загрузить_данные_мультипликаторов(info):
     """Извлекает мультипликаторы оценки из словаря info yfinance.
     Возвращает dict с отображаемыми значениями и метаданными.
     """
-    valuation = {}
+    оценка = {}
     for key, label in [
         ("trailingPE", "P/E (за 12 мес.)"),
         ("forwardPE", "Прогнозный P/E"),
@@ -587,13 +587,13 @@ def fetch_valuation_data(info):
         ("enterpriseToEbitda", "EV/EBITDA"),
     ]:
         val = info.get(key)
-        valuation[label] = f"{val:.2f}" if val else "Н/Д"
+        оценка[label] = f"{val:.2f}" if val else "Н/Д"
 
     # Цена
-    cur_price = info.get("currentPrice")
-    valuation["_цена"] = f"{cur_price:,.2f}" if cur_price else None
+    текущая_цена = info.get("currentPrice")
+    оценка["_цена"] = f"{текущая_цена:,.2f}" if текущая_цена else None
     currency = (info.get("currency") or "").upper()
-    valuation["_символ_валюты"] = {
+    оценка["_символ_валюты"] = {
         "RUB": "₽",
         "USD": "$",
         "EUR": "€",
@@ -601,22 +601,22 @@ def fetch_valuation_data(info):
     }.get(currency, "₽")
 
     # Информация о периодах
-    mrq = info.get("mostRecentQuarter")
-    nfy = info.get("nextFiscalYearEnd")
-    valuation["_конец_скользящего_года"] = (
-        datetime.fromtimestamp(mrq).strftime("%Y-%m-%d") if mrq else None
+    последний_квартал = info.get("mostRecentQuarter")
+    следующий_фингод = info.get("nextFiscalYearEnd")
+    оценка["_конец_скользящего_года"] = (
+        datetime.fromtimestamp(последний_квартал).strftime("%Y-%m-%d") if последний_квартал else None
     )
-    valuation["_конец_прогноза"] = (
-        datetime.fromtimestamp(nfy).strftime("%Y-%m-%d") if nfy else None
+    оценка["_конец_прогноза"] = (
+        datetime.fromtimestamp(следующий_фингод).strftime("%Y-%m-%d") if следующий_фингод else None
     )
 
-    return valuation
+    return оценка
 
 
-def build_valuation_table(v):
+def построить_таблицу_мультипликаторов(оценка):
     """Строит раздел оценочных мультипликаторов в формате markdown из словаря v."""
     headers = ["P/E (за 12 мес.)", "Прогнозный P/E", "P/S (за 12 мес.)", "P/B", "EV/EBITDA"]
-    values = [v.get(h, "Н/Д") for h in headers]
+    values = [оценка.get(h, "Н/Д") for h in headers]
     widths = [max(len(h), len(val)) for h, val in zip(headers, values)]
     header_row = "| " + " | ".join(h.rjust(w) for h, w in zip(headers, widths)) + " |"
     sep_row = "|" + "|".join("-" * (w + 2) for w in widths) + "|"
@@ -624,12 +624,12 @@ def build_valuation_table(v):
 
     today = date.today().strftime("%Y-%m-%d")
     period_parts = []
-    if v.get("_цена"):
-        period_parts.append(f"Цена {v.get('_символ_валюты', '₽')}{v['_цена']} на {today}")
-    if v.get("_конец_скользящего_года"):
-        period_parts.append(f"за 12 мес. на {v['_конец_скользящего_года']}")
-    if v.get("_конец_прогноза"):
-        period_parts.append(f"Прогноз до {v['_конец_прогноза']}")
+    if оценка.get("_цена"):
+        period_parts.append(f"Цена {оценка.get('_символ_валюты', '₽')}{оценка['_цена']} на {today}")
+    if оценка.get("_конец_скользящего_года"):
+        period_parts.append(f"за 12 мес. на {оценка['_конец_скользящего_года']}")
+    if оценка.get("_конец_прогноза"):
+        period_parts.append(f"Прогноз до {оценка['_конец_прогноза']}")
     period_note = " | ".join(period_parts) if period_parts else ""
 
     title = (
@@ -641,50 +641,50 @@ def build_valuation_table(v):
     return title + header_row + "\n" + sep_row + "\n" + val_row + footnote
 
 
-def update_metadata(content, market_cap, enterprise_value, unit_label=МЕТКА_ЕДИНИЦЫ_ПО_УМОЛЧАНИЮ):
+def обновить_метаданные(содержимое, рыночная_кап, стоимость_предпр, метка_единицы=МЕТКА_ЕДИНИЦЫ_ПО_УМОЛЧАНИЮ):
     """Обновляет метаданные рыночной капитализации и стоимости предприятия в содержимом файла."""
-    market_cap_value = market_cap if market_cap not in (None, "", "None") else "Н/Д"
-    enterprise_value_value = enterprise_value if enterprise_value not in (None, "", "None") else "Н/Д"
+    значение_рыночной_кап = рыночная_кап if рыночная_кап not in (None, "", "None") else "Н/Д"
+    значение_стоимости_предпр = стоимость_предпр if стоимость_предпр not in (None, "", "None") else "Н/Д"
 
     for pattern in ШАБЛОНЫ_МЕТОК_МЕТАДАННЫХ["рыночная_капитализация"]:
-        content = re.sub(rf"({pattern}) .+", rf"\1 {market_cap_value} {unit_label}", content)
+        содержимое = re.sub(rf"({pattern}) .+", rf"\1 {значение_рыночной_кап} {метка_единицы}", содержимое)
     for pattern in ШАБЛОНЫ_МЕТОК_МЕТАДАННЫХ["стоимость_предприятия"]:
-        content = re.sub(rf"({pattern}) .+", rf"\1 {enterprise_value_value} {unit_label}", content)
-    return content
+        содержимое = re.sub(rf"({pattern}) .+", rf"\1 {значение_стоимости_предпр} {метка_единицы}", содержимое)
+    return содержимое
 
 
-def update_company_classification(content, sector=None, industry=None):
+def обновить_классификацию_компании(содержимое, сектор=None, отрасль=None):
     """Обновляет метаданные сектора и отрасли, когда доступны свежие значения.
     Автоматически переводит английские названия на русский.
     """
-    if sector and sector not in {"", "Н/Д", "Не определено"}:
-        sector = translate_sector(sector)
+    if сектор and сектор not in {"", "Н/Д", "Не определено"}:
+        сектор = перевести_сектор(сектор)
         for pattern in ШАБЛОНЫ_МЕТОК_МЕТАДАННЫХ["сектор"]:
-            content = re.sub(rf"({pattern}) .+", rf"\1 {sector}", content)
-    if industry and industry not in {"", "Н/Д", "Не определено"}:
-        industry = translate_industry(industry)
+            содержимое = re.sub(rf"({pattern}) .+", rf"\1 {сектор}", содержимое)
+    if отрасль and отрасль not in {"", "Н/Д", "Не определено"}:
+        отрасль = перевести_отрасль(отрасль)
         for pattern in ШАБЛОНЫ_МЕТОК_МЕТАДАННЫХ["отрасль"]:
-            content = re.sub(rf"({pattern}) .+", rf"\1 {industry}", content)
-    return content
+            содержимое = re.sub(rf"({pattern}) .+", rf"\1 {отрасль}", содержимое)
+    return содержимое
 
 
 # =============================================================================
 # Замена секций
 # =============================================================================
 
-def replace_section(content, section_header, new_body, next_section_header=None):
+def заменить_секцию(содержимое, заголовок_секции, новое_содержимое, следующий_заголовок=None):
     """Заменяет содержимое между section_header и next_section_header.
     Если next_section_header равен None, заменяет до конца файла.
     """
-    if next_section_header:
-        pattern = rf"({re.escape(section_header)}\n)(.*?)(?=\n{re.escape(next_section_header)})"
-        return re.sub(pattern, rf"\g<1>{new_body}\n", content, flags=re.DOTALL)
+    if следующий_заголовок:
+        pattern = rf"({re.escape(заголовок_секции)}\n)(.*?)(?=\n{re.escape(следующий_заголовок)})"
+        return re.sub(pattern, rf"\g<1>{новое_содержимое}\n", содержимое, flags=re.DOTALL)
     else:
-        pattern = rf"{re.escape(section_header)}.*"
-        return re.sub(pattern, f"{section_header}\n{new_body}\n", content, flags=re.DOTALL)
+        pattern = rf"{re.escape(заголовок_секции)}.*"
+        return re.sub(pattern, f"{заголовок_секции}\n{новое_содержимое}\n", содержимое, flags=re.DOTALL)
 
 
-def make_ru_parser(**kwargs):
+def создать_русский_парсер(**kwargs):
     """Создаёт ArgumentParser с русскоязычными заголовками секций помощи."""
     parser = argparse.ArgumentParser(**kwargs)
     for g in parser._action_groups:

@@ -22,7 +22,7 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from utils import find_ticker_files, setup_stdout, make_ru_parser
+from utils import найти_файлы_тикеров, настроить_вывод, создать_русский_парсер
 
 АДРЕС_ISS = "https://iss.moex.com/iss/statistics/engines/stock/markets/index/analytics/MOEXBC/constituents.json"
 КОДЫ_ИНДЕКСОВ_ПО_УМОЛЧАНИЮ = ["MOEXBC", "MOEXBMI"]
@@ -39,12 +39,12 @@ from utils import find_ticker_files, setup_stdout, make_ru_parser
 }
 
 
-def fetch_constituents(index_code, tradedate=None):
+def загрузить_состав(код_индекса, дата_торгов=None):
     params = {"iss.meta": "off"}
-    if tradedate:
-        params["date"] = tradedate
+    if дата_торгов:
+        params["date"] = дата_торгов
 
-    iss_url = АДРЕС_ISS.replace("/MOEXBC/", f"/{index_code}/")
+    iss_url = АДРЕС_ISS.replace("/MOEXBC/", f"/{код_индекса}/")
     url = f"{iss_url}?{urlencode(params)}"
     with urlopen(url, timeout=20) as response:
         payload = json.load(response)
@@ -58,7 +58,7 @@ def fetch_constituents(index_code, tradedate=None):
     return items
 
 
-def _translate_item(item):
+def _перевести_элемент(item):
     return {
         "тикер": item.get("ticker"),
         "название": item.get("shortnames"),
@@ -68,66 +68,66 @@ def _translate_item(item):
     }
 
 
-def build_index_report(index_code, items):
-    covered = set(find_ticker_files().keys())
-    missing = [item for item in items if item["ticker"] not in covered]
+def построить_отчёт_по_индексу(код_индекса, items):
+    покрытые = set(найти_файлы_тикеров().keys())
+    отсутствующие = [item for item in items if item["ticker"] not in покрытые]
     report = {
-        "код_индекса": index_code,
-        "название_индекса": МЕТКИ_ИНДЕКСОВ.get(index_code, index_code),
+        "код_индекса": код_индекса,
+        "название_индекса": МЕТКИ_ИНДЕКСОВ.get(код_индекса, код_индекса),
         "дата_торгов": items[0]["tradedate"] if items else None,
         "количество": len(items),
-        "покрыто": len(items) - len(missing),
-        "отсутствует": len(missing),
-        "состав": [_translate_item(i) for i in items],
-        "отсутствующие": [_translate_item(i) for i in missing],
+        "покрыто": len(items) - len(отсутствующие),
+        "отсутствует": len(отсутствующие),
+        "состав": [_перевести_элемент(i) for i in items],
+        "отсутствующие": [_перевести_элемент(i) for i in отсутствующие],
     }
     return report
 
 
-def build_report(index_codes, tradedate=None):
-    index_reports = []
-    aggregated_missing = {}
-    tradedates = []
+def построить_отчёт(коды_индексов, дата_торгов=None):
+    отчёты_по_индексам = []
+    агрегированные_отсутствующие = {}
+    даты_торгов = []
 
-    for index_code in index_codes:
-        items = fetch_constituents(index_code, tradedate)
-        index_report = build_index_report(index_code, items)
-        index_reports.append(index_report)
+    for код_индекса in коды_индексов:
+        items = загрузить_состав(код_индекса, дата_торгов)
+        index_report = построить_отчёт_по_индексу(код_индекса, items)
+        отчёты_по_индексам.append(index_report)
         if index_report["дата_торгов"]:
-            tradedates.append(index_report["дата_торгов"])
+            даты_торгов.append(index_report["дата_торгов"])
 
         for item in index_report["отсутствующие"]:
             ticker = item["тикер"]
-            existing = aggregated_missing.get(ticker)
+            existing = агрегированные_отсутствующие.get(ticker)
             if existing is None:
-                aggregated_missing[ticker] = {
+                агрегированные_отсутствующие[ticker] = {
                     "тикер": ticker,
                     "название": item["название"],
-                    "индексы": [index_code],
+                    "индексы": [код_индекса],
                     "лучший_ранг": item["ранг"],
                     "максимальный_вес": item["вес"],
                 }
                 continue
 
-            existing["индексы"].append(index_code)
+            existing["индексы"].append(код_индекса)
             existing["лучший_ранг"] = min(existing["лучший_ранг"], item["ранг"])
             existing["максимальный_вес"] = max(existing["максимальный_вес"], item["вес"])
 
     next_queue = sorted(
-        aggregated_missing.values(),
+        агрегированные_отсутствующие.values(),
         key=lambda item: (item["лучший_ранг"], -item["максимальный_вес"], item["тикер"]),
     )
 
     return {
-        "запрошенные_индексы": index_codes,
-        "дата_торгов": max(tradedates) if tradedates else None,
-        "отчёты": index_reports,
+        "запрошенные_индексы": коды_индексов,
+        "дата_торгов": max(даты_торгов) if даты_торгов else None,
+        "отчёты": отчёты_по_индексам,
         "следующая_очередь": next_queue,
     }
 
 
-def print_report(report):
-    for index_report in report["отчёты"]:
+def вывести_отчёт(отчёт):
+    for index_report in отчёт["отчёты"]:
         print(
             f"{index_report['код_индекса']} ({index_report['название_индекса']}) на "
             f"{index_report['дата_торгов']}: {index_report['количество']} бумаг | "
@@ -153,7 +153,7 @@ def print_report(report):
             print("Все текущие бумаги этого индекса уже покрыты российскими карточками.")
         print("")
 
-    if report["следующая_очередь"]:
+    if отчёт["следующая_очередь"]:
         print("Следующая агрегированная очередь покрытия:")
         for item in report["следующая_очередь"]:
             indices = ", ".join(item["индексы"])
@@ -166,8 +166,8 @@ def print_report(report):
 
 
 def main():
-    setup_stdout()
-    parser = make_ru_parser(
+    настроить_вывод()
+    parser = создать_русский_парсер(
         description=(
             "Проверить актуальный состав официальных корзин MOEX через MOEX ISS "
             "и собрать следующую очередь покрытия."
@@ -189,10 +189,10 @@ def main():
         help="Вывести результат в JSON",
     )
     args = parser.parse_args()
-    index_codes = args.indices or КОДЫ_ИНДЕКСОВ_ПО_УМОЛЧАНИЮ
+    коды_индексов = args.indices or КОДЫ_ИНДЕКСОВ_ПО_УМОЛЧАНИЮ
 
     try:
-        report = build_report(index_codes, args.дата)
+        report = построить_отчёт(коды_индексов, args.дата)
     except HTTPError as exc:
         print(f"Ошибка HTTP при запросе MOEX ISS: {exc}", file=sys.stderr)
         sys.exit(1)
@@ -204,7 +204,7 @@ def main():
         print(json.dumps(report, ensure_ascii=False, indent=2))
         return
 
-    print_report(report)
+    вывести_отчёт(report)
 
 
 if __name__ == "__main__":

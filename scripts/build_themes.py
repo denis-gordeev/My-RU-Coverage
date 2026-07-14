@@ -19,7 +19,7 @@ import sys
 from collections import defaultdict
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from utils import ШАБЛОН_ТИКЕРА, extract_wikilinks
+from utils import ШАБЛОН_ТИКЕРА, извлечь_викилинки
 
 ДИРЕКТОРИЯ_ОТЧЁТОВ = os.path.join(os.path.dirname(__file__), "..", "Pilot_Reports")
 ДИРЕКТОРИЯ_ТЕМ = os.path.join(os.path.dirname(__file__), "..", "themes")
@@ -222,7 +222,7 @@ from utils import ШАБЛОН_ТИКЕРА, extract_wikilinks
 }
 
 
-def ru_plural(value, form1, form2, form5):
+def русское_множественное(value, form1, form2, form5):
     value = abs(value) % 100
     if 11 <= value <= 19:
         return form5
@@ -263,9 +263,9 @@ def ru_plural(value, form1, form2, form5):
 }
 
 
-def scan_wikilinks():
+def сканировать_викилинки():
     """Просканировать все отчёты и вернуть карту викилинков с контекстом."""
-    wl_map = defaultdict(list)
+    карта_викилинков = defaultdict(list)
 
     for sector_dir in os.listdir(ДИРЕКТОРИЯ_ОТЧЁТОВ):
         sector_path = os.path.join(ДИРЕКТОРИЯ_ОТЧЁТОВ, sector_dir)
@@ -297,7 +297,7 @@ def scan_wikilinks():
                     sections["клиенты"] = part
 
             text = sections["описание"] + sections["цепочка_поставок"] + sections["клиенты"]
-            for wl in set(extract_wikilinks(text)):
+            for wl in set(извлечь_викилинки(text)):
                 role = "связанные"
                 if wl in sections["цепочка_поставок"]:
                     context = sections["цепочка_поставок"].split(wl)[0][-100:].lower()
@@ -308,7 +308,7 @@ def scan_wikilinks():
                     elif "средн" in context or "ключев" in context:
                         role = "ключевое_звено"
 
-                wl_map[wl].append(
+                карта_викилинков[wl].append(
                     {
                         "тикер": ticker,
                         "компания": company,
@@ -318,12 +318,12 @@ def scan_wikilinks():
                 )
 
             sector_themes = СООТВЕТСТВИЕ_СЕКТОРОВ_ТЕМАМ.get(sector_dir, [])
-            for theme_tag in sector_themes:
+            for тег_темы in sector_themes:
                 already = any(
-                    e["тикер"] == ticker for e in wl_map[theme_tag]
+                    e["тикер"] == ticker for e in карта_викилинков[тег_темы]
                 )
                 if not already:
-                    wl_map[theme_tag].append(
+                    карта_викилинков[тег_темы].append(
                         {
                             "тикер": ticker,
                             "компания": company,
@@ -332,31 +332,31 @@ def scan_wikilinks():
                         }
                     )
 
-    return wl_map
+    return карта_викилинков
 
 
-def build_theme_page(theme_tag, theme_def, wl_map):
+def построить_страницу_темы(тег_темы, определение_темы, карта_викилинков):
     """Строит страницу темы в формате markdown."""
-    entries = wl_map.get(theme_tag, [])
+    entries = карта_викилинков.get(тег_темы, [])
     if not entries:
         return None
 
     lines = []
-    lines.append(f"# {theme_def['название']}")
+    lines.append(f"# {определение_темы['название']}")
     lines.append("")
-    lines.append(f"> {theme_def['описание']}")
+    lines.append(f"> {определение_темы['описание']}")
     lines.append("")
     lines.append("**Контур:** активная российская тема | [Ко всем темам](README.md)")
     lines.append("")
     entry_count = len(entries)
-    lines.append(f"**Количество компаний:** {entry_count} {ru_plural(entry_count, 'компания', 'компании', 'компаний')}")
+    lines.append(f"**Количество компаний:** {entry_count} {русское_множественное(entry_count, 'компания', 'компании', 'компаний')}")
     lines.append("")
 
     # Связанные темы
-    related = theme_def.get("связанные", [])
+    related = определение_темы.get("связанные", [])
     related_with_counts = []
     for r in related:
-        count = len(wl_map.get(r, []))
+        count = len(карта_викилинков.get(r, []))
         if count > 0:
             related_with_counts.append(f"[[{r}]] ({count})")
     if related_with_counts:
@@ -372,14 +372,14 @@ def build_theme_page(theme_tag, theme_def, wl_map):
     конечный_спрос = [e for e in entries if e["роль"] == "конечный_спрос"]
     связанные = [e for e in entries if e["роль"] == "связанные"]
 
-    def format_entries(entries):
+    def форматировать_записи(entries):
         # Группировка по сектору
-        by_sector = defaultdict(list)
+        по_сектору = defaultdict(list)
         for e in entries:
-            by_sector[e["сектор"]].append(e)
+            по_сектору[e["сектор"]].append(e)
         result = []
-        for sector in sorted(by_sector.keys()):
-            items = sorted(by_sector[sector], key=lambda x: x["тикер"])
+        for sector in sorted(по_сектору.keys()):
+            items = sorted(по_сектору[sector], key=lambda x: x["тикер"])
             for item in items:
                 result.append(
                     f"- **{item['тикер']} {item['компания']}** ({sector})"
@@ -387,37 +387,37 @@ def build_theme_page(theme_tag, theme_def, wl_map):
         return result
 
     if верхний_контур:
-        lines.append(f"## Верхний контур ({len(верхний_контур)} {ru_plural(len(верхний_контур), 'компания', 'компании', 'компаний')})")
+        lines.append(f"## Верхний контур ({len(верхний_контур)} {русское_множественное(len(верхний_контур), 'компания', 'компании', 'компаний')})")
         lines.append("")
-        lines.extend(format_entries(верхний_контур))
+        lines.extend(форматировать_записи(верхний_контур))
         lines.append("")
 
     if ключевое_звено:
-        lines.append(f"## Ключевое звено ({len(ключевое_звено)} {ru_plural(len(ключевое_звено), 'компания', 'компании', 'компаний')})")
+        lines.append(f"## Ключевое звено ({len(ключевое_звено)} {русское_множественное(len(ключевое_звено), 'компания', 'компании', 'компаний')})")
         lines.append("")
-        lines.extend(format_entries(ключевое_звено))
+        lines.extend(форматировать_записи(ключевое_звено))
         lines.append("")
 
     if конечный_спрос:
-        lines.append(f"## Конечный спрос ({len(конечный_спрос)} {ru_plural(len(конечный_спрос), 'компания', 'компании', 'компаний')})")
+        lines.append(f"## Конечный спрос ({len(конечный_спрос)} {русское_множественное(len(конечный_спрос), 'компания', 'компании', 'компаний')})")
         lines.append("")
-        lines.extend(format_entries(конечный_спрос))
+        lines.extend(форматировать_записи(конечный_спрос))
         lines.append("")
 
     if связанные:
-        lines.append(f"## Связанные компании ({len(связанные)} {ru_plural(len(связанные), 'компания', 'компании', 'компаний')})")
+        lines.append(f"## Связанные компании ({len(связанные)} {русское_множественное(len(связанные), 'компания', 'компании', 'компаний')})")
         lines.append("")
-        lines.extend(format_entries(связанные))
+        lines.extend(форматировать_записи(связанные))
         lines.append("")
 
     return "\n".join(lines)
 
 
-def build_index(themes_built):
+def построить_индекс(построенные_темы):
     """Строит индекс themes/README.md."""
     lines = []
-    ru_built = sum(1 for tag in ТЕМЫ_RU if tag in themes_built)
-    ru_total_companies = sum(themes_built[tag] for tag in ТЕМЫ_RU if tag in themes_built)
+    ru_built = sum(1 for tag in ТЕМЫ_RU if tag in построенные_темы)
+    ru_total_companies = sum(построенные_темы[tag] for tag in ТЕМЫ_RU if tag in построенные_темы)
 
     lines.append("# Тематические подборки")
     lines.append("")
@@ -432,7 +432,7 @@ def build_index(themes_built):
     lines.append("## Акцент текущего покрытия")
     lines.append("")
     lines.append(
-        f"- Российский контур сейчас охватывает {ru_built} {ru_plural(ru_built, 'тему', 'темы', 'тем')} "
+        f"- Российский контур сейчас охватывает {ru_built} {русское_множественное(ru_built, 'тему', 'темы', 'тем')} "
         f"и {ru_total_companies} тематических вхождений компаний."
     )
     lines.append(f"- Следующая автоматическая очередь `MOEXBMI`: {', '.join(f'`{ticker}`' for ticker in ОЧЕРЕДЬ_ПРИОРИТЕТА_RU)}.")
@@ -441,10 +441,10 @@ def build_index(themes_built):
     lines.append("## Российский рынок")
     lines.append("")
     for tag in ТЕМЫ_RU:
-        if tag in themes_built:
-            count = themes_built[tag]
+        if tag in построенные_темы:
+            count = построенные_темы[tag]
             safe_name = tag.replace(" ", "_").replace("/", "_")
-            lines.append(f"- [{tag}]({safe_name}.md) — {count} {ru_plural(count, 'компания', 'компании', 'компаний')}")
+            lines.append(f"- [{tag}]({safe_name}.md) — {count} {русское_множественное(count, 'компания', 'компании', 'компаний')}")
     lines.append("")
 
     return "\n".join(lines)
@@ -464,8 +464,8 @@ def main():
         return
 
     print("Сканирую викилинки по всем отчётам...")
-    wl_map = scan_wikilinks()
-    print(f"Найдено уникальных викилинков: {len(wl_map)}.\n")
+    карта_викилинков = сканировать_викилинки()
+    print(f"Найдено уникальных викилинков: {len(карта_викилинков)}.\n")
 
     # Фильтр по запрошенной теме или сборка всех
     if args and args[0] != "--список":
@@ -476,24 +476,24 @@ def main():
     else:
         themes_to_build = ОПРЕДЕЛЕНИЯ_ТЕМ
 
-    themes_built = {}
+    построенные_темы = {}
     for tag, defn in themes_to_build.items():
-        page = build_theme_page(tag, defn, wl_map)
+        page = построить_страницу_темы(tag, defn, карта_викилинков)
         if page:
             safe_name = tag.replace(" ", "_").replace("/", "_")
             filepath = os.path.join(ДИРЕКТОРИЯ_ТЕМ, f"{safe_name}.md")
             with open(filepath, "w", encoding="utf-8") as f:
                 f.write(page)
-            count = len(wl_map.get(tag, []))
-            themes_built[tag] = count
-            print(f"  {tag}: {count} {ru_plural(count, 'компания', 'компании', 'компаний')} -> {safe_name}.md")
+            count = len(карта_викилинков.get(tag, []))
+            построенные_темы[tag] = count
+            print(f"  {tag}: {count} {русское_множественное(count, 'компания', 'компании', 'компаний')} -> {safe_name}.md")
 
     # Сборка индекса
-    index = build_index(themes_built)
+    index = построить_индекс(построенные_темы)
     with open(os.path.join(ДИРЕКТОРИЯ_ТЕМ, "README.md"), "w", encoding="utf-8") as f:
         f.write(index)
 
-    print(f"\nГотово. Сгенерировано тематических страниц: {len(themes_built)} в каталоге themes/")
+    print(f"\nГотово. Сгенерировано тематических страниц: {len(построенные_темы)} в каталоге themes/")
 
 
 if __name__ == "__main__":

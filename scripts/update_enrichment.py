@@ -33,21 +33,21 @@ import json
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import (
-    find_ticker_files, parse_scope_args, КОРЕНЬ_ПРОЕКТА, normalize_wikilinks,
+    найти_файлы_тикеров, разобрать_аргументы_области, КОРЕНЬ_ПРОЕКТА, нормализовать_викилинки,
     ЗАГОЛОВОК_СЕКЦИИ_ОПИСАНИЯ, ЗАГОЛОВОК_СЕКЦИИ_ЦЕПОЧКИ, ЗАГОЛОВОК_СЕКЦИИ_КЛИЕНТОВ,
     РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ,
 )
 
 
-def apply_enrichment(filepath, ticker, data):
+def применить_обогащение(путь, ticker, данные):
     """Применяет данные обогащения к одному файлу. Сохраняет метаданные и финансовые данные."""
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(путь, "r", encoding="utf-8") as f:
         content = f.read()
 
     # Добавляем блок метаданных, если отсутствует
     if not re.search(r"\*\*Сектор:\*\*", content) and not re.search(r"\*\*Рыночная капитализация:\*\*", content):
-        sector = data.get("сектор", "Н/Д")
-        industry = data.get("отрасль", "Н/Д")
+        sector = данные.get("сектор", "Н/Д")
+        industry = данные.get("отрасль", "Н/Д")
         meta = (
             f"**Сектор:** {sector}\n"
             f"**Отрасль:** {industry}\n"
@@ -57,19 +57,19 @@ def apply_enrichment(filepath, ticker, data):
         content = re.sub(РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["описание_деятельности"] + r"\n", ЗАГОЛОВОК_СЕКЦИИ_ОПИСАНИЯ + "\n" + meta, content, count=1)
 
     # Заменяем описание деятельности (сохраняя блок метаданных выше)
-    if "описание" in data:
-        def repl_desc(m):
-            return f"{m.group(1)}{data['описание']}\n"
+    if "описание" in данные:
+        def замена_описания(m):
+            return f"{m.group(1)}{данные['описание']}\n"
         content = re.sub(
             r"((?:## Описание деятельности)\n(?:.*?(?:Стоимость предприятия \(EV\)):.*?\n\n|))(.*?)(?=\n(?:## Положение в цепочке поставок))",
-            repl_desc,
+            замена_описания,
             content,
             flags=re.DOTALL,
         )
 
     # Заменяем секцию цепочки поставок
-    if "цепочка_поставок" in data:
-        sc = data["цепочка_поставок"] + "\n"
+    if "цепочка_поставок" in данные:
+        sc = данные["цепочка_поставок"] + "\n"
         content = re.sub(
             r"((?:## Положение в цепочке поставок)\n)(.*?)(?=\n(?:## Ключевые клиенты и поставщики))",
             rf"\g<1>{sc}",
@@ -78,8 +78,8 @@ def apply_enrichment(filepath, ticker, data):
         )
 
     # Заменяем секцию клиентов/поставщиков
-    if "клиенты_и_поставщики" in data:
-        ct = data["клиенты_и_поставщики"] + "\n"
+    if "клиенты_и_поставщики" in данные:
+        ct = данные["клиенты_и_поставщики"] + "\n"
         content = re.sub(
             r"((?:## Ключевые клиенты и поставщики)\n)(.*?)(?=\n(?:## Финансовый обзор))",
             rf"\g<1>{ct}",
@@ -92,21 +92,21 @@ def apply_enrichment(filepath, ticker, data):
     content = re.sub(РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["клиенты_и_поставщики"], ЗАГОЛОВОК_СЕКЦИИ_КЛИЕНТОВ, content)
 
     # Нормализуем викилинки: стандартизируем алиасы, схлопываем дубли
-    content = normalize_wikilinks(content)
+    content = нормализовать_викилинки(content)
 
-    with open(filepath, "w", encoding="utf-8") as f:
+    with open(путь, "w", encoding="utf-8") as f:
         f.write(content)
 
     try:
-        print(f"  {ticker}: обогащено ({os.path.basename(filepath)})")
+        print(f"  {ticker}: обогащено ({os.path.basename(путь)})")
     except UnicodeEncodeError:
         print(f"  {ticker}: обогащено")
     return True
 
 
-def load_enrichment_data(json_path):
+def загрузить_данные_обогащения(путь_json):
     """Загружает данные обогащения из JSON-файла."""
-    with open(json_path, "r", encoding="utf-8") as f:
+    with open(путь_json, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -131,22 +131,22 @@ def main():
     # Загружаем данные обогащения
     if not os.path.isabs(json_path):
         json_path = os.path.join(КОРЕНЬ_ПРОЕКТА, json_path)
-    enrichment_data = load_enrichment_data(json_path)
+    enrichment_data = загрузить_данные_обогащения(json_path)
     print(f"Загружено записей по тикерам: {len(enrichment_data)} из {os.path.basename(json_path)}")
 
     # Разбираем область действия
-    tickers, sector, desc = parse_scope_args(args)
+    tickers, sector, desc = разобрать_аргументы_области(args)
     print(f"Область применения: {desc}\n")
 
     # Ищем подходящие файлы
     # Если указаны конкретные тикеры, пересекаем с данными обогащения
-    available_tickers = list(enrichment_data.keys())
+    доступные_тикеры = list(enrichment_data.keys())
     if tickers:
-        target_tickers = [t for t in tickers if t in enrichment_data]
+        целевые_тикеры = [t for t in tickers if t in enrichment_data]
     else:
-        target_tickers = available_tickers
+        целевые_тикеры = доступные_тикеры
 
-    files = find_ticker_files(target_tickers, sector)
+    files = найти_файлы_тикеров(целевые_тикеры, sector)
 
     if not files:
         print("Подходящие файлы не найдены.")
@@ -155,7 +155,7 @@ def main():
     enriched = skipped = 0
     for ticker in sorted(files.keys()):
         if ticker in enrichment_data:
-            apply_enrichment(files[ticker], ticker, enrichment_data[ticker])
+            применить_обогащение(files[ticker], ticker, enrichment_data[ticker])
             enriched += 1
         else:
             skipped += 1

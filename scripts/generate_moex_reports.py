@@ -16,9 +16,9 @@ import sys
 from urllib.error import HTTPError, URLError
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from add_ticker import generate_report, sanitize_folder_name
-from moex_blue_chip_queue import КОДЫ_ИНДЕКСОВ_ПО_УМОЛЧАНИЮ, build_report
-from utils import ДИРЕКТОРИЯ_ОТЧЁТОВ, find_ticker_files, setup_stdout, make_ru_parser
+from add_ticker import сгенерировать_отчёт, очистить_имя_папки
+from moex_blue_chip_queue import КОДЫ_ИНДЕКСОВ_ПО_УМОЛЧАНИЮ, построить_отчёт
+from utils import ДИРЕКТОРИЯ_ОТЧЁТОВ, найти_файлы_тикеров, настроить_вывод, создать_русский_парсер
 
 ПЕРЕОПРЕДЕЛЕНИЯ_ОТЧЁТОВ = {
     "DOMRF": {
@@ -86,12 +86,12 @@ from utils import ДИРЕКТОРИЯ_ОТЧЁТОВ, find_ticker_files, setup_
 СУФФИКСЫ_КОРОТКОГО_ИМЕНИ = (" ао", " ап", "-ао", "-ап")
 
 
-def normalize_company_name(ticker, shortname):
+def нормализовать_название_компании(ticker, короткое_имя):
     override = ПЕРЕОПРЕДЕЛЕНИЯ_ОТЧЁТОВ.get(ticker, {})
     if override.get("название"):
         return override["название"]
 
-    cleaned = (shortname or ticker).strip()
+    cleaned = (короткое_имя or ticker).strip()
     if cleaned[:1].lower() == "i" and len(cleaned) > 1 and cleaned[1].isalpha():
         cleaned = cleaned[1:]
     lowered = cleaned.lower()
@@ -102,73 +102,73 @@ def normalize_company_name(ticker, shortname):
     return cleaned.strip(" .") or ticker
 
 
-def select_queue_items(report, requested_tickers=None):
-    queue = report["следующая_очередь"]
-    if not requested_tickers:
+def отобрать_элементы_очереди(отчёт, запрошенные_тикеры=None):
+    queue = отчёт["следующая_очередь"]
+    if not запрошенные_тикеры:
         return queue
 
     lookup = {item["тикер"]: item for item in queue}
-    items = []
-    for ticker in requested_tickers:
+    элементы = []
+    for ticker in запрошенные_тикеры:
         item = lookup.get(ticker)
         if item is None:
-            items.append(
+            элементы.append(
                 {
                     "тикер": ticker,
                     "название": ПЕРЕОПРЕДЕЛЕНИЯ_ОТЧЁТОВ.get(ticker, {}).get("название", ticker),
                 }
             )
         else:
-            items.append(item)
-    return items
+            элементы.append(item)
+    return элементы
 
 
-def build_output_path(ticker, company_name, sector_name):
-    safe_sector = sanitize_folder_name(sector_name)
-    filename = f"{ticker}_{company_name}.md"
+def построить_путь_вывода(ticker, название_компании, название_сектора):
+    safe_sector = очистить_имя_папки(название_сектора)
+    filename = f"{ticker}_{название_компании}.md"
     return os.path.join(ДИРЕКТОРИЯ_ОТЧЁТОВ, safe_sector, filename)
 
 
-def create_reports(items, limit=None, пробный_запуск=False):
-    existing = find_ticker_files()
-    created = 0
-    skipped = 0
+def создать_отчёты(элементы, limit=None, пробный_запуск=False):
+    existing = найти_файлы_тикеров()
+    создано = 0
+    пропущено = 0
 
-    for item in items:
-        if limit is not None and created >= limit:
+    for item in элементы:
+        if limit is not None and создано >= limit:
             break
 
         ticker = item["тикер"]
         if ticker in existing:
             print(f"  {ticker}: пропуск (карточка уже существует)")
-            skipped += 1
+            пропущено += 1
             continue
 
         override = ПЕРЕОПРЕДЕЛЕНИЯ_ОТЧЁТОВ.get(ticker, {})
-        company_name = normalize_company_name(ticker, item.get("название", ticker))
+        название_компании = нормализовать_название_компании(ticker, item.get("название", ticker))
         sector = override.get("сектор")
         industry = override.get("отрасль")
-        content, detected_sector = generate_report(ticker, company_name, sector, industry)
+        content, detected_sector = сгенерировать_отчёт(ticker, название_компании, sector, industry)
         target_sector = sector or detected_sector or "Не определено"
-        output_path = build_output_path(ticker, company_name, target_sector)
+        output_path = построить_путь_вывода(ticker, название_компании, target_sector)
 
         if пробный_запуск:
             print(f"  {ticker}: черновик -> {output_path}")
-            created += 1
+            создано += 1
             continue
 
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         with open(output_path, "w", encoding="utf-8") as handle:
             handle.write(content)
         print(f"  {ticker}: создано -> {output_path}")
-        created += 1
+        создано += 1
 
-    return created, skipped
+    return создано, пропущено
 
 
 def main():
-    setup_stdout()
-    parser = make_ru_parser(
+    настроить_вывод()
+    parser = создать_русский_парсер(
         description=(
             "Создать базовые MOEX-карточки по живой очереди из MOEX ISS без "
             "опоры на устаревший Excel."
@@ -182,7 +182,7 @@ def main():
     parser.add_argument("--дата", help="Дата состава индекса в формате YYYY-MM-DD")
     parser.add_argument(
         "--индекс",
-        dest="indices",
+        dest="индексы",
         action="append",
         help=(
             "Код индекса MOEX ISS. Можно повторять несколько раз; по умолчанию "
@@ -207,9 +207,9 @@ def main():
     )
     args = parser.parse_args()
 
-    index_codes = args.indices or КОДЫ_ИНДЕКСОВ_ПО_УМОЛЧАНИЮ
+    коды_индексов = args.индексы or КОДЫ_ИНДЕКСОВ_ПО_УМОЛЧАНИЮ
     try:
-        report = build_report(index_codes, args.дата)
+        report = построить_отчёт(коды_индексов, args.дата)
     except HTTPError as exc:
         print(f"Ошибка HTTP при запросе MOEX ISS: {exc}", file=sys.stderr)
         sys.exit(1)
@@ -217,18 +217,18 @@ def main():
         print(f"Сетевой сбой при запросе MOEX ISS: {exc}", file=sys.stderr)
         sys.exit(1)
 
-    items = select_queue_items(report, [ticker.upper() for ticker in args.тикеры])
-    if not items:
+    элементы = отобрать_элементы_очереди(отчёт, [ticker.upper() for ticker in args.тикеры])
+    if not элементы:
         print("Очередь уже покрыта: новых карточек для создания нет.")
         return
 
     limit = None if args.все_непокрытые or args.тикеры else max(args.лимит, 0)
     print(
-        f"Генерирую базовые MOEX-карточки из очереди {', '.join(index_codes)} "
+        f"Генерирую базовые MOEX-карточки из очереди {', '.join(коды_индексов)} "
         f"на дату {report['дата_торгов']}..."
     )
-    created, skipped = create_reports(items, limit=limit, пробный_запуск=args.пробный_запуск)
-    print(f"\nГотово. Создано: {created} | Пропущено: {skipped}")
+    создано, пропущено = создать_отчёты(элементы, limit=limit, пробный_запуск=args.пробный_запуск)
+    print(f"\nГотово. Создано: {создано} | Пропущено: {пропущено}")
 
 
 if __name__ == "__main__":

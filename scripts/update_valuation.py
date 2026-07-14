@@ -22,14 +22,14 @@ import yfinance as yf
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import (
-    find_ticker_files, parse_scope_args, setup_stdout,
-    fetch_valuation_data, build_valuation_table, update_metadata,
-    СУФФИКСЫ_РЫНКА_ПО_УМОЛЧАНИЮ, get_market_profile,
+    найти_файлы_тикеров, разобрать_аргументы_области, настроить_вывод,
+    загрузить_данные_мультипликаторов, построить_таблицу_мультипликаторов, обновить_метаданные,
+    СУФФИКСЫ_РЫНКА_ПО_УМОЛЧАНИЮ, получить_профиль_рынка,
     РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ,
 )
 
 
-def fetch_valuation(ticker):
+def загрузить_оценку(ticker):
     """Загружает только оценочные мультипликаторы. Пробует суффиксы в приоритетном порядке."""
     for suffix in СУФФИКСЫ_РЫНКА_ПО_УМОЛЧАНИЮ:
         try:
@@ -38,7 +38,7 @@ def fetch_valuation(ticker):
             if not info or not info.get("currentPrice"):
                 continue
 
-            valuation = fetch_valuation_data(info)
+            valuation = загрузить_данные_мультипликаторов(info)
 
             market_cap = (
                 f"{info['marketCap'] / 1_000_000:,.0f}"
@@ -50,7 +50,7 @@ def fetch_valuation(ticker):
                 if info.get("enterpriseValue")
                 else None
             )
-            market_profile = get_market_profile(suffix)
+            market_profile = получить_профиль_рынка(suffix)
             return {
                 "оценка": valuation,
                 "рыночная_капитализация": market_cap,
@@ -63,17 +63,17 @@ def fetch_valuation(ticker):
     return None
 
 
-def update_file(filepath, ticker, пробный_запуск=False):
+def обновить_файл(путь, ticker, пробный_запуск=False):
     """Обновляет только раздел оценки в файле тикера."""
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(путь, "r", encoding="utf-8") as f:
         content = f.read()
 
-    data = fetch_valuation(ticker)
+    data = загрузить_оценку(ticker)
     if data is None:
         print(f"  {ticker}: пропуск (нет данных)")
         return False
 
-    new_table = build_valuation_table(data["оценка"])
+    new_table = построить_таблицу_мультипликаторов(data["оценка"])
 
     if re.search(РЕГЕКСЫ_ЗАГОЛОВКОВ_СЕКЦИЙ["оценочные_мультипликаторы"], content):
         content = re.sub(
@@ -87,7 +87,7 @@ def update_file(filepath, ticker, пробный_запуск=False):
         if annual_match:
             content = content[: annual_match.start()] + new_table + "\n\n" + content[annual_match.start() :]
 
-    content = update_metadata(
+    content = обновить_метаданные(
         content,
         data.get("рыночная_капитализация"),
         data.get("стоимость_предприятия"),
@@ -98,43 +98,43 @@ def update_file(filepath, ticker, пробный_запуск=False):
         print(f"  {ticker}: черновое обновление ({data['суффикс']})")
         return True
 
-    with open(filepath, "w", encoding="utf-8") as f:
+    with open(путь, "w", encoding="utf-8") as f:
         f.write(content)
     print(f"  {ticker}: обновлено ({data['суффикс']})")
     return True
 
 
 def main():
-    setup_stdout()
+    настроить_вывод()
 
     args = list(sys.argv[1:])
     пробный_запуск = "--пробный-запуск" in args
     if пробный_запуск:
         args.remove("--пробный-запуск")
 
-    tickers, sector, desc = parse_scope_args(args)
+    tickers, sector, desc = разобрать_аргументы_области(args)
     print(f"Обновляю оценочные мультипликаторы для области: {desc}...")
-    files = find_ticker_files(tickers, sector)
+    files = найти_файлы_тикеров(tickers, sector)
 
     if not files:
         print("Подходящие файлы не найдены.")
         return
 
     print(f"Найдено файлов: {len(files)}.\n")
-    updated = failed = skipped = 0
+    обновлено = с_ошибкой = пропущено = 0
 
     for ticker in sorted(files.keys()):
         try:
-            if update_file(files[ticker], ticker, пробный_запуск):
-                updated += 1
+            if обновить_файл(files[ticker], ticker, пробный_запуск):
+                обновлено += 1
             else:
-                skipped += 1
+                пропущено += 1
         except Exception as e:
             print(f"  {ticker}: ошибка ({e})")
-            failed += 1
+            с_ошибкой += 1
         time.sleep(0.3)
 
-    print(f"\nГотово. Обновлено: {updated} | Пропущено: {skipped} | Ошибок: {failed}")
+    print(f"\nГотово. Обновлено: {обновлено} | Пропущено: {пропущено} | Ошибок: {с_ошибкой}")
 
 
 if __name__ == "__main__":

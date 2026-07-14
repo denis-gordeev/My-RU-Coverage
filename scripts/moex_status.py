@@ -17,32 +17,32 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from utils import find_ticker_files, setup_stdout, ШАБЛОН_ТИКЕРА, make_ru_parser
+from utils import найти_файлы_тикеров, настроить_вывод, ШАБЛОН_ТИКЕРА, создать_русский_парсер
 
 КОРЕНЬ = Path(__file__).resolve().parents[1]
 ДИРЕКТОРИЯ_ОТЧЁТОВ = КОРЕНЬ / "Pilot_Reports"
 ДИРЕКТОРИЯ_ТЕМ = КОРЕНЬ / "themes"
 
 
-def count_reports():
-    reports = find_ticker_files()
-    by_sector = {}
+def посчитать_отчёты():
+    reports = найти_файлы_тикеров()
+    по_сектору = {}
     for ticker, filepath in reports.items():
         sector = os.path.basename(os.path.dirname(filepath))
-        by_sector.setdefault(sector, []).append(ticker)
-    return len(reports), by_sector
+        по_сектору.setdefault(sector, []).append(ticker)
+    return len(reports), по_сектору
 
 
-def count_themes():
+def посчитать_темы():
     if not ДИРЕКТОРИЯ_ТЕМ.exists():
         return 0
     return len([f for f in ДИРЕКТОРИЯ_ТЕМ.iterdir() if f.suffix == ".md" and f.name != "README.md"])
 
 
-def check_audit():
+def проверить_аудит():
     total = 0
-    clean = 0
-    issues_count = 0
+    чистые = 0
+    число_замечаний = 0
     for subdir in sorted(ДИРЕКТОРИЯ_ОТЧЁТОВ.iterdir()):
         if not subdir.is_dir():
             continue
@@ -69,16 +69,16 @@ def check_audit():
             )
             min_wikilinks = len(wikilinks) >= 10
             if has_required and has_metadata and min_wikilinks:
-                clean += 1
+                чистые += 1
             else:
-                issues_count += 1
-    return total, clean, issues_count
+                число_замечаний += 1
+    return total, чистые, число_замечаний
 
 
-def get_queue_summary():
+def получить_сводку_очереди():
     try:
-        from moex_blue_chip_queue import build_report, КОДЫ_ИНДЕКСОВ_ПО_УМОЛЧАНИЮ
-        report = build_report(КОДЫ_ИНДЕКСОВ_ПО_УМОЛЧАНИЮ)
+        from moex_blue_chip_queue import построить_отчёт, КОДЫ_ИНДЕКСОВ_ПО_УМОЛЧАНИЮ
+        report = построить_отчёт(КОДЫ_ИНДЕКСОВ_ПО_УМОЛЧАНИЮ)
         queue = report.get("следующая_очередь", [])
         первые_5 = [
             {"тикер": item["тикер"], "название": item["название"]}
@@ -90,29 +90,29 @@ def get_queue_summary():
 
 
 def main():
-    setup_stdout()
-    parser = make_ru_parser(description="Статус-сводка по покрытию MOEX")
+    настроить_вывод()
+    parser = создать_русский_парсер(description="Статус-сводка по покрытию MOEX")
     parser.add_argument("--json", action="store_true", help="Вывести в JSON")
     args = parser.parse_args()
 
-    report_count, by_sector = count_reports()
-    theme_count = count_themes()
-    audit_total, audit_clean, audit_issues = check_audit()
-    queue_result = get_queue_summary()
+    report_count, по_сектору = посчитать_отчёты()
+    theme_count = посчитать_темы()
+    audit_total, audit_clean, audit_issues = проверить_аудит()
+    queue_result = получить_сводку_очереди()
 
     if len(queue_result) == 4:
-        queue_len, очередь_первые_5, queue_date = None, None, None
-        queue_error = queue_result[3]
+        длина_очереди, очередь_первые_5, дата_очереди = None, None, None
+        ошибка_очереди = queue_result[3]
     else:
-        queue_len, очередь_первые_5, queue_date = queue_result
-        queue_error = None
+        длина_очереди, очередь_первые_5, дата_очереди = queue_result
+        ошибка_очереди = None
 
     audit_pct = (audit_clean / audit_total * 100) if audit_total > 0 else 0
 
     result = {
         "отчёты": report_count,
-        "секторы": len(by_sector),
-        "по_сектору": {k: len(v) for k, v in sorted(by_sector.items())},
+        "секторы": len(по_сектору),
+        "по_сектору": {k: len(v) for k, v in sorted(по_сектору.items())},
         "темы": theme_count,
         "проверка": {
             "всего": audit_total,
@@ -121,14 +121,14 @@ def main():
             "доля_%": round(audit_pct, 1),
         },
         "очередь": {
-            "непокрытых": queue_len,
-            "дата": queue_date,
+            "непокрытых": длина_очереди,
+            "дата": дата_очереди,
             "первые_5": очередь_первые_5,
         },
     }
 
-    if queue_error:
-        result["очередь"]["ошибка"] = queue_error
+    if ошибка_очереди:
+        result["очередь"]["ошибка"] = ошибка_очереди
 
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2))
@@ -139,7 +139,7 @@ def main():
     print("=" * 50)
     print()
     print(f"  Карточки:       {report_count}")
-    print(f"  Секторы:        {len(by_sector)}")
+    print(f"  Секторы:        {len(по_сектору)}")
     print(f"  Темы:           {theme_count}")
     print()
     print(f"  Проверка:      {audit_clean}/{audit_total} ({audit_pct:.0f}%) проходят")
@@ -147,18 +147,18 @@ def main():
         print(f"                  {audit_issues} с замечаниями")
     print()
 
-    if queue_len is not None:
-        print(f"  Очередь MOEX:   {queue_len} непокрытых ({queue_date})")
+    if длина_очереди is not None:
+        print(f"  Очередь MOEX:   {длина_очереди} непокрытых ({дата_очереди})")
         if очередь_первые_5:
             print("  Следующие:")
             for item in очередь_первые_5:
                 print(f"    - {item['тикер']} ({item['название']})")
     else:
-        print(f"  Очередь MOEX:   недоступна ({queue_error})")
+        print(f"  Очередь MOEX:   недоступна ({ошибка_очереди})")
 
     print()
     print("  Секторы:")
-    for sector, tickers in sorted(by_sector.items(), key=lambda x: -len(x[1])):
+    for sector, tickers in sorted(по_сектору.items(), key=lambda x: -len(x[1])):
         print(f"    {sector}: {len(tickers)}")
     print()
     print("=" * 50)
