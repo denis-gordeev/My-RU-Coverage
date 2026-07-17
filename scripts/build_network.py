@@ -34,36 +34,36 @@ def сканировать_граф(минимальный_вес=5, лимит_
     число_упоминаний_узлов = defaultdict(int)
     викилинки_по_файлу = {}
 
-    for root, dirs, files in os.walk(ДИРЕКТОРИЯ_ОТЧЁТОВ):
-        for f in files:
+    for корень, папки, файлы in os.walk(ДИРЕКТОРИЯ_ОТЧЁТОВ):
+        for f in файлы:
             if not f.endswith(".md"):
                 continue
             m = re.match(rf"^({ШАБЛОН_ТИКЕРА})", f, re.IGNORECASE)
             if not m:
                 continue
-            with open(os.path.join(root, f), "r", encoding="utf-8") as fh:
-                content = fh.read()
-            split_parts = разделить_перед_финансами(content)
-            if split_parts:
-                content = split_parts[0]
-            wls = set(извлечь_викилинки(content))
-            викилинки_по_файлу[m.group(1)] = wls
-            for wl in wls:
-                число_упоминаний_узлов[wl] += 1
+            with open(os.path.join(корень, f), "r", encoding="utf-8") as fh:
+                содержимое = fh.read()
+            разделённые_части = разделить_перед_финансами(содержимое)
+            if разделённые_части:
+                содержимое = разделённые_части[0]
+            набор_викилинков = set(извлечь_викилинки(содержимое))
+            викилинки_по_файлу[m.group(1)] = набор_викилинков
+            for викилинк in набор_викилинков:
+                число_упоминаний_узлов[викилинк] += 1
 
     if лимит_узлов:
         ведущие_узлы = set(
             имя for имя, _ in sorted(число_упоминаний_узлов.items(), key=lambda x: -x[1])[:лимит_узлов]
         )
     else:
-        ведущие_узлы = set(имя for имя, count in число_упоминаний_узлов.items() if count >= 2)
+        ведущие_узлы = set(имя for имя, счёт in число_упоминаний_узлов.items() if счёт >= 2)
 
     рёбра = defaultdict(int)
-    for тикер, wls in викилинки_по_файлу.items():
-        filtered = sorted(wls & ведущие_узлы)
-        for i in range(len(filtered)):
-            for j in range(i + 1, len(filtered)):
-                рёбра[(filtered[i], filtered[j])] += 1
+    for тикер, набор_викилинков in викилинки_по_файлу.items():
+        отфильтрованные = sorted(набор_викилинков & ведущие_узлы)
+        for i in range(len(отфильтрованные)):
+            for j in range(i + 1, len(отфильтрованные)):
+                рёбра[(отфильтрованные[i], отфильтрованные[j])] += 1
 
     отфильтрованные_рёбра = {k: v for k, v in рёбра.items() if v >= минимальный_вес}
 
@@ -74,13 +74,13 @@ def сканировать_граф(минимальный_вес=5, лимит_
 
     узлы = []
     for имя in активные_узлы:
-        cat = классифицировать_викилинк(имя)
+        категория = классифицировать_викилинк(имя)
         узлы.append({
             "имя": имя,
             "упоминания": число_упоминаний_узлов[имя],
-            "категория": cat,
-            "метка_категории": МЕТКИ_КАТЕГОРИЙ[cat],
-            "цвет": ЦВЕТА_КАТЕГОРИЙ[cat],
+            "категория": категория,
+            "метка_категории": МЕТКИ_КАТЕГОРИЙ[категория],
+            "цвет": ЦВЕТА_КАТЕГОРИЙ[категория],
         })
 
     список_рёбер = []
@@ -279,18 +279,18 @@ def main():
     print(f"Граф: узлов {len(узлы)}, связей {len(рёбра)}")
 
     данные_графа = {"узлы": узлы, "связи": рёбра}
-    json_path = os.path.join(ДИРЕКТОРИЯ_СЕТИ, "graph_data.json")
-    with open(json_path, "w", encoding="utf-8") as f:
+    путь_json = os.path.join(ДИРЕКТОРИЯ_СЕТИ, "graph_data.json")
+    with open(путь_json, "w", encoding="utf-8") as f:
         json.dump(данные_графа, f, ensure_ascii=False, indent=2)
-    print(f"Сохранён файл: {json_path}")
+    print(f"Сохранён файл: {путь_json}")
 
-    html = построить_html(узлы, рёбра)
-    html_path = os.path.join(ДИРЕКТОРИЯ_СЕТИ, "index.html")
-    with open(html_path, "w", encoding="utf-8") as f:
-        f.write(html)
-    print(f"Сохранён файл: {html_path}")
+    текст_html = построить_html(узлы, рёбра)
+    путь_html = os.path.join(ДИРЕКТОРИЯ_СЕТИ, "index.html")
+    with open(путь_html, "w", encoding="utf-8") as f:
+        f.write(текст_html)
+    print(f"Сохранён файл: {путь_html}")
 
-    print(f"\nОткройте в браузере: {html_path}")
+    print(f"\nОткройте в браузере: {путь_html}")
     print("Или поднимите местный сервер: python -m http.server 8000 --directory network/")
 
 

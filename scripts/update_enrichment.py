@@ -119,9 +119,9 @@ def main():
     # Извлекаем флаг --данные
     путь_json = None
     if "--данные" in args:
-        idx = args.index("--данные")
-        путь_json = args[idx + 1]
-        args = args[:idx] + args[idx + 2:]
+        индекс = args.index("--данные")
+        путь_json = args[индекс + 1]
+        args = args[:индекс] + args[индекс + 2:]
 
     if not путь_json:
         print("Использование: python scripts/update_enrichment.py --данные <json-файл> [область]")

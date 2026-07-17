@@ -40,17 +40,17 @@ from utils import найти_файлы_тикеров, настроить_вы�
 
 
 def загрузить_состав(код_индекса, дата_торгов=None):
-    params = {"iss.meta": "off"}
+    параметры = {"iss.meta": "off"}
     if дата_торгов:
-        params["date"] = дата_торгов
+        параметры["date"] = дата_торгов
 
-    iss_url = АДРЕС_ISS.replace("/MOEXBC/", f"/{код_индекса}/")
-    url = f"{iss_url}?{urlencode(params)}"
-    with urlopen(url, timeout=20) as response:
-        payload = json.load(response)
+    адрес_iss = АДРЕС_ISS.replace("/MOEXBC/", f"/{код_индекса}/")
+    адрес = f"{адрес_iss}?{urlencode(параметры)}"
+    with urlopen(адрес, timeout=20) as ответ:
+        данные_ответа = json.load(ответ)
 
-    столбцы = payload["analytics"]["columns"]
-    строки = payload["analytics"]["data"]
+    столбцы = данные_ответа["analytics"]["columns"]
+    строки = данные_ответа["analytics"]["data"]
     элементы = [dict(zip(столбцы, строка)) for строка in строки]
     элементы.sort(key=lambda элемент: элемент.get("weight") or 0, reverse=True)
     for ранг, элемент in enumerate(элементы, start=1):
