@@ -54,7 +54,7 @@ def загрузить_состав(код_индекса, дата_торгов
     элементы = [dict(zip(столбцы, строка)) for строка in строки]
     элементы.sort(key=lambda элемент: элемент.get("weight") or 0, reverse=True)
     for ранг, элемент in enumerate(элементы, start=1):
-        элемент["rank"] = ранг
+        элемент["ранг"] = ранг
     return элементы
 
 
@@ -63,7 +63,7 @@ def _перевести_элемент(элемент):
         "тикер": элемент.get("ticker"),
         "название": элемент.get("shortnames"),
         "вес": элемент.get("weight"),
-        "ранг": элемент.get("rank"),
+        "ранг": элемент.get("ранг"),
         "дата_торгов": элемент.get("tradedate"),
     }
 
@@ -167,14 +167,14 @@ def вывести_отчёт(отчёт):
 
 def main():
     настроить_вывод()
-    parser = создать_русский_парсер(
+    парсер = создать_русский_парсер(
         description=(
             "Проверить актуальный состав официальных корзин MOEX через MOEX ISS "
             "и собрать следующую очередь покрытия."
         )
     )
-    parser.add_argument("--дата", help="Дата состава в формате YYYY-MM-DD")
-    parser.add_argument(
+    парсер.add_argument("--дата", help="Дата состава в формате YYYY-MM-DD")
+    парсер.add_argument(
         "--индекс",
         dest="индексы",
         action="append",
@@ -183,16 +183,16 @@ def main():
             "используются MOEXBC и MOEXBMI."
         ),
     )
-    parser.add_argument(
+    парсер.add_argument(
         "--json",
         action="store_true",
         help="Вывести результат в JSON",
     )
-    args = parser.parse_args()
-    коды_индексов = args.индексы or КОДЫ_ИНДЕКСОВ_ПО_УМОЛЧАНИЮ
+    аргументы = парсер.parse_args()
+    коды_индексов = аргументы.индексы or КОДЫ_ИНДЕКСОВ_ПО_УМОЛЧАНИЮ
 
     try:
-        отчёт = построить_отчёт(коды_индексов, args.дата)
+        отчёт = построить_отчёт(коды_индексов, аргументы.дата)
     except HTTPError as ошибка:
         print(f"Ошибка HTTP при запросе MOEX ISS: {ошибка}", file=sys.stderr)
         sys.exit(1)
@@ -200,7 +200,7 @@ def main():
         print(f"Сетевой сбой при запросе MOEX ISS: {ошибка}", file=sys.stderr)
         sys.exit(1)
 
-    if args.json:
+    if аргументы.json:
         print(json.dumps(отчёт, ensure_ascii=False, indent=2))
         return
 
