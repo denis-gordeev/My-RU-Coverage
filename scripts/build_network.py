@@ -291,7 +291,7 @@ def main():
     print(f"Сохранён файл: {путь_html}")
 
     print(f"\nОткройте в браузере: {путь_html}")
-    print("Или поднимите местный сервер: python -m http.server 8000 --directory network/")
+    print("Или поднимите локальный сервер: python -m http.server 8000 --directory network/")
 
 
 if __name__ == "__main__":
