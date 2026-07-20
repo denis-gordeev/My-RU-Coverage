@@ -92,7 +92,7 @@ def получить_сводку_очереди():
 def main():
     настроить_вывод()
     парсер = создать_русский_парсер(description="Статус-сводка по покрытию MOEX")
-    парсер.add_argument("--json", action="store_true", help="Вывести в JSON")
+    парсер.add_argument("--json", action="store_true", help="Вывести в формате JSON")
     аргументы = парсер.parse_args()
 
     число_отчётов, по_сектору = посчитать_отчёты()
