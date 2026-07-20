@@ -783,10 +783,10 @@ def заменить_секцию(содержимое, заголовок_се�
 
 def создать_русский_парсер(**kwargs):
     """Создаёт ArgumentParser с русскоязычными заголовками секций помощи."""
-    parser = argparse.ArgumentParser(**kwargs)
-    for g in parser._action_groups:
+    парсер = argparse.ArgumentParser(**kwargs)
+    for g in парсер._action_groups:
         if g.title == "positional arguments":
             g.title = "Позиционные аргументы"
         elif g.title in ("optional arguments", "options"):
             g.title = "Параметры"
-    return parser
+    return парсер

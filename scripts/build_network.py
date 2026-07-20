@@ -280,14 +280,14 @@ def main():
 
     данные_графа = {"узлы": узлы, "связи": рёбра}
     путь_json = os.path.join(ДИРЕКТОРИЯ_СЕТИ, "graph_data.json")
-    with open(путь_json, "w", encoding="utf-8") as f:
-        json.dump(данные_графа, f, ensure_ascii=False, indent=2)
+    with open(путь_json, "w", encoding="utf-8") as ф:
+        json.dump(данные_графа, ф, ensure_ascii=False, indent=2)
     print(f"Сохранён файл: {путь_json}")
 
     текст_html = построить_html(узлы, рёбра)
     путь_html = os.path.join(ДИРЕКТОРИЯ_СЕТИ, "index.html")
-    with open(путь_html, "w", encoding="utf-8") as f:
-        f.write(текст_html)
+    with open(путь_html, "w", encoding="utf-8") as ф:
+        ф.write(текст_html)
     print(f"Сохранён файл: {путь_html}")
 
     print(f"\nОткройте в браузере: {путь_html}")

@@ -87,22 +87,22 @@ def main():
     if sys.platform == "win32":
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-    args = sys.argv[1:]
+    аргументы = sys.argv[1:]
 
-    if not args or args[0] in {"-h", "--help"}:
+    if not аргументы or аргументы[0] in {"-h", "--help"}:
         print("Использование:")
         print("  python scripts/add_ticker.py <тикер> <название>")
         print("  python scripts/add_ticker.py <тикер> <название> --сектор <сектор>")
         return
 
     # Разбор аргументов
-    тикер = args[0]
-    название = args[1] if len(args) > 1 else "Без названия"
+    тикер = аргументы[0]
+    название = аргументы[1] if len(аргументы) > 1 else "Без названия"
 
     сектор = None
-    if "--сектор" in args:
-        индекс = args.index("--сектор")
-        сектор = " ".join(args[индекс + 1 :])
+    if "--сектор" in аргументы:
+        индекс = аргументы.index("--сектор")
+        сектор = " ".join(аргументы[индекс + 1 :])
 
     # Проверяем, не существует ли уже тикер
     существующие = найти_файлы_тикеров([тикер])
