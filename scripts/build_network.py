@@ -262,15 +262,15 @@ render(5);
 def main():
     настроить_вывод()
 
-    args = sys.argv[1:]
+    аргументы = sys.argv[1:]
     минимальный_вес = 2
     лимит_узлов = None
 
-    for i, arg in enumerate(args):
-        if arg == "--мин-вес" and i + 1 < len(args):
-            минимальный_вес = int(args[i + 1])
-        elif arg == "--лимит" and i + 1 < len(args):
-            лимит_узлов = int(args[i + 1])
+    for i, аргумент in enumerate(аргументы):
+        if аргумент == "--мин-вес" and i + 1 < len(аргументы):
+            минимальный_вес = int(аргументы[i + 1])
+        elif аргумент == "--лимит" and i + 1 < len(аргументы):
+            лимит_узлов = int(аргументы[i + 1])
 
     os.makedirs(ДИРЕКТОРИЯ_СЕТИ, exist_ok=True)
 
