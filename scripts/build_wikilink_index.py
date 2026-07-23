@@ -79,7 +79,7 @@ def построить_секцию(заголовок, элементы, лим
     return строки
 
 
-def main():
+def главный():
     if sys.platform == "win32":
         sys.stdout.reconfigure(encoding="utf-8")
 
@@ -114,4 +114,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    главный()

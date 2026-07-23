@@ -110,7 +110,7 @@ def загрузить_данные_обогащения(путь_json):
         return json.load(ф)
 
 
-def main():
+def главный():
     if sys.platform == "win32":
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
@@ -164,4 +164,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    главный()

@@ -83,7 +83,7 @@ def очистить_имя_папки(название):
     return re.sub(r'[<>:"/\\|?*]', "", название).strip()
 
 
-def main():
+def главный():
     if sys.platform == "win32":
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
@@ -131,4 +131,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    главный()

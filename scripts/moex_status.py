@@ -89,7 +89,7 @@ def получить_сводку_очереди():
         return None, None, None, str(ошибка)
 
 
-def main():
+def главный():
     настроить_вывод()
     парсер = создать_русский_парсер(description="Статус-сводка по покрытию MOEX")
     парсер.add_argument("--json", action="store_true", help="Вывести в формате JSON")
@@ -165,4 +165,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    главный()
