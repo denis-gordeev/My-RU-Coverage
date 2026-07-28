@@ -53,7 +53,7 @@ def сканировать_граф(минимальный_вес=5, лимит_
 
     if лимит_узлов:
         ведущие_узлы = set(
-            имя for имя, _ in sorted(число_упоминаний_узлов.items(), key=lambda x: -x[1])[:лимит_узлов]
+            имя for имя, _ in sorted(число_упоминаний_узлов.items(), key=lambda пара: -пара[1])[:лимит_узлов]
         )
     else:
         ведущие_узлы = set(имя for имя, счёт in число_упоминаний_узлов.items() if счёт >= 2)
@@ -100,10 +100,10 @@ def построить_html(узлы, связи):
 
     элементы_легенды = "".join(
         f'<div style="display:flex;align-items:center;margin:4px 12px">'
-        f'<div style="width:14px;height:14px;border-radius:50%;background:{color};margin-right:6px"></div>'
-        f'<span style="font-size:13px">{label}</span></div>'
-        for cat, (color, label) in {
-            k: (ЦВЕТА_КАТЕГОРИЙ[k], МЕТКИ_КАТЕГОРИЙ[k]) for k in ЦВЕТА_КАТЕГОРИЙ
+        f'<div style="width:14px;height:14px;border-radius:50%;background:{цвет};margin-right:6px"></div>'
+        f'<span style="font-size:13px">{метка}</span></div>'
+        for категория, (цвет, метка) in {
+            к: (ЦВЕТА_КАТЕГОРИЙ[к], МЕТКИ_КАТЕГОРИЙ[к]) for к in ЦВЕТА_КАТЕГОРИЙ
         }.items()
     )
 

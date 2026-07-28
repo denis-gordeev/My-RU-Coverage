@@ -24,7 +24,7 @@ from urllib.request import urlopen
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import найти_файлы_тикеров, настроить_вывод, создать_русский_парсер
 
-АДРЕС_ISS = "https://iss.moex.com/iss/statistics/engines/stock/markets/index/analytics/MOEXBC/constituents.json"
+АДРЕС_ИСС = "https://iss.moex.com/iss/statistics/engines/stock/markets/index/analytics/MOEXBC/constituents.json"
 КОДЫ_ИНДЕКСОВ_ПО_УМОЛЧАНИЮ = ["MOEXBC", "MOEXBMI"]
 МЕТКИ_ИНДЕКСОВ = {
     "MOEXBC": "Индекс крупнейших акций",
@@ -44,8 +44,8 @@ def загрузить_состав(код_индекса, дата_торгов
     if дата_торгов:
         параметры["date"] = дата_торгов
 
-    адрес_iss = АДРЕС_ISS.replace("/MOEXBC/", f"/{код_индекса}/")
-    адрес = f"{адрес_iss}?{urlencode(параметры)}"
+    адрес_исс = АДРЕС_ИСС.replace("/MOEXBC/", f"/{код_индекса}/")
+    адрес = f"{адрес_исс}?{urlencode(параметры)}"
     with urlopen(адрес, timeout=20) as ответ:
         данные_ответа = json.load(ответ)
 

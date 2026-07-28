@@ -36,7 +36,7 @@ def посчитать_отчёты():
 def посчитать_темы():
     if not ДИРЕКТОРИЯ_ТЕМ.exists():
         return 0
-    return len([f for f in ДИРЕКТОРИЯ_ТЕМ.iterdir() if f.suffix == ".md" and f.name != "README.md"])
+    return len([ф for ф in ДИРЕКТОРИЯ_ТЕМ.iterdir() if ф.suffix == ".md" and ф.name != "README.md"])
 
 
 def проверить_аудит():
@@ -158,7 +158,7 @@ def главный():
 
     print()
     print("  Секторы:")
-    for сектор, тикеры in sorted(по_сектору.items(), key=lambda x: -len(x[1])):
+    for сектор, тикеры in sorted(по_сектору.items(), key=lambda пара: -len(пара[1])):
         print(f"    {сектор}: {len(тикеры)}")
     print()
     print("=" * 50)
