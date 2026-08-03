@@ -96,7 +96,7 @@ def сканировать_граф(минимальный_вес=5, лимит_
 
 def построить_html(узлы, связи):
     """Генерирует автономную HTML-визуализацию на D3.js."""
-    json_графа = json.dumps({"узлы": узлы, "связи": связи}, ensure_ascii=False)
+    строка_графа = json.dumps({"узлы": узлы, "связи": связи}, ensure_ascii=False)
 
     элементы_легенды = "".join(
         f'<div style="display:flex;align-items:center;margin:4px 12px">'
@@ -141,7 +141,7 @@ def построить_html(узлы, связи):
 
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
-const fullData = {json_графа};
+const fullData = {строка_графа};
 
 // Сопоставление русских ключей JSON во внутренние английские для D3.js
 fullData.узлы.forEach(n => {{
