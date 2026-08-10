@@ -11,7 +11,7 @@ moex_blue_chip_queue.py — Проверка официальных корзин
   python scripts/moex_blue_chip_queue.py
   python scripts/moex_blue_chip_queue.py --индекс MOEXBC
   python scripts/moex_blue_chip_queue.py --индекс MOEXBMI --дата 2026-04-03
-  python scripts/moex_blue_chip_queue.py --json
+  python scripts/moex_blue_chip_queue.py --джсон
 """
 
 import json
@@ -185,7 +185,7 @@ def главный():
         ),
     )
     парсер.add_argument(
-        "--json",
+        "--джсон",
         action="store_true",
         help="Вывести результат в формате JSON",
     )
@@ -201,7 +201,7 @@ def главный():
         print(f"Сетевой сбой при запросе MOEX ISS: {ошибка}", file=sys.stderr)
         sys.exit(1)
 
-    if аргументы.json:
+    if аргументы.джсон:
         print(json.dumps(отчёт, ensure_ascii=False, indent=2))
         return
 

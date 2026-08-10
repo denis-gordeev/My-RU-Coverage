@@ -7,7 +7,7 @@ moex_status.py — Статус-сводка по покрытию MOEX.
 
 Использование:
     python scripts/moex_status.py
-    python scripts/moex_status.py --json
+    python scripts/moex_status.py --джсон
 """
 
 import json
@@ -92,7 +92,7 @@ def получить_сводку_очереди():
 def главный():
     настроить_вывод()
     парсер = создать_русский_парсер(description="Статус-сводка по покрытию MOEX")
-    парсер.add_argument("--json", action="store_true", help="Вывести в формате JSON")
+    парсер.add_argument("--джсон", action="store_true", help="Вывести в формате JSON")
     аргументы = парсер.parse_args()
 
     число_отчётов, по_сектору = посчитать_отчёты()
@@ -130,7 +130,7 @@ def главный():
     if ошибка_очереди:
         сводка["очередь"]["ошибка"] = ошибка_очереди
 
-    if аргументы.json:
+    if аргументы.джсон:
         print(json.dumps(сводка, ensure_ascii=False, indent=2))
         return
 
