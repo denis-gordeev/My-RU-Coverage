@@ -20,7 +20,7 @@ update_enrichment.py — Обновление содержимого обога�
   }
 }
 
-При вызове через Claude /update-enrichment skill, Claude:
+При вызове через Claude /обновить-обогащение навык, Claude:
 1. Исследует тикеры через веб-поиск
 2. Записывает enrichment.json
 3. Запускает этот скрипт
