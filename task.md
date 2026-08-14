@@ -5,6 +5,6 @@
 Актуальный живой список задач и статусов ведётся в `TODO.md`.
 
 Для нового российского покрытия используйте:
-- `python scripts/moex_blue_chip_queue.py` — очередь MOEX
+- `python scripts/moex_blue_chip_queue.py` — очередь МосБиржи
 - `python scripts/generate_moex_reports.py` — генерация карточек
 - `python scripts/audit_ru_reports.py` — аудит качества

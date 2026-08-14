@@ -1,13 +1,13 @@
 # My RU Coverage — База покрытия российского рынка
 
-База исследовательских заметок по акциям с упором на российский рынок. Репозиторий использует Markdown-отчёты, связанные через `[[викилинки]]`, чтобы собирать граф компаний, технологий, материалов и конечных рынков.
+База исследовательских заметок по акциям с упором на российский рынок. Репозиторий использует МД-отчёты, связанные через `[[викилинки]]`, чтобы собирать граф компаний, технологий, материалов и конечных рынков.
 
 ## Текущее состояние
 
 - 43 российских отчёта в `Pilot_Reports/` проходят аудит качества (`scripts/audit_ru_reports.py`).
 - `themes/` содержит 29 российских тем.
 - `WIKILINKS.md`, `network/graph_data.json` и `network/index.html` пересобираются из актуального российского корпуса.
-- Для рабочего процесса MOEX приоритетны `scripts/moex_blue_chip_queue.py`, `scripts/generate_moex_reports.py`, `scripts/update_financials.py`, `scripts/update_valuation.py`.
+- Для рабочего процесса МосБиржи приоритетны `scripts/moex_blue_chip_queue.py`, `scripts/generate_moex_reports.py`, `scripts/update_financials.py`, `scripts/update_valuation.py`.
 - Статус-сводка по покрытию: `python scripts/moex_status.py`.
 - Исторический тайваньский корпус описан в [LEGACY.md](LEGACY.md).
 
@@ -68,7 +68,7 @@ python scripts/update_enrichment.py --данные enrichment.json SBER
 python scripts/audit_ru_reports.py
 ```
 
-Статус-сводка по покрытию MOEX:
+Статус-сводка по покрытию МосБиржи:
 
 ```bash
 python scripts/moex_status.py
@@ -82,7 +82,7 @@ python scripts/build_network.py
 python scripts/build_themes.py
 ```
 
-Проверить актуальное покрытие официальной очереди MOEX:
+Проверить актуальное покрытие официальной очереди МосБиржи:
 
 ```bash
 python scripts/moex_blue_chip_queue.py
@@ -90,7 +90,7 @@ python scripts/moex_blue_chip_queue.py --индекс MOEXBC
 python scripts/moex_blue_chip_queue.py --индекс MOEXBMI
 ```
 
-Сгенерировать базовые MOEX-карточки из живой очереди:
+Сгенерировать базовые карточки МосБиржи из живой очереди:
 
 ```bash
 python scripts/generate_moex_reports.py
